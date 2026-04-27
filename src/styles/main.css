@@ -1,0 +1,94 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f5f5f5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+}
+
+:root {
+  --green-primary: #0f5132;
+  --green-bright: #198754;
+  --green-dark: #0a3d2c;
+
+  --red-primary: #dc3545;
+
+  --text-dark: #1f1f1f;
+  --text-light: #6c757d;
+
+  --white: #ffffff;
+}
+
+.btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Verde */
+.btn-green {
+  background: linear-gradient(135deg, #198754, #0f5132);
+  color: white;
+}
+
+.btn-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+/* Rojo */
+.btn-red {
+  background: linear-gradient(135deg, #ff4d4d, #b30000);
+  color: white;
+}
+
+.btn-red:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.btn.green {
+  background: linear-gradient(135deg, #198754, #0f5132);
+  color: white;
+}
+
+.btn.red {
+  background: linear-gradient(135deg, #ff4d4d, #b30000);
+  color: white;
+}
+
+.btn {
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
