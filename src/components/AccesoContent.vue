@@ -71,7 +71,7 @@
 <style scoped>
 .acceso {
   min-height: 100vh;
-  background: url('@/assets/bg.jpg') center/cover no-repeat;
+  background: url('/src/assets/hero-bg.jpg') center/cover no-repeat;
   padding: 40px;
 }
 
