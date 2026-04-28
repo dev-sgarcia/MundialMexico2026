@@ -9,6 +9,7 @@
           <span class="subtitle">MÉXICO <b>2026</b></span>
       </div>
       </div>
+
 <nav class="menu">
   <a class="menu-item">
     <img src="/src/assets/home.png" />
@@ -35,14 +36,30 @@
     <span>DONACIÓN</span>
   </a>
 </nav>
-      <button class="btn btn-green google-btn">
-        <img src="/src/assets/google.png" alt="Google" class="google-icon" />
-        <span>ACCEDER CON GOOGLE</span>
-      </button>
-    </div>
+
+
+  <!-- BOTÓN -->
+  <button @click="$router.push('/acceso')" class="btn btn-green google-btn">
+    <img src="/src/assets/google.png" alt="Google" class="google-icon"/>
+    <span v-if="!simple">ACCEDER CON GOOGLE</span>
+    <span v-else>CERRAR SESIÓN</span>
+  </button>
+
+  <!-- <button class="btn btn-green google-btn">
+    <img src="/src/assets/google.png" alt="Google" class="google-icon" />
+    <span>ACCEDER CON GOOGLE</span>
+  </button> -->
+  
+  </div>
   </header>
 </template>
 
+
+<script setup>
+const props = defineProps({
+  simple: Boolean
+})
+</script>
 
 
 <style scoped>

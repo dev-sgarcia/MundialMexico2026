@@ -10,9 +10,22 @@
     </div>
     <h3 :class="item.theme">{{ item.title }}</h3>
     <p>{{ item.desc }}</p>
-    <button :class="['btn', item.theme]">
+
+<button 
+  :class="['btn', item.theme, item.route === '/acceso' ? 'google-btn' : '']"
+  @click="item.route && router.push(item.route)"
+>
+  <img 
+    v-if="item.route === '/acceso'" 
+    class="google-icon"
+  />
+  {{ item.btn }}
+</button>
+
+
+    <!-- <button :class="['btn', item.theme]">
         {{ item.btn }}
-    </button>
+    </button> -->
     </div>
   </section>
 </template>
@@ -26,15 +39,28 @@ import {
   HeartIcon
 } from '@heroicons/vue/24/solid'
 
+
+//Para usar el boton ACCESO
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const handleClick = (item) => {
+  if (item.title === 'ACCESO') {
+    router.push('/acceso')
+  }
+  // Aquí después puedes agregar más rutas:
+  // if (item.title === 'RESULTADOS MUNDIAL') router.push('/resultados')
+}
+//Para usar el boton ACCESO
+
 const items = [
 {
   image: new URL('/src/assets/google.png', import.meta.url).href,
   title: 'ACCESO',
   desc: 'Inicia sesión con tu cuenta de Google y únete usando tu clave de invitado.',
   btn: 'ACCEDER CON GOOGLE',
-  theme: 'green'
+  theme: 'green',
+  route: '/acceso'
 },
-  // { icon: UserIcon, title: 'ACCESO', desc: 'Inicia sesión con tu cuenta de Google y únete usando tu clave de invitado.', btn: 'ACCEDER CON GOOGLE', theme: 'green' },
 {
   image: new URL('/src/assets/results2.png', import.meta.url).href,
   title: 'RESULTADOS MUNDIAL',
@@ -42,7 +68,6 @@ const items = [
   btn: 'VER RESULTADOS',
   theme: 'red'
 },  
-  //{ icon: TrophyIcon, title: 'RESULTADOS MUNDIAL', desc: 'Consulta los resultados de todos los partidos.', btn: 'VER RESULTADOS', theme: 'red' },
 {
   image: new URL('/src/assets/rules.png', import.meta.url).href,
   title: 'REGLAS',
@@ -50,7 +75,6 @@ const items = [
   btn: 'VER REGLAS',
   theme: 'green'
 },
-  // { icon: BookOpenIcon, title: 'REGLAS', desc: 'Conoce las reglas generales de puntuación y cómo funciona la quiniela.', btn: 'VER REGLAS', theme: 'green' },
 {
   image: new URL('/src/assets/play2.png', import.meta.url).href,
   title: 'JUEGA CON NOSOTROS',
@@ -58,7 +82,6 @@ const items = [
   btn: 'MÁS INFORMACIÓN',
   theme: 'red'
 },  
-  //{ icon: UsersIcon, title: 'JUEGA CON NOSOTROS', desc: '¿Quieres organizar una quiniela con tu empresa o amigos?', btn: 'MÁS INFORMACIÓN', theme: 'red' },
 {
   image: new URL('/src/assets/donate.png', import.meta.url).href,
   title: 'DONACIÓN',
@@ -66,7 +89,6 @@ const items = [
   btn: 'DONAR CON PAYPAL',
   theme: 'green'
 }   
-  // { icon: HeartIcon, title: 'DONACIÓN', desc: 'Apoya a los desarrolladores para seguir mejorando la plataforma.', btn: 'DONAR CON PAYPAL', theme: 'green' }
 ]
 </script>
 
