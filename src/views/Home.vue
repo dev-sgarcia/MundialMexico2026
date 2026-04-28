@@ -10,4 +10,5 @@ import Header from '../components/Header.vue'
 import Hero from '../components/Hero.vue'
 import Cards from '../components/Cards.vue'
 import Footer from '../components/Footer.vue'
+import AccesoContent from '../components/AccesoContent.vue'
 </script>
