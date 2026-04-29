@@ -6,7 +6,7 @@
       <!-- CARD 1: PERFIL -->
       <div class="card profile">
         <div class="avatar">
-          <img src="/src/assets/user.png" />
+          <img src="@/assets/user.png" />
         </div>
 
         <h3>Juan Pérez</h3>
@@ -71,7 +71,7 @@
 <style scoped>
 .acceso {
   min-height: 100vh;
-  background: url('/src/assets/hero-bg.jpg') center/cover no-repeat;
+  background: url('@/assets/hero-bg.jpg') center/cover no-repeat;
   padding: 40px;
 }
 

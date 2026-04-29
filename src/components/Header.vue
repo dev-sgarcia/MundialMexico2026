@@ -3,7 +3,7 @@
     <div class="container nav">
 
      <div class="logo">
-      <img src="/src/assets/logo.png" alt="Mundial 2026" />
+      <img src="@/assets/logo.png" alt="Mundial 2026" />
       <div class="logo-text">
           <span class="title">MUNDIAL</span>
           <span class="subtitle">MÉXICO <b>2026</b></span>
@@ -12,27 +12,27 @@
 
 <nav class="menu">
   <a class="menu-item">
-    <img src="/src/assets/home.png" />
+    <img src="@/assets/home.png" />
     <span>INICIO</span>
   </a>
 
   <a class="menu-item">
-    <img src="/src/assets/results.png" />
+    <img src="@/assets/results.png" />
     <span>RESULTADOS</span>
   </a>
 
   <a class="menu-item">
-    <img src="/src/assets/rules.png" />
+    <img src="@/assets/rules.png" />
     <span>REGLAS</span>
   </a>
 
   <a class="menu-item">
-    <img src="/src/assets/play.png" />
+    <img src="@/assets/play.png" />
     <span>JUEGA</span>
   </a>
 
   <a class="menu-item">
-    <img src="/src/assets/donate.png" />
+    <img src="@/assets/donate.png" />
     <span>DONACIÓN</span>
   </a>
 </nav>
@@ -40,7 +40,7 @@
 
   <!-- BOTÓN -->
   <button @click="$router.push('/acceso')" class="btn btn-green google-btn">
-    <img src="/src/assets/google.png" alt="Google" class="google-icon"/>
+    <img src="@/assets/google.png" alt="Google" class="google-icon"/>
     <span v-if="!simple">ACCEDER CON GOOGLE</span>
     <span v-else>CERRAR SESIÓN</span>
   </button>
