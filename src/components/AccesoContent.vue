@@ -6,7 +6,8 @@
       <!-- CARD 1: PERFIL -->
       <div class="card profile">
         <div class="avatar">
-          <img src="@/assets/user.png" />
+          <img :src="userImg" />
+          <!-- <img src="@/assets/user.png" /> -->
         </div>
 
         <h3>Juan Pérez</h3>
@@ -67,6 +68,9 @@
   </section>
 </template>
 
+<script setup>
+  import userImg from '@/assets/user.png'
+</script>
 
 <style scoped>
 .acceso {
