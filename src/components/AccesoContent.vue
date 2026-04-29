@@ -1,5 +1,8 @@
 <template>
-  <section class="acceso">
+  <section 
+    class="acceso"
+    :style="{ backgroundImage: `url(${bgImg})` }"
+  >    
 
     <div class="cards">
 
@@ -7,7 +10,6 @@
       <div class="card profile">
         <div class="avatar">
           <img :src="userImg" />
-          <!-- <img src="@/assets/user.png" /> -->
         </div>
 
         <h3>Juan Pérez</h3>
@@ -69,13 +71,13 @@
 </template>
 
 <script setup>
-  import userImg from '@/assets/user.png'
+import userImg from '@/assets/user.png'
+import bgImg from '@/assets/hero-bg.jpg' 
 </script>
 
 <style scoped>
 .acceso {
   min-height: 100vh;
-  background: url('@/assets/hero-bg.jpg') center/cover no-repeat;
   padding: 40px;
 }
 
@@ -172,6 +174,7 @@ input, select {
     grid-template-columns: repeat(1, 1fr);
     margin-top: 60px;
   }
+}
 
 @media (max-width: 768px) {
   .cards {
@@ -179,6 +182,4 @@ input, select {
     margin-top: 60px;
   }
 }  
-}
-
 </style>
