@@ -37,6 +37,10 @@
 
       <!-- CARD 2: UNIRSE -->
       <div class="card join">
+        <div class="avatar">
+          <img :src="ligaImg" />
+        </div>
+
         <h3>Unirse a liga</h3>
         <p>Ingresa tu código de invitación</p>
 
@@ -47,6 +51,10 @@
 
       <!-- CARD 3: LIGA -->
       <div class="card league">
+        <div class="avatar">
+          <img :src="campeonImg" />
+        </div>
+
         <h3>Liga Campeones</h3>
 
         <!-- SI NO HA ELEGIDO -->
@@ -72,6 +80,8 @@
 
 <script setup>
 import userImg from '@/assets/user.png'
+import ligaImg from '@/assets/liga.png'
+import campeonImg from '@/assets/campeon.png'
 import bgImg from '@/assets/hero-bg.jpg' 
 </script>
 
