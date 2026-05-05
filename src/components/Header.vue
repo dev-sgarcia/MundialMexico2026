@@ -21,11 +21,22 @@
     <span>RESULTADOS</span>
   </a>
 
-  <a class="menu-item">
+
+<router-link 
+  to="/reglas" 
+  class="menu-item"
+  active-class="active"
+>
+  <img src="@/assets/rules.png" />
+  <span>REGLAS</span>
+</router-link>
+
+
+  <!-- <router-link to="/reglas" class="menu-item">
     <img src="@/assets/rules.png" />
     <span>REGLAS</span>
-  </a>
-
+  </router-link>   -->
+  
   <a class="menu-item">
     <img src="@/assets/play.png" />
     <span>JUEGA</span>
