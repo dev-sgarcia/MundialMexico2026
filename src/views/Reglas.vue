@@ -6,90 +6,88 @@
 
     <!-- HERO -->
     <section class="hero-reglas">
-    <h1>REGLAS DE LA QUINIELA</h1>
-    <p>Conoce cómo se puntúa y las condiciones para participar.</p>
+      <h1>REGLAS DE LA QUINIELA</h1>
+      <p>Conoce cómo se puntúa y las condiciones para participar.</p>
     </section>
 
     <!-- CARDS -->
     <section class="reglas-container">
       <div class="card">
-      <div class="card-header">
-        <div class="icon-circle green">
-        <img src="@/assets/porteria.png" />
+        <div class="card-header">
+          <div class="icon-circle green">
+            <img src="@/assets/porteria.png" />
+          </div>
+          <div class="card-content">
+            <h3>3 PUNTOS</h3>
+            <p>Si le atinas al marcador exacto.</p>
+            <small>(Ej. Dices 2-1 y termina 2-1)</small>
+          </div>
         </div>
-        <div class="card-content">
-        <h3>3 PUNTOS</h3>
-        <p>Si le atinas al marcador exacto.</p>
-        <small>(Ej. Dices 2-1 y termina 2-1)</small>
-      </div>
-      </div>
       </div>
 
       <div class="card">
         <div class="card-header">
-        <div class="icon-circle green">
-        <img src="@/assets/campeon.png" />
+          <div class="icon-circle green">
+            <img src="@/assets/campeon.png" />
+          </div>
+          <div class="card-content">
+            <h3>1 PUNTO</h3>
+            <p>Si aciertas ganador o empate, pero no el marcador.</p>
+          </div>
         </div>
-        <div class="card-content">
-        <h3>1 PUNTO</h3>
-        <p>Si aciertas ganador o empate, pero no el marcador.</p>
-      </div>
-      </div>
-      </div>
-
-
-      <div class="card">
-        <div class="card-header">
-        <div class="icon-circle green">
-        <img src="@/assets/corona.png" />
-        </div>
-        <div class="card-content">
-        <h3>10 PUNTOS</h3>
-        <p>Si eliges al campeón desde el inicio.</p>
-      </div>
-      </div>
       </div>
 
       <div class="card">
         <div class="card-header">
-        <div class="icon-circle green">
-        <img src="@/assets/reloj.png" />
+          <div class="icon-circle green">
+            <img src="@/assets/corona.png" />
+          </div>
+          <div class="card-content">
+            <h3>10 PUNTOS</h3>
+            <p>Si eliges al campeón desde el inicio.</p>
+          </div>
         </div>
-        <div class="card-content">
-        <h3>TIEMPO LÍMITE</h3>
-        <p>Tienes hasta 1 hora antes del partido.</p>
       </div>
-      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="icon-circle green">
+            <img src="@/assets/reloj.png" />
+          </div>
+          <div class="card-content">
+            <h3>TIEMPO LÍMITE</h3>
+            <p>Tienes hasta 1 hora antes del partido.</p>
+          </div>
+        </div>
       </div>
 
       <div class="card red">
         <div class="card-header">
-        <div class="icon-circle red">
-        <img src="@/assets/regalo.png" />
+          <div class="icon-circle red">
+            <img src="@/assets/regalo.png" />
+          </div>
+          <div class="card-content">
+            <h3>PREMIOS</h3>
+            <ul>
+              <li>Ganador fase grupos</li>
+              <li>Ganador finales</li>
+              <li>Mayor puntaje</li>
+            </ul>
+          </div>
         </div>
-        <div class="card-content">
-        <h3>PREMIOS</h3>
-        <ul>
-        <li>Ganador fase grupos</li>
-        <li>Ganador finales</li>
-        <li>Mayor puntaje</li>
-        </ul>        
       </div>
-      </div>
-      </div>      
 
       <div class="card">
-        <div class="card-header">        
-        <div class="icon-circle green">
-        <img src="@/assets/balanza.png" />
+        <div class="card-header">
+          <div class="icon-circle green">
+            <img src="@/assets/balanza.png" />
+          </div>
+          <div class="card-content">
+            <h3>DESEMPATE</h3>
+            <p>Se toma el primer registro realizado.</p>
+          </div>
         </div>
-        <div class="card-content">
-        <h3>DESEMPATE</h3>
-        <p>Se toma el primer registro realizado.</p>
       </div>
-      </div>
-      </div>
-
     </section>
 
     <!-- CTA -->
@@ -104,35 +102,26 @@
 
     <!-- FOOTER -->
     <Footer />
-
   </div>
 </template>
 
 <script setup>
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 </script>
 
 <style scoped>
-/* 
-.reglas-page {
-  background: #f4f6f9;
-} 
-*/
-
 .reglas-page-bg {
   min-height: 100vh;
-  background: linear-gradient(
-      rgba(0, 50, 30, 0.7),
-      rgba(0, 0, 0, 0.8)
-    ),
-    url('/src/assets/bg-rules.jpg') center/cover no-repeat;    
+  background:
+    linear-gradient(rgba(0, 50, 30, 0.7), rgba(0, 0, 0, 0.8)),
+    url("/src/assets/bg-rules.jpg") center/cover no-repeat;
 }
 
 /* HERO */
 .hero-reglas {
   text-align: center;
-  padding: 60px 20px 30px;
+  padding: 14px 20px 30px;
   color: white;
 }
 
@@ -157,14 +146,13 @@ import Footer from '@/components/Footer.vue'
   background: rgba(255, 255, 255, 0.95);
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease;
 }
 
 .card:hover {
   transform: translateY(-5px);
 }
-
 
 .card-header {
   display: flex;
@@ -190,7 +178,6 @@ import Footer from '@/components/Footer.vue'
 .card-content small {
   color: #666;
 }
-
 
 .icon {
   font-size: 30px;
