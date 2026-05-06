@@ -38,7 +38,9 @@ import {
   UsersIcon,
   HeartIcon,
 } from "@heroicons/vue/24/solid";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const items = [
   {
     image: new URL("/src/assets/results2.png", import.meta.url).href,
@@ -53,6 +55,7 @@ const items = [
     desc: "Conoce las reglas generales de puntuación y cómo funciona la quiniela.",
     btn: "VER REGLAS",
     theme: "green",
+    route: "/reglas",
   },
   {
     image: new URL("/src/assets/play2.png", import.meta.url).href,
@@ -67,6 +70,7 @@ const items = [
     desc: "Apoya a los desarrolladores para seguir mejorando la plataforma.",
     btn: "DONAR CON PAYPAL",
     theme: "green",
+    route: "/donacion",
   },
 ];
 </script>
