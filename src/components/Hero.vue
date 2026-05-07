@@ -1,7 +1,6 @@
 <template>
   <section class="hero">
     <div class="overlay"></div>
-
     <div class="container hero-content">
       <div class="left">
         <h1>LA PASIÓN NOS UNE,</h1>
@@ -9,13 +8,10 @@
           LA QUINIELA NOS HACE
           <span>CAMPEONES</span>
         </h2>
-
         <p>
-          Únete a la mejor quiniela del Mundial 2026.
-          Compite con tu liga, demuestra tus conocimientos
-          y vive cada partido al máximo.
+          Únete a la mejor quiniela del Mundial 2026. Compite con tu liga,
+          demuestra tus conocimientos y vive cada partido al máximo.
         </p>
-
         <div class="info">
           <span>📅 11 JUN - 19 JUL 2026</span>
           <span>📍 MÉXICO, EE.UU. Y CANADÁ</span>
@@ -29,7 +25,7 @@
 .hero {
   position: relative;
   height: 520px;
-  background: url('/src/assets/hero-bg.jpg') center/cover no-repeat;
+  background: url("/src/assets/hero-bg.jpg") center/cover no-repeat;
   display: flex;
   align-items: center;
   color: white;
@@ -50,13 +46,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  padding-top: 120px; /* 🔥 empuja el contenido hacia abajo */
 }
 
 .left {
   max-width: 550px;
-  margin-top: 20px; /* micro ajuste visual */
+  margin-top: 20px;
 }
 
 h1 {
@@ -91,8 +85,7 @@ p {
   transform: rotate(-10deg);
 }
 
-/* Responsive */
-@media (max-width: 768px) {    
+@media (max-width: 768px) {
   .hero {
     height: auto;
     padding: 40px 0;
@@ -102,7 +95,7 @@ p {
     flex-direction: column;
     text-align: center;
     padding-top: 100px;
-  }  
+  }
 
   .info {
     justify-content: center;
@@ -122,17 +115,17 @@ p {
   .left {
     max-width: 100%;
     padding: 0 15px;
-  }  
+  }
 }
 
 .hero {
   position: relative;
   height: 520px;
-  padding-bottom: 120px; /* 🔥 espacio para que las cards se monten */
+  padding-bottom: 120px;
 }
 
 .hero::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -1px;
   left: 0;
@@ -152,7 +145,7 @@ h2 {
   font-size: clamp(26px, 7vw, 44px);
   font-weight: 800;
   line-height: 1.1;
-  word-break: break-word;  
+  word-break: break-word;
 }
 
 h2 span {
@@ -163,5 +156,4 @@ p {
   font-size: 15px;
   opacity: 0.9;
 }
-
 </style>

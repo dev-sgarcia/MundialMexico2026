@@ -1,53 +1,63 @@
-<!-- <template>
-  <footer class="footer">
-    <div class="container">
-      <p>Mundial 2026 - 3 países, 1 pasión</p>
-    </div>
-  </footer>
-</template>
-
-<style scoped>
-.footer {
-  margin-top: 40px;
-  padding: 20px;
-  background: #0a3d2c;
-  color: white;
-  text-align: center;
-}
-</style> -->
-
 <template>
   <footer class="footer">
-    <div class="footer-content">
-      
-      <!-- Lado izquierdo -->
-      <div class="left">
-        <div class="text">
-          <h2>MÉXICO 2026</h2>
-          <p>EL MUNDIAL DE NUESTRA HISTORIA</p>
+    <div class="footer-main">
+      <div class="brand">
+        <h2>QUINIELA 2026</h2>
+        <p>
+          Predice resultados
+          <span class="brand-dot">•</span>
+          compite
+          <span class="brand-dot">•</span>
+          vive cada partido
+        </p>
+      </div>
+
+      <div class="host-strip">
+        <span class="host-label">TRES PAÍSES UNA SOLA PASIÓN</span>
+
+        <div class="flag-cards">
+          <div class="flag-card mexico">
+            <img src="https://flagcdn.com/mx.svg" alt="México" />
+            <span>México</span>
+          </div>
+
+          <div class="flag-card usa">
+            <img src="https://flagcdn.com/us.svg" alt="Estados Unidos" />
+            <span>Estados Unidos</span>
+          </div>
+
+          <div class="flag-card canada">
+            <img src="https://flagcdn.com/ca.svg" alt="Canadá" />
+            <span>Canadá</span>
+          </div>
         </div>
       </div>
 
-      <!-- Centro -->
-      <div class="center">
-        <p>3 PAÍSES, 16 CIUDADES, 1 MISMA PASIÓN</p>
-      </div>
+      <div class="social">
+        <div class="social-icon">
+          <i class="fab fa-facebook-f"></i>
+        </div>
 
-      <!-- Lado derecho -->
-      <div class="right">
-      <div class="social-icon">
-        <i class="fab fa-facebook-f"></i>
-      </div>
-      <div class="social-icon">
+        <div class="social-icon">
           <i class="fab fa-instagram"></i>
-      </div>
-      <div class="social-icon">
+        </div>
+
+        <div class="social-icon">
+          <i class="fab fa-x-twitter"></i>
+        </div>
+
+        <div class="social-icon">
           <i class="fas fa-envelope"></i>
+        </div>
       </div>
-      </div>      
+    </div>
 
+    <div class="divider"></div>
 
-
+    <div class="footer-bottom">
+      <span>© 2026 Quiniela Mundial</span>
+      <span class="footer-dot">•</span>
+      <span>3 países, 16 ciudades, 1 pasión</span>
     </div>
   </footer>
 </template>
@@ -55,147 +65,231 @@
 <style scoped>
 .footer {
   width: 100%;
-  /*background: linear-gradient(90deg, #0a3d2c, #0f5132);*/
-  background: url('/src/assets/footer.png') center/cover no-repeat;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 30px 40px 20px;
   color: white;
-  padding: 15px 30px;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #0b1f1a, #071411);
+}
 
-  min-height: 180px;
+.footer-main {
+  width: 100%;
   display: grid;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: start;
+  gap: 32px;
 }
 
-.footer-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.brand {
+  justify-self: start;
+  max-width: 360px;
+  padding-top: 22px;
 }
 
-/* IZQUIERDA */
-.left {
+.brand h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+}
+
+.brand p {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 6px;
+  margin: 7px 0 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.brand-dot {
+  color: #00ff9c;
+  opacity: 0.85;
+}
+
+.host-strip {
+  justify-self: center;
+  width: 100%;
+  max-width: 430px;
+  text-align: center;
+}
+
+.host-label {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.flag-cards {
+  display: flex;
+  justify-content: center;
   gap: 10px;
 }
 
-.logo {
-  width: 50px;
-}
-
-.text h2 {
-  font-size: 18px;
-  margin: 0;
-  font-weight: bold;
-}
-
-.text p {
-  margin: 0;
-  font-size: 12px;
-}
-
-/* CENTRO */
-.center {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 13px;
-}
-
-.divider {
-  width: 2px;
-  height: 30px;
-  background: white;
-}
-
-/* DERECHA */
-.right {
-  display: flex;
-  gap: 15px;
-}
-
-.icon {
-  font-size: 16px;
+.flag-card {
+  position: relative;
+  min-width: 74px;
+  padding: 10px 8px;
+  overflow: hidden;
   cursor: pointer;
-  border: 1px solid white;
-  border-radius: 50%;
-  padding: 8px;
-  transition: 0.3s;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
-.icon:hover {
-  background: white;
-  color: #0a3d2c;
+.flag-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.right {
+.flag-card img,
+.flag-card span {
+  position: relative;
+  z-index: 1;
+}
+
+.flag-card img {
+  width: 38px;
+  height: 26px;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+}
+
+.flag-card span {
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.flag-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.flag-card:hover::before {
+  opacity: 1;
+}
+
+.flag-card.mexico::before {
+  background: radial-gradient(
+    circle at top,
+    rgba(0, 255, 156, 0.28),
+    transparent 65%
+  );
+}
+
+.flag-card.usa::before {
+  background: radial-gradient(
+    circle at top,
+    rgba(77, 171, 255, 0.28),
+    transparent 65%
+  );
+}
+
+.flag-card.canada::before {
+  background: radial-gradient(
+    circle at top,
+    rgba(255, 77, 77, 0.28),
+    transparent 65%
+  );
+}
+
+.social {
+  justify-self: end;
+  padding-top: 28px;
   display: flex;
   gap: 12px;
 }
 
-/* CÍRCULO */
 .social-icon {
   width: 36px;
   height: 36px;
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
-
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  transition: all 0.3s ease;
-  cursor: pointer;
 }
 
-/* ICONO */
 .social-icon i {
   font-size: 14px;
-  color: white;
-  line-height: 1;
 }
 
-/* HOVER */
 .social-icon:hover {
+  color: #0b1f1a;
   background: white;
+  transform: translateY(-2px);
 }
 
-.social-icon:hover i {
-  color: #0a3d2c;
+.divider {
+  height: 1px;
+  margin: 25px 0 15px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.social-icon {
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+.footer-bottom {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
 }
 
-/* MOBILE */
-@media (max-width: 600px) {
-  .left {
+.footer-dot {
+  opacity: 0.4;
+}
+
+@media (max-width: 900px) {
+  .footer {
+    padding: 28px 20px 18px;
+  }
+
+  .footer-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
     text-align: center;
   }
 
-  .right {
-    gap: 35px; /* más espacio entre iconos */
-    justify-content: center; /* opcional: los centra */
-    margin-top: 10px;    
+  .brand,
+  .social {
+    padding-top: 0;
   }
 
-  .social-icon {
-    width: 40px;
-    height: 40px;
+  .brand p {
+    justify-content: center;
   }
 
-  .social-icon i {
-    font-size: 16px;
+  .flag-cards {
+    flex-wrap: wrap;
   }
 
-  .footer-content {
-    flex-direction: column;
-    gap: 15px;
-  } 
-
+  .social {
+    justify-content: center;
+  }
 }
-
 </style>
