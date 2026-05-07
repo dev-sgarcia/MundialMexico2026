@@ -49,6 +49,7 @@
           <img src="@/assets/google.png" alt="Google" />
           <span>Acceder con Google</span>
         </button>
+
         <button class="menu-toggle" @click="isMenuOpen = true">☰</button>
       </div>
     </div>
@@ -109,11 +110,6 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-
-const router = useRouter();
-const goToAccess = () => {
-  router.push("/acceso");
-};
 import {
   PhHouse,
   PhChartBar,
@@ -122,23 +118,30 @@ import {
   PhHandshake,
 } from "@phosphor-icons/vue";
 
+const router = useRouter();
 const isMenuOpen = ref(false);
+
+const goToAccess = () => {
+  router.push("/acceso");
+};
 </script>
 
 <style scoped>
 .header {
   position: sticky;
   top: 0;
+  left: 0;
   width: 100%;
   z-index: 100;
 }
 
 .nav {
   width: 100%;
+  min-width: 0;
   padding: 10px 32px;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: 220px 1fr auto auto;
+  grid-template-columns: 220px 1fr auto;
   align-items: center;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px);
@@ -146,62 +149,8 @@ const isMenuOpen = ref(false);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-.desktop-login {
-  display: flex;
-  justify-content: flex-end;
-  margin-right: 14px;
-}
-
-.mobile-login-btn {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  height: 46px;
-  padding: 0 18px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-
-.mobile-login-btn img {
-  width: 18px;
-  height: 18px;
-}
-
-.mobile-login-btn span {
-  display: block;
-}
-
-.google-login-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: none;
-  border-radius: 999px;
-  padding: 10px 18px;
-  background: linear-gradient(135deg, #198754, #0f5132);
-  color: white;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow:
-    0 10px 22px rgba(15, 81, 50, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-.google-login-btn img {
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  padding: 2px;
-}
-
-.google-login-btn:hover {
-  transform: translateY(-2px);
-}
-
 .logo {
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -210,11 +159,13 @@ const isMenuOpen = ref(false);
 }
 
 .logo img {
+  flex: 0 0 auto;
   height: 38px;
   width: auto;
 }
 
 .logo-text {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   line-height: 1;
@@ -251,6 +202,7 @@ const isMenuOpen = ref(false);
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  padding: 6px 10px;
   text-decoration: none;
   color: #143d2d;
   font-size: 11px;
@@ -288,12 +240,6 @@ const isMenuOpen = ref(false);
 .menu-item:hover {
   color: #32620e;
   transform: translateY(-3px);
-  /* background: rgba(50, 98, 14, 0.08);
-  border-radius: 14px; */
-}
-
-.menu-item {
-  padding: 6px 10px;
 }
 
 .menu-item:hover .icon {
@@ -316,36 +262,66 @@ const isMenuOpen = ref(false);
   width: 100%;
 }
 
-/* .soccer-icon {
-  animation: ballPulse 2.6s ease-in-out infinite;
-} */
-
-@keyframes ballPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.12);
-  }
+.desktop-login {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .header-actions {
   justify-self: end;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.google-login-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #198754, #0f5132);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  box-shadow:
+    0 10px 22px rgba(15, 81, 50, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.google-login-btn img {
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.google-login-btn:hover {
+  transform: translateY(-2px);
+}
+
+.mobile-login-btn {
+  display: none;
 }
 
 .menu-toggle {
   display: none;
+  flex: 0 0 auto;
   border: none;
   background: #0f7a45;
   color: white;
   border-radius: 12px;
-  padding: 8px 12px;
-  font-size: 22px;
+  width: 46px;
+  height: 46px;
+  font-size: 24px;
+  line-height: 1;
   cursor: pointer;
   box-shadow: 0 6px 14px rgba(0, 122, 69, 0.25);
 }
@@ -448,57 +424,104 @@ const isMenuOpen = ref(false);
   }
 }
 
-@media (min-width: 901px) {
-  .mobile-login-btn {
-    display: none !important;
-  }
-}
-
 @media (max-width: 900px) {
   .nav {
-    grid-template-columns: 1fr auto;
-    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
   }
 
-  .menu {
-    display: none;
-  }
-
-  .menu-toggle {
-    display: block;
-  }
-
+  .menu,
   .desktop-login {
     display: none;
   }
 
+  .header-actions {
+    display: flex;
+    margin-left: auto;
+  }
+
   .mobile-login-btn {
     display: flex;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 12px;
+  }
+
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
-  .header {
-    top: 8px;
-    padding: 0 12px;
-    box-sizing: border-box;
+  .nav {
+    padding: 10px 10px;
+    gap: 8px;
   }
 
-  .nav {
-    border-radius: 28px;
-    padding: 10px 14px;
+  .logo {
+    gap: 7px;
   }
 
   .logo img {
-    height: 35px;
+    height: 34px;
   }
 
   .title {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .subtitle {
+    font-size: 10px;
+  }
+
+  .header-actions {
+    gap: 7px;
+  }
+
+  .mobile-login-btn {
+    height: 40px;
+    padding: 0 12px;
     font-size: 11px;
+  }
+
+  .mobile-login-btn img {
+    width: 17px;
+    height: 17px;
+  }
+
+  .menu-toggle {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 390px) {
+  .mobile-login-btn {
+    width: 42px;
+    padding: 0;
+  }
+
+  .mobile-login-btn span {
+    display: none;
+  }
+
+  .logo img {
+    height: 32px;
+  }
+
+  .title {
+    font-size: 12px;
+  }
+
+  .subtitle {
+    font-size: 9px;
   }
 }
 </style>
