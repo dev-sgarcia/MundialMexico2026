@@ -137,14 +137,30 @@ button {
 
 @media (max-width: 900px) {
   .cards {
-    grid-template-columns: repeat(2, 1fr);
-    margin-top: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: -60px;
+    padding: 0 16px;
   }
 
-  @media (max-width: 768px) {
-    .cards {
-      margin-top: -40px;
-    }
+  .card {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .icon-circle {
+    width: 64px;
+    height: 64px;
+  }
+
+  .icon-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .card {
+    padding: 18px 16px;
   }
 }
 
