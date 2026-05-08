@@ -139,19 +139,6 @@ onUnmounted(() => {
   );
 }
 
-.hero::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 100px;
-  background: white;
-  border-top-left-radius: 50% 40px;
-  border-top-right-radius: 50% 40px;
-  z-index: 2;
-}
-
 .hero-content {
   position: relative;
   z-index: 3;
