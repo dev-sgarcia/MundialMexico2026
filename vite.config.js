@@ -11,7 +11,7 @@ import path from "path";
 export default defineConfig({
   plugins: [vue()],
   build: {
-    chunkSizeWarningLimit: 3000, // Aumenta el límite de advertencia a 2 MB
+    chunkSizeWarningLimit: 2000, // Aumenta el límite de advertencia a 2 MB
   },
   resolve: {
     alias: {
