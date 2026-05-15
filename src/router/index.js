@@ -3,8 +3,13 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
   {
     path: "/",
-    name: "Home",
+    name: "home",
     component: () => import("@/views/Home.vue"),
+  },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: () => import("@/views/Dashboard.vue"),
   },
   {
     path: "/acceso",
@@ -25,6 +30,16 @@ const routes = [
     path: "/juega",
     name: "Juega",
     component: () => import("@/views/Juega.vue"),
+  },
+  {
+    path: "/predicciones",
+    name: "Predicciones",
+    component: () => import("@/views/Predicciones.vue"),
+  },
+  {
+    path: "/resultados",
+    name: "Resultados",
+    component: () => import("@/views/Resultados.vue"),
   },
 ];
 
