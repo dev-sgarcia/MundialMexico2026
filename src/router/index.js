@@ -26,7 +26,17 @@ const routes = [
     name: "Juega",
     component: () => import("@/views/Juega.vue"),
   },
-];
+  {
+    path: '/admin-panel',
+    name: 'AdminPanel',
+    component: () => import('@/views/Administracion.vue')
+  },
+  {
+    path:'/juega-nosotros',
+    name:'JuegaInfo',
+    component: () => import('@/views/JuegaInfo.vue')
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(),
