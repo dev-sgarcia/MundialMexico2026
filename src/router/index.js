@@ -3,8 +3,13 @@ import { createRouter, createWebHistory } from "vue-router";
 const routes = [
   {
     path: "/",
-    name: "Home",
+    name: "home",
     component: () => import("@/views/Home.vue"),
+  },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: () => import("@/views/Dashboard.vue"),
   },
   {
     path: "/acceso",
@@ -27,16 +32,26 @@ const routes = [
     component: () => import("@/views/Juega.vue"),
   },
   {
-    path: '/admin-panel',
-    name: 'AdminPanel',
-    component: () => import('@/views/Administracion.vue')
+    path: "/predicciones",
+    name: "Predicciones",
+    component: () => import("@/views/Predicciones.vue"),
   },
   {
-    path:'/juega-nosotros',
-    name:'JuegaInfo',
-    component: () => import('@/views/JuegaInfo.vue')
-  }
-]
+    path: "/resultados",
+    name: "Resultados",
+    component: () => import("@/views/Resultados.vue"),
+  },
+  {
+    path: "/admin-panel",
+    name: "AdminPanel",
+    component: () => import("@/views/Administracion.vue"),
+  },
+  {
+    path: "/juega-nosotros",
+    name: "JuegaInfo",
+    component: () => import("@/views/JuegaInfo.vue"),
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
