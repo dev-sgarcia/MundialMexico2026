@@ -26,7 +26,7 @@
           <span>REGLAS</span>
         </router-link>
 
-        <router-link to="/juega" class="menu-item" active-class="active">
+        <router-link to="/juega-nosotros" class="menu-item" active-class="active">
           <PhSoccerBall class="icon soccer-icon" weight="fill" />
           <span>JUEGA</span>
         </router-link>
@@ -38,19 +38,33 @@
       </nav>
 
       <div class="desktop-login">
-        <button class="google-login-btn" @click="goToAccess">
+        <div v-if="user" class="user-profile-box">
+          <span class="user-name">{{ user.user_metadata.full_name }}</span>
+          <button class="logout-link" @click="handleLogout">Cerrar sesión</button>
+        </div>
+        
+        <button v-else class="google-login-btn" @click="goToAccess">
           <img src="@/assets/google.png" alt="Google" />
           <span>Acceder con Google</span>
         </button>
       </div>
 
       <div class="header-actions">
-        <button class="google-login-btn mobile-login-btn" @click="goToAccess">
+        <div v-if="user" class="user-profile-box mobile-profile">
+          <span class="user-name">{{ user.user_metadata.full_name }}</span>
+          <button class="logout-link" @click="handleLogout">Cerrar sesión</button>
+        </div>
+
+        <button v-else class="google-login-btn mobile-login-btn" @click="goToAccess">
           <img src="@/assets/google.png" alt="Google" />
           <span>Acceder con Google</span>
         </button>
 
-        <button class="menu-toggle" @click="isMenuOpen = true">☰</button>
+        <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
       </div>
     </div>
 
@@ -63,43 +77,32 @@
     <aside class="mobile-menu" :class="{ open: isMenuOpen }">
       <button class="close-menu" @click="isMenuOpen = false">×</button>
 
+      <div v-if="user" class="mobile-menu-user-box">
+        <span class="mobile-user-name">{{ user.user_metadata.full_name }}</span>
+        <button class="logout-link" @click="handleLogout(); isMenuOpen = false;">Cerrar sesión</button>
+      </div>
+
       <router-link to="/" class="mobile-menu-item" @click="isMenuOpen = false">
         <PhHouse class="mobile-icon" weight="fill" />
         <span>INICIO</span>
       </router-link>
 
-      <router-link
-        to="/resultados"
-        class="mobile-menu-item"
-        @click="isMenuOpen = false"
-      >
+      <router-link to="/resultados" class="mobile-menu-item" @click="isMenuOpen = false">
         <PhChartBar class="mobile-icon" weight="fill" />
         <span>RESULTADOS</span>
       </router-link>
 
-      <router-link
-        to="/reglas"
-        class="mobile-menu-item"
-        @click="isMenuOpen = false"
-      >
+      <router-link to="/reglas" class="mobile-menu-item" @click="isMenuOpen = false">
         <PhBookOpen class="mobile-icon" weight="duotone" />
         <span>REGLAS</span>
       </router-link>
 
-      <router-link
-        to="/juega"
-        class="mobile-menu-item"
-        @click="isMenuOpen = false"
-      >
+      <router-link to="/juega-nosotros" class="mobile-menu-item" @click="isMenuOpen = false">
         <PhSoccerBall class="mobile-icon" weight="fill" />
         <span>JUEGA</span>
       </router-link>
 
-      <router-link
-        to="/donacion"
-        class="mobile-menu-item"
-        @click="isMenuOpen = false"
-      >
+      <router-link to="/donacion" class="mobile-menu-item" @click="isMenuOpen = false">
         <PhHandshake class="mobile-icon" weight="fill" />
         <span>DONACIÓN</span>
       </router-link>
@@ -108,8 +111,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { supabase } from '@/supabaseClient';
 import {
   PhHouse,
   PhChartBar,
@@ -120,10 +124,40 @@ import {
 
 const router = useRouter();
 const isMenuOpen = ref(false);
+const user = ref(null);
 
-const goToAccess = () => {
-  router.push("/acceso");
-};
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  user.value = session?.user || null;
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    user.value = session?.user || null;
+  });
+});
+
+const goToAccess = async () => {
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/juega`
+      }
+    })
+    if (error) throw error
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error.message)
+  }
+}
+
+const handleLogout = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    router.push('/'); 
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error.message);
+  }
+}
 </script>
 
 <style scoped>
@@ -307,10 +341,6 @@ const goToAccess = () => {
   transform: translateY(-2px);
 }
 
-.mobile-login-btn {
-  display: none;
-}
-
 .menu-toggle {
   display: none;
   flex: 0 0 auto;
@@ -409,6 +439,56 @@ const goToAccess = () => {
   color: inherit;
 }
 
+/* --- ESTILOS DE AUTENTICACIÓN --- */
+.user-profile-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f5132; /* Sintonizado con el color verde principal de tu marca */
+  text-transform: capitalize;
+}
+
+.logout-link {
+  background: none;
+  border: none;
+  color: #dc3545; /* El color rojo oficial que querías para el botón */
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.logout-link:hover {
+  color: #bb2d3b; /* Variación un poco más oscura para el efecto hover */
+}
+
+.mobile-menu-user-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 10px;
+}
+
+.mobile-user-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f5132;
+  margin-bottom: 4px;
+}
+
+/* --- RESPONSIVE / MEDIA QUERIES --- */
 @media (max-width: 1100px) {
   .menu {
     gap: 22px;
@@ -435,7 +515,7 @@ const goToAccess = () => {
 
   .menu,
   .desktop-login {
-    display: none;
+    display: none !important;
   }
 
   .header-actions {
@@ -443,17 +523,21 @@ const goToAccess = () => {
     margin-left: auto;
   }
 
+  /* CORRECCIÓN: El botón móvil ya no hereda display flex si está oculto */
   .mobile-login-btn {
-    display: flex;
+    display: inline-flex; 
     height: 42px;
     padding: 0 14px;
     font-size: 12px;
   }
 
-  .menu-toggle {
-    display: flex;
+  .user-profile-box.mobile-profile {
     align-items: center;
-    justify-content: center;
+    margin-right: 12px;
+  }
+  
+  .user-profile-box.mobile-profile .user-name {
+    font-size: 12px;
   }
 }
 
@@ -503,6 +587,11 @@ const goToAccess = () => {
 }
 
 @media (max-width: 390px) {
+  /* Si la pantalla es ultra chica, ocultamos el perfil del header externo */
+  .header-actions .user-profile-box.mobile-profile {
+    display: none;
+  }
+
   .mobile-login-btn {
     width: 42px;
     padding: 0;
