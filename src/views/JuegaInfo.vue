@@ -99,31 +99,31 @@
             </div>
 
             <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
-
-              <button class="contact-btn whatsapp-btn">
-
+              <a 
+                href="https://wa.me/525547214435?text=Hola,%20necesito%20ayuda%20con%20la%20quiniela%20en%20MexasLeague." 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="contact-btn whatsapp-btn text-decoration-none"
+              >
                 <PhWhatsappLogo :size="32" weight="fill" class="whats-icon" />
-
                 <div class="text-start">
                   <div class="fw-bold">WhatsApp</div>
                   <small>Chatear ahora</small>
                 </div>
+              </a>
 
-              </button>
-
-              <button class="contact-btn email-btn">
-
-                <i class="bi bi-envelope-fill"></i>
-
+              <a 
+                href="mailto:ingeniero.mx@gmail.com?subject=Soporte%20Quiniela%20Mundial%202026" 
+                class="contact-btn email-btn text-decoration-none"
+              >
+                <i class="bi bi-envelope-fill" style="font-size: 32px;"></i>
                 <div class="text-start">
                   <div class="fw-bold">Correo electrónico</div>
                   <small>Enviar correo</small>
                 </div>
+              </a>
 
-              </button>
-
-            </div>
-
+            </div>            
           </div>
 
           <div class="col-12 col-lg-8 m">

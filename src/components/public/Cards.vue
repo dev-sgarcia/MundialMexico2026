@@ -48,6 +48,7 @@ const items = [
     desc: "Consulta los resultados de todos los partidos.",
     btn: "VER RESULTADOS",
     theme: "red",
+    route: "/resultados",    
   },
   {
     image: new URL("/src/assets/rules.png", import.meta.url).href,
@@ -63,6 +64,7 @@ const items = [
     desc: "¿Quieres organizar una quiniela con tu empresa o amigos?",
     btn: "MÁS INFORMACIÓN",
     theme: "red",
+    route: "/juega-nosotros",
   },
   {
     image: new URL("/src/assets/donate.png", import.meta.url).href,
