@@ -1,376 +1,367 @@
 <template>
-  <section class="menu-background">
+  <section class="menu-background py-5">
+
     <div class="overlay"></div>
-    <div class="container mt-5">
+
+    <div class="container position-relative z-1">
+
       <div class="row g-4 justify-content-center">
-        
-        <div class="col-lg-5 col-md-6 d-flex">
+
+        <div class="col-12 col-md-6 col-xxl-5 d-flex">
+
           <div class="card betting-card overflow-hidden w-100 shadow-lg">
+
             <div class="row g-0 h-100">
-              <div class="col-4">
-                <img 
-                  src="/src/assets/copa-liga.jpg" 
-                  class="img-fluid h-100 w-100 fill-image"
+
+              <div class="col-12 col-lg-4">
+
+                <img
+                  src="/src/assets/copa-liga.jpg"
+                  class="img-fluid fill-image"
                   alt="Copa Liga"
                 >
+
               </div>
-              <div class="col-8">
-                <div class="card-body d-flex flex-column h-100">
-                  <h5 class="card-title text-gold fw-bold">¡Únete a una Liga!</h5>
+
+              <div class="col-12 col-lg-8">
+
+                <div
+                  class="card-body d-flex flex-column h-100 p-3 p-lg-4"
+                >
+
+                  <h5 class="card-title text-gold fw-bold">
+                    ¡Únete a una Liga!
+                  </h5>
+
                   <p class="card-text small text-white-50">
-                    ¿Tienes un código de invitación? Úsalo para unirte a una liga y comenzar a jugar.
+                    ¿Tienes un código de invitación?
+                    Úsalo para unirte a una liga y comenzar a jugar.
                   </p>
-                  
+
                   <div class="mt-auto pt-3">
-                    <div class="input-group input-group-sm">
-                      <input 
+
+                    <div
+                      class="d-flex flex-column flex-sm-row gap-2"
+                    >
+
+                      <input
                         v-model="codigoInvitacion"
-                        type="text" 
-                        class="form-control bg-dark text-white border-secondary" 
+                        type="text"
+                        class="form-control bg-dark text-white border-secondary"
                         placeholder="Código"
                       >
-                      <button @click="unirseALiga" class="btn btn-primary fw-bold" type="button">
+
+                      <button
+                        @click="unirseALiga"
+                        class="btn btn-primary fw-bold w-100 w-sm-auto"
+                        type="button"
+                      >
                         Unirse
                       </button>
+
                     </div>
-                    <div v-if="errorInvitacion" class="text-danger small mt-2 fw-bold">
+
+                    <div
+                      v-if="errorInvitacion"
+                      class="text-danger small mt-2 fw-bold"
+                    >
                       {{ errorInvitacion }}
                     </div>
+
                   </div>
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
 
-        <!-- <div v-if="misLigas.length > 0" class="col-lg-5 col-md-6 d-flex">
-          <div class="card betting-card w-100 shadow-lg">
-            <div class="row g-0 h-100">
-              <div class="col-4 border-end border-white border-opacity-10">
-                <img 
-                  src="/src/assets/handed-cup.png" 
-                  class="img-fluid h-100 w-100 fill-handed-cup" 
-                  alt="Campeón"
-                >
-              </div>
-              <div class="col-8">
-                <div class="card-body d-flex flex-column h-100">
-                  <h5 class="card-title text-gold fw-bold">{{ misLigas[0].leagues?.name || 'Liga Activa' }}</h5>
-                  
-                  <p class="card-text small text-white-50">
-                    Elige el país que consideras será el campeón del Mundial 2026.
-                  </p>
 
-                  <div class="mt-auto pt-3">
-                    <div id="loading-spinner" v-if="loading" class="text-center py-1">
-                      <div class="spinner-border spinner-border-sm text-gold" role="status"></div>
-                    </div>
-
-                    <div v-else>
-                      <div v-if="misLigas[0].champion_team && campeonAsignado" class="d-flex flex-column gap-2">
-                        <div class="d-flex align-items-center gap-2 bg-dark bg-opacity-50 p-2 rounded border border-secondary border-opacity-20">
-                          <span :class="'fi fi-' + campeonAsignado.code.toLowerCase()"></span>
-                          <span class="small text-white fw-semibold">Tu Campeón: {{ campeonAsignado.name }}</span>
-                        </div>
-                        
-                        <router-link to="/predicciones" class="btn btn-success btn-sm w-100 fw-bold mt-1">
-                          Jugar
-                        </router-link>
-                      </div>
-
-                      <div v-else class="dropdown">
-                        <button
-                          class="btn btn-outline-light btn-sm dropdown-toggle w-100 d-flex align-items-center justify-content-between select-trigger"
-                          type="button" 
-                          data-bs-toggle="dropdown"
-                        >
-                          <div v-if="selectedTeam" class="d-flex align-items-center gap-2">
-                            <span :class="'fi fi-' + selectedTeam.code.toLowerCase()"></span>
-                            <span class="text-truncate" style="max-width: 110px;">{{ selectedTeam.name }}</span>
-                          </div>
-                          <span v-else>Seleccionar país...</span>
-                        </button>
-
-                        <ul class="dropdown-menu dropdown-menu-dark custom-select-list w-100 shadow-lg">
-                          <li v-for="country in worldCupTeams" :key="country.code">
-                            <button class="dropdown-item d-flex align-items-center gap-2 py-2" @click="selectTeam(country)">
-                              <span :class="'fi fi-' + country.code.toLowerCase()"></span>
-                              <span class="small">{{ country.name }}</span>
-                            </button>
-                          </li>
-                        </ul>
-
-                        <Transition name="fade">
-                          <button 
-                            v-if="selectedTeam" 
-                            @click="guardarCampeon"
-                            class="btn btn-primary btn-sm w-100 mt-2 fw-bold animate-slide-up"
-                          >
-                            Apostar por {{ selectedTeam.name }}
-                          </button>
-                        </Transition>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-
-        <div 
-          v-for="liga in misLigas" 
-          :key="liga.league_id" 
-          class="col-lg-5 col-md-6 d-flex"
+        <div
+          v-for="liga in misLigas"
+          :key="liga.league_id"
+          class="col-12 col-md-6 col-xxl-5 d-flex"
         >
-          <div class="card betting-card w-100 shadow-lg">
+
+          <div class="card betting-card w-100 shadow-lg overflow-hidden">
+
             <div class="row g-0 h-100">
-              <div class="col-4 border-end border-white border-opacity-10">
-                <img 
-                  src="/src/assets/handed-cup.png" 
-                  class="img-fluid h-100 w-100 fill-handed-cup" 
+
+              <div
+                class="col-12 col-lg-4 border-lg-end border-white border-opacity-10"
+              >
+
+                <img
+                  src="/src/assets/handed-cup.png"
+                  class="img-fluid fill-handed-cup"
                   alt="Campeón"
                 >
+
               </div>
-              <div class="col-8">
-                <div class="card-body d-flex flex-column h-100">
-                  <h5 class="card-title text-gold fw-bold">{{ liga.leagues?.name || 'Liga Activa' }}</h5>
-                  
+
+              <div class="col-12 col-lg-8">
+
+                <div
+                  class="card-body d-flex flex-column h-100 p-3 p-lg-4"
+                >
+
+                  <h5 class="card-title text-gold fw-bold">
+                    {{ liga.leagues?.name || 'Liga Activa' }}
+                  </h5>
+
                   <p class="card-text small text-white-50">
-                    Elige el país que consideras será el campeón del Mundial 2026.
+                    Elige el país que consideras será
+                    el campeón del Mundial 2026.
                   </p>
 
                   <div class="mt-auto pt-3">
-                    <div v-if="loading" class="text-center py-1">
-                      <div class="spinner-border spinner-border-sm text-gold" role="status"></div>
+                    <div
+                      v-if="loading"
+                      class="text-center py-1"
+                    >
+
+                      <div
+                        class="spinner-border spinner-border-sm text-warning"
+                        role="status"
+                      ></div>
+
                     </div>
 
                     <div v-else>
-                      <div v-if="liga.champion_team && obtenerCampeonAsignado(liga.champion_team)" class="d-flex flex-column gap-2">
-                        <div class="d-flex align-items-center gap-2 bg-dark bg-opacity-50 p-2 rounded border border-secondary border-opacity-20">
-                          <span :class="'fi fi-' + obtenerCampeonAsignado(liga.champion_team).code.toLowerCase()"></span>
-                          <span class="small text-white fw-semibold">Tu Campeón: {{ obtenerCampeonAsignado(liga.champion_team).name }}</span>
+
+                      <div
+                        v-if="liga.champion_team && obtenerCampeonAsignado(liga.champion_team)"
+                        class="d-flex flex-column gap-2"
+                      >
+
+                        <div
+                          class="d-flex align-items-center gap-2 bg-dark bg-opacity-50 p-2 rounded border border-secondary border-opacity-25"
+                        >
+
+                          <span
+                            :class="'fi fi-' + obtenerCampeonAsignado(liga.champion_team).code.toLowerCase()"
+                          ></span>
+
+                          <span class="small text-white fw-semibold">
+
+                            Tu Campeón:
+                            {{ obtenerCampeonAsignado(liga.champion_team).name }}
+
+                          </span>
+
                         </div>
-                        
-                        <router-link to="/predicciones" class="btn btn-success btn-sm w-100 fw-bold mt-1">
+
+                        <router-link
+                          to="/predicciones"
+                          class="btn btn-success btn-sm w-100 fw-bold mt-1"
+                        >
                           Jugar
                         </router-link>
+
                       </div>
 
-                      <div v-else class="dropdown">
+                      <div v-else>
+
                         <button
-                          class="btn btn-outline-light btn-sm dropdown-toggle w-100 d-flex align-items-center justify-content-between select-trigger"
-                          type="button" 
-                          data-bs-toggle="dropdown"
+                          class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-between select-trigger"
+                          type="button"
+                          @click="toggleDropdown(liga.league_id)"
                         >
-                          <div v-if="liga.selectedTeam" class="d-flex align-items-center gap-2">
-                            <span :class="'fi fi-' + liga.selectedTeam.code.toLowerCase()"></span>
-                            <span class="text-truncate" style="max-width: 110px;">{{ liga.selectedTeam.name }}</span>
+
+                          <div
+                            v-if="liga.selectedTeam"
+                            class="d-flex align-items-center gap-2"
+                          >
+
+                            <span
+                              :class="'fi fi-' + liga.selectedTeam.code.toLowerCase()"
+                            ></span>
+
+                            <span
+                              class="text-truncate"
+                              style="max-width: 140px;"
+                            >
+                              {{ liga.selectedTeam.name }}
+                            </span>
+
                           </div>
-                          <span v-else>Seleccionar país...</span>
+
+                          <span v-else>
+                            Seleccionar país...
+                          </span>
+
+                          <i class="bi bi-chevron-down"></i>
+
                         </button>
 
-                        <ul class="dropdown-menu dropdown-menu-dark custom-select-list w-100 shadow-lg">
-                          <li v-for="country in worldCupTeams" :key="country.code">
-                            <button class="dropdown-item d-flex align-items-center gap-2 py-2" @click="selectTeamForLeague(country, liga)">
-                              <span :class="'fi fi-' + country.code.toLowerCase()"></span>
-                              <span class="small">{{ country.name }}</span>
-                            </button>
-                          </li>
-                        </ul>
-
                         <Transition name="fade">
-                          <button 
-                            v-if="liga.selectedTeam" 
+
+                          <button
+                            v-if="liga.selectedTeam"
                             @click="guardarCampeon(liga)"
                             class="btn btn-primary btn-sm w-100 mt-2 fw-bold animate-slide-up"
                           >
-                            Apostar por {{ liga.selectedTeam.name }}
+
+                            Apostar por
+                            {{ liga.selectedTeam.name }}
+
                           </button>
+
                         </Transition>
+
                       </div>
+
                     </div>
 
                   </div>
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
 
+      </div>
+
+    </div>
+
+    <Teleport to="body">
+
+      <div
+        v-if="selectedLeagueDropdown"
+        class="custom-teleport-dropdown"
+        @click.self="closeDropdown"
+      >
+
+        <div class="dropdown-card shadow-lg">
+
+          <div
+            class="d-flex justify-content-between align-items-center mb-3"
+          >
+
+            <h5 class="text-gold fw-bold m-0">
+              Seleccionar país
+            </h5>
+
+            <button
+              class="btn btn-sm btn-outline-light"
+              @click="closeDropdown"
+            >
+              <i class="bi bi-x-lg"></i>
+            </button>
+
+          </div>
+
+          <button
+            v-for="country in worldCupTeams"
+            :key="country.code"
+            class="dropdown-country"
+            @click="selectTeamForLeague(country)"
+          >
+
+            <span
+              :class="'fi fi-' + country.code.toLowerCase()"
+            ></span>
+
+            <span>
+              {{ country.name }}
+            </span>
+
+          </button>
+
+        </div>
 
       </div>
-    </div>
+
+    </Teleport>
+
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { supabase } from '@/supabaseClient';
+import { ref } from 'vue';
 
-// Estados globales y carga
-const loading = ref(true);
-const misLigas = ref([]);
-
-// 1. LÓGICA DE LA PRIMERA CARD (UNIRSE A UNA LIGA)
 const codigoInvitacion = ref('');
 const errorInvitacion = ref('');
+const loading = ref(false);
 
-const unirseALiga = async () => {
-  errorInvitacion.value = '';
+const selectedLeagueDropdown = ref(null);
 
-  if (!codigoInvitacion.value) {
-    errorInvitacion.value = 'Por favor, escribe un código.';
-    return;
+const misLigas = ref([
+  {
+    league_id: 1,
+    leagues: {
+      name: 'Mundialito RA'
+    },
+    champion_team: null,
+    selectedTeam: null
+  },
+  {
+    league_id: 2,
+    leagues: {
+      name: 'Conade 2026'
+    },
+    champion_team: null,
+    selectedTeam: null
   }
+]);
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    errorInvitacion.value = 'Debes iniciar sesión primero.';
-    return;
-  }
+const worldCupTeams = ref([
+  { name: 'México', code: 'mx' },
+  { name: 'Argentina', code: 'ar' },
+  { name: 'Brasil', code: 'br' },
+  { name: 'Francia', code: 'fr' },
+  { name: 'España', code: 'es' },
+  { name: 'Alemania', code: 'de' },
+  { name: 'Portugal', code: 'pt' },
+  { name: 'Inglaterra', code: 'gb' },
+  { name: 'Uruguay', code: 'uy' },
+  { name: 'Croacia', code: 'hr' }
+]);
 
-  const { data: ligas, error: errBusqueda } = await supabase
-    .from('leagues')
-    .select('id, name')
-    .eq('invite_code', codigoInvitacion.value);
+const toggleDropdown = (leagueId) => {
 
-  if (errBusqueda || !ligas || ligas.length === 0) {
-    errorInvitacion.value = 'Código no encontrado. Revisa las mayúsculas y guiones.';
-    return;
-  }
+  const liga = misLigas.value.find(
+    x => x.league_id === leagueId
+  );
 
-  const ligaEncontrada = ligas[0];
-
-  const { data: yaEsMiembro } = await supabase
-    .from('league_members')
-    .select('*')
-    .eq('league_id', ligaEncontrada.id)
-    .eq('user_id', session.user.id);
-
-  if (yaEsMiembro && yaEsMiembro.length > 0) {
-    errorInvitacion.value = 'Ya perteneces a esta liga.';
-    return;
-  }
-
-  const { error: errInscripcion } = await supabase.from('league_members').insert({
-    league_id: ligaEncontrada.id,
-    user_id: session.user.id,
-  });
-
-  if (errInscripcion) {
-    errorInvitacion.value = 'Hubo un problema al inscribirte.';
-    console.error(errInscripcion);
-  } else {
-    alert(`¡Felicidades! Te has unido a: ${ligaEncontrada.name}`);
-    codigoInvitacion.value = '';
-    window.location.reload();
-  }
+  selectedLeagueDropdown.value = liga;
 };
 
-
-// ==========================================
-// 2. LÓGICA DE LA SEGUNDA CARD (LIGAS Y CAMPEÓN)
-// ==========================================
-const worldCupTeams = ref([]);
-const qualifiedCodes = [
-  'MX', 'US', 'CA', 'PA', 'CR', 'JM', 'AR', 'BR', 'CO', 'UY', 'EC', 'PE', 'CL',
-  'FR', 'ES', 'GB', 'DE', 'IT', 'NL', 'BE', 'PT', 'HR', 'CH', 'DK', 'PL', 'RS', 'UA', 'TR',
-  'MA', 'SN', 'TN', 'DZ', 'EG', 'NG', 'CM', 'CI', 'ZA', 'JP', 'KR', 'AU', 'SA', 'IR', 'QA', 
-  'IQ', 'UZ', 'NZ', 'GH', 'ML'
-];
-
-// Traer todas las ligas a las que pertenece el usuario logueado
-const cargarLigas = async (userId) => {
-  const { data, error } = await supabase
-    .from('league_members')
-    .select('league_id, champion_team, leagues(id, name, invite_code)')
-    .eq('user_id', userId);
-
-  if (!error && data) {
-    // Inicializamos una propiedad reactiva local 'selectedTeam' en cada liga para el combo independiente
-    misLigas.value = data.map(liga => ({
-      ...liga,
-      selectedTeam: null
-    }));
-  }
+const closeDropdown = () => {
+  selectedLeagueDropdown.value = null;
 };
 
-// Modificado a función: Busca un campeón específico según el código guardado
-const obtenerCampeonAsignado = (championTeamCode) => {
-  if (!championTeamCode) return null;
-  const codeToFind = championTeamCode.toUpperCase();
-  return worldCupTeams.value.find(t => t.code === codeToFind) || null;
+const selectTeamForLeague = (country) => {
+
+  if (!selectedLeagueDropdown.value) return;
+
+  selectedLeagueDropdown.value.selectedTeam = country;
+
+  closeDropdown();
 };
 
-// Asigna el país seleccionado únicamente a la tarjeta de la liga donde se hizo clic
-const selectTeamForLeague = (team, liga) => {
-  liga.selectedTeam = team;
+const guardarCampeon = (liga) => {
+  console.log('Guardar campeón:', liga.selectedTeam);
 };
 
-// Persiste la selección del campeón apuntando a la liga correcta
-const guardarCampeon = async (liga) => {
-  if (!liga.selectedTeam) return;
-
-  try {
-    loading.value = true;
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { error } = await supabase
-      .from('league_members')
-      .update({ champion_team: liga.selectedTeam.code })
-      .eq('league_id', liga.league_id)
-      .eq('user_id', session.user.id);
-
-    if (error) throw error;
-
-    alert(`Se guardó con éxito tu pronóstico: ${liga.selectedTeam.name} Campeón.`);
-    window.location.reload();
-
-  } catch (err) {
-    console.error("Error al guardar campeón:", err.message);
-    alert("No se pudo registrar tu elección. Inténtalo de nuevo.");
-  } finally {
-    loading.value = false;
-  }
+const unirseALiga = () => {
+  console.log('Código:', codigoInvitacion.value);
 };
 
-
-onMounted(async () => {
-  try {
-    // 1. Comprobar sesión de usuario y cargar sus ligas asignadas
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      await cargarLigas(session.user.id);
-    }
-
-    // 2. Cargar los países clasificados desde la API de países
-    const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,translations');
-    const data = await res.json();
-
-    worldCupTeams.value = data
-      .filter(c => qualifiedCodes.includes(c.cca2))
-      .map(c => {
-        let name = c.translations.spa.common;
-        if (c.cca2 === 'GB') name = 'Inglaterra';
-        if (c.cca2 === 'US') name = 'Estados Unidos';
-        return { name, code: c.cca2 };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-  } catch (err) {
-    console.error("Error loading setup:", err);
-  } finally {
-    loading.value = false;
-  }
-});
-
-const selectTeam = (team) => { 
-  selectedTeam.value = team; 
+const obtenerCampeonAsignado = (team) => {
+  return worldCupTeams.value.find(
+    x => x.code === team
+  );
 };
-
 </script>
 
 <style scoped>
@@ -378,67 +369,214 @@ const selectTeam = (team) => {
 
 .menu-background {
   position: relative;
-  height: 100vh;
-  max-height: 620px;
-  background: url("/src/assets/fifa-world-cup.png") center/cover no-repeat;
-  display: flex;
-  align-items: center;
+
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(30, 49, 42, 0.95) 20%,
+      rgba(10, 16, 33, 0.55) 100%
+    ),
+    url("/src/assets/fifa-world-cup.png")
+    center/cover no-repeat;
+
+  overflow: hidden;
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg,
-      rgba(30, 49, 42, 0.95) 20%,
-      rgba(10, 16, 33, 0.4) 100%);
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(72, 255, 133, 0.08),
+      transparent 60%
+    );
 }
 
 .betting-card {
-  background: rgba(200, 300, 300, 0.02);
+  background:
+    rgba(255, 255, 255, 0.03);
+
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(154, 235, 154, 0.15);
+
+  border:
+    1px solid rgba(154, 235, 154, 0.15);
+
   color: white;
-  min-height: 240px;
+
+  border-radius: 24px;
+
+  transition: all 0.3s ease;
+
+  min-height: 260px;
 }
 
-.text-gold { color: #d4af37; }
+.betting-card:hover {
+  transform: translateY(-6px);
 
-.fill-image {
-  object-fit: cover;
-  object-position: -219px;
+  border-color:
+    rgba(212, 175, 55, 0.35);
+
+  box-shadow:
+    0 0 30px rgba(0,0,0,0.25);
 }
 
+.fill-image,
 .fill-handed-cup {
   object-fit: cover;
+
+  width: 100%;
+  height: 100%;
+
+  min-height: 220px;
 }
 
-.select-trigger {
-  border-color: rgba(19, 143, 81, 0.4);
-  background: rgba(0, 0, 0, 0.3);
-  font-size: 0.85rem;
-}
-
-.custom-select-list {
-  max-height: 250px;
-  overflow-y: auto;
-  background-color: #12192c;
-  border: 1px solid #d4af37;
-}
-
-.dropdown-item:hover {
-  background-color: rgba(212, 175, 55, 0.2);
+.text-gold {
   color: #d4af37;
 }
 
+.card-text {
+  line-height: 1.6;
+}
+
+.select-trigger {
+  border-color:
+    rgba(19, 143, 81, 0.4);
+
+  background:
+    rgba(0, 0, 0, 0.3);
+
+  min-height: 42px;
+}
+
+.custom-teleport-dropdown {
+  position: fixed;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  z-index: 99999;
+
+  background:
+    rgba(0, 0, 0, 0.55);
+
+  backdrop-filter: blur(5px);
+
+  padding: 1rem;
+}
+
+.dropdown-card {
+  width: min(100%, 420px);
+
+  max-height: 70vh;
+
+  overflow-y: auto;
+
+  border-radius: 22px;
+
+  background: #101820;
+
+  border:
+    1px solid rgba(212, 175, 55, 0.35);
+
+  padding: 1rem;
+}
+
+.dropdown-country {
+  width: 100%;
+
+  border: none;
+
+  background: transparent;
+
+  color: white;
+
+  padding: 0.9rem 1rem;
+
+  border-radius: 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.8rem;
+
+  transition: all 0.2s ease;
+
+  margin-bottom: 0.3rem;
+}
+
+.dropdown-country:hover {
+  background:
+    rgba(212, 175, 55, 0.15);
+
+  color: #d4af37;
+}
+
+.btn-primary {
+  background:
+    linear-gradient(
+      135deg,
+      #1f7a42,
+      #28a745
+    );
+
+  border: none;
+}
+
+.btn-primary:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #28a745,
+      #1f7a42
+    );
+}
+
+.btn-success {
+  background:
+    linear-gradient(
+      135deg,
+      #198754,
+      #20c997
+    );
+
+  border: none;
+}
+
 .animate-slide-up {
-  animation: slideUp 0.3s ease-out;
+  animation:
+    slideUp 0.3s ease-out;
 }
 
 @keyframes slideUp {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

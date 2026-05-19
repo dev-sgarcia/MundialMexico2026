@@ -1,107 +1,237 @@
 <template>
-  <!-- <div class="reglas-page"> -->
   <div class="reglas-page-bg">
-    <!-- HEADER -->
     <Header />
+    <section class="hero-reglas text-center text-white px-3">
 
-    <!-- HERO -->
-    <section class="hero-reglas">
-      <h1>REGLAS DE LA QUINIELA</h1>
-      <p>Conoce cómo se puntúa y las condiciones para participar.</p>
+      <div class="container">
+
+        <h1 class="fw-bold display-4 display-lg-3">
+          REGLAS DE LA QUINIELA
+        </h1>
+
+        <p class="hero-description mx-auto">
+          Conoce cómo se puntúa y las condiciones para participar.
+        </p>
+
+      </div>
+
     </section>
 
-    <!-- CARDS -->
-    <section class="reglas-container">
-      <div class="card">
-        <div class="card-header">
-          <div class="icon-circle green">
-            <img src="@/assets/porteria.png" />
+    <section class="container pb-5">
+
+      <div class="row g-4">
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+          <div class="rule-card h-100">
+
+            <div class="d-flex align-items-start gap-3">
+
+              <div class="icon-circle green">
+
+                <img src="@/assets/porteria.png" />
+
+              </div>
+
+              <div class="card-content">
+
+                <h3>3 PUNTOS</h3>
+
+                <p>
+                  Si le atinas al marcador exacto.
+                </p>
+
+                <small>
+                  (Ej. Dices 2-1 y termina 2-1)
+                </small>
+
+              </div>
+
+            </div>
+
           </div>
-          <div class="card-content">
-            <h3>3 PUNTOS</h3>
-            <p>Si le atinas al marcador exacto.</p>
-            <small>(Ej. Dices 2-1 y termina 2-1)</small>
-          </div>
+
         </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+          <div class="rule-card h-100">
+
+            <div class="d-flex align-items-start gap-3">
+
+              <div class="icon-circle green">
+
+                <img src="@/assets/campeon.png" />
+
+              </div>
+
+              <div class="card-content">
+
+                <h3>1 PUNTO</h3>
+
+                <p>
+                  Si aciertas ganador o empate,
+                  pero no el marcador.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+          <div class="rule-card h-100">
+
+            <div class="d-flex align-items-start gap-3">
+
+              <div class="icon-circle green">
+
+                <img src="@/assets/corona.png" />
+
+              </div>
+
+              <div class="card-content">
+
+                <h3>10 PUNTOS</h3>
+
+                <p>
+                  Si eliges al campeón
+                  desde el inicio.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+          <div class="rule-card h-100">
+
+            <div class="d-flex align-items-start gap-3">
+
+              <div class="icon-circle green">
+
+                <img src="@/assets/reloj.png" />
+
+              </div>
+
+              <div class="card-content">
+
+                <h3>TIEMPO LÍMITE</h3>
+
+                <p>
+                  Tienes hasta 1 hora antes del partido.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+          <div class="rule-card red h-100">
+
+            <div class="d-flex align-items-start gap-3">
+
+              <div class="icon-circle red">
+
+                <img src="@/assets/regalo.png" />
+
+              </div>
+
+              <div class="card-content">
+
+                <h3>PREMIOS</h3>
+
+                <ul class="mb-0">
+
+                  <li>Ganador fase grupos</li>
+
+                  <li>Ganador finales</li>
+
+                  <li>Mayor puntaje</li>
+
+                </ul>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-4">
+
+          <div class="rule-card h-100">
+
+            <div class="d-flex align-items-start gap-3">
+
+              <div class="icon-circle green">
+
+                <img src="@/assets/balanza.png" />
+
+              </div>
+
+              <div class="card-content">
+
+                <h3>DESEMPATE</h3>
+
+                <p>
+                  Se toma el primer registro realizado.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <div class="icon-circle green">
-            <img src="@/assets/campeon.png" />
-          </div>
-          <div class="card-content">
-            <h3>1 PUNTO</h3>
-            <p>Si aciertas ganador o empate, pero no el marcador.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="icon-circle green">
-            <img src="@/assets/corona.png" />
-          </div>
-          <div class="card-content">
-            <h3>10 PUNTOS</h3>
-            <p>Si eliges al campeón desde el inicio.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="icon-circle green">
-            <img src="@/assets/reloj.png" />
-          </div>
-          <div class="card-content">
-            <h3>TIEMPO LÍMITE</h3>
-            <p>Tienes hasta 1 hora antes del partido.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card red">
-        <div class="card-header">
-          <div class="icon-circle red">
-            <img src="@/assets/regalo.png" />
-          </div>
-          <div class="card-content">
-            <h3>PREMIOS</h3>
-            <ul>
-              <li>Ganador fase grupos</li>
-              <li>Ganador finales</li>
-              <li>Mayor puntaje</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="icon-circle green">
-            <img src="@/assets/balanza.png" />
-          </div>
-          <div class="card-content">
-            <h3>DESEMPATE</h3>
-            <p>Se toma el primer registro realizado.</p>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- CTA -->
-    <section class="cta">
-      <div class="cta-content">
-        <h2>¡Que gane el mejor!</h2>
-        <p>Participa, diviértete y demuestra tus conocimientos.</p>
+    <section class="container pb-5">
+
+      <div
+        class="cta-card d-flex flex-column flex-lg-row align-items-center justify-content-between gap-4 text-center text-lg-start"
+      >
+
+        <div>
+
+          <h2 class="fw-bold mb-2">
+            ¡Que gane el mejor!
+          </h2>
+
+          <p class="mb-0 text-white-50">
+            Participa, diviértete y demuestra tus conocimientos.
+          </p>
+
+        </div>
+
+        <button class="btn-jugar">
+          IR A JUGAR
+        </button>
+
       </div>
 
-      <button class="btn-jugar">IR A JUGAR</button>
     </section>
-
-    <!-- FOOTER -->
     <Footer />
+
   </div>
 </template>
 
@@ -113,165 +243,222 @@ import Footer from "@/components/common/Footer.vue";
 <style scoped>
 .reglas-page-bg {
   min-height: 100vh;
+
   background:
-    linear-gradient(rgba(0, 50, 30, 0.7), rgba(0, 0, 0, 0.8)),
-    url("/src/assets/bg-rules.jpg") center/cover no-repeat;
+    linear-gradient(
+      rgba(0, 50, 30, 0.72),
+      rgba(0, 0, 0, 0.84)
+    ),
+    url("/src/assets/bg-rules.jpg")
+    center/cover no-repeat;
 }
 
-/* HERO */
+
 .hero-reglas {
-  text-align: center;
-  padding: 14px 20px 30px;
-  color: white;
+  padding:
+    4rem 0 3rem;
 }
 
-.hero-reglas h1 {
-  font-size: 36px;
-  font-weight: bold;
+.hero-description {
+  color:
+    rgba(255,255,255,0.82);
+
+  max-width: 700px;
+
+  line-height: 1.8;
+
+  font-size: 1rem;
 }
 
-.hero-reglas p {
-  opacity: 0.9;
+.rule-card {
+  position: relative;
+  cursor: pointer;
+  background:
+    rgba(255, 255, 255, 0.05);
+
+  backdrop-filter: blur(14px);
+
+  -webkit-backdrop-filter: blur(14px);
+
+  border:
+    1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 22px;
+
+  padding: 1.4rem;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
-/* GRID */
-.reglas-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  padding: 40px;
+.rule-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.06),
+      transparent 40%
+    );
+
+  pointer-events: none;
 }
 
-.card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
-}
+.rule-card:hover {
+  transform: translateY(-6px);
 
-.card:hover {
-  transform: translateY(-5px);
-}
+  border-color:
+    rgba(212, 175, 55, 0.35);
 
-.card-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-}
-
-.card-content {
-  text-align: left;
-}
-
-.card-content h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.card-content p {
-  margin: 5px 0;
-  font-size: 14px;
-}
-
-.card-content small {
-  color: #666;
-}
-
-.icon {
-  font-size: 30px;
-  margin-bottom: 10px;
-}
-
-.icon.green {
-  color: #2e7d32;
-}
-
-.icon.red {
-  color: #e53935;
-}
-
-.icon-circle {
-  min-width: 60px;
-  height: 60px;
-}
-
-.card.red h3 {
-  color: #e53935;
-}
-
-/* CTA */
-.cta {
-  background: linear-gradient(90deg, #1b5e20, #2e7d32);
-  margin: 40px;
-  padding: 25px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-}
-
-.btn-jugar {
-  background: #66bb6a;
-  border: none;
-  padding: 12px 22px;
-  border-radius: 8px;
-  font-weight: bold;
+  box-shadow:
+    0 0 30px rgba(0,0,0,0.28);
 }
 
 .icon-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+  width: 68px;
+
+  height: 68px;
+
+  min-width: 68px;
+
+  border-radius: 18px;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
-  margin-bottom: 10px;
+
+  flex-shrink: 0;
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter: blur(8px);
 }
 
 .icon-circle.green {
-  background: #2e7d32;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(31, 122, 66, 0.75),
+      rgba(40, 167, 69, 0.55)
+    );
 }
 
 .icon-circle.red {
-  background: #e53935;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(180, 30, 30, 0.75),
+      rgba(255, 70, 70, 0.55)
+    );
 }
 
 .icon-circle img {
   width: 38px;
+
+  object-fit: contain;
 }
 
-ul {
-  padding-left: 18px;
-  margin-top: 5px;
+.card-content h3 {
+  margin: 0;
+
+  font-size: 1.1rem;
+
+  font-weight: 800;
+
+  color: #d4af37;
+}
+
+.card-content p {
+  margin: 0.4rem 0;
+
+  font-size: 0.95rem;
+
+  line-height: 1.7;
+
+  color:
+    rgba(255,255,255,0.82);
+}
+
+.card-content small {
+  color:
+    rgba(255,255,255,0.55);
+
+  font-size: 0.8rem;
+}
+
+.rule-card.red .card-content h3 {
+  color: #ff6b6b;
 }
 
 ul li {
-  font-size: 14px;
+  color:
+    rgba(255,255,255,0.82);
+
+  margin-bottom: 0.3rem;
+
+  font-size: 0.9rem;
 }
 
-@media (max-width: 768px) {
-  .hero-reglas h1 {
-    font-size: 26px;
-  }
 
-  .cta {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-  }
+.cta-card {
+  background:
+    rgba(255,255,255,0.05);
+
+  backdrop-filter: blur(14px);
+
+  -webkit-backdrop-filter: blur(14px);
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  border-radius: 22px;
+
+  padding: 2rem;
+
+  color: white;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.18);
 }
 
-@media (max-width: 480px) {
-  .card-header {
-    align-items: flex-start;
-  }
+.btn-jugar {
+  border: none;
+  padding:0.9rem 1.6rem;
+  border-radius: 14px;
+  font-weight: 700;
+  color: white;
+  background:
+    linear-gradient(
+      135deg,
+      #1f7a42,
+      #28a745
+    );
 
-  .icon-circle {
-    width: 50px;
-    height: 50px;
-  }
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  white-space: nowrap;
+}
+
+.btn-jugar:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 8px 24px rgba(40,167,69,0.35);
 }
 </style>
