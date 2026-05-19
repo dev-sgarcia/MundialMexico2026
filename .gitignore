@@ -27,6 +27,3 @@ dist
 *.sln
 *.sw?
 .vs/*
-
-#Supabase
-supabaseClient.js
