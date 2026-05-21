@@ -1,7 +1,6 @@
 <template>
   <Header />
   <Hero />
-  <Cards />
   <Footer />
 </template>
 
