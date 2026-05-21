@@ -1,5 +1,5 @@
 <template>
-  <div class="results-page min-vh-100 text-white">
+  <div class="bg-black min-vh-100 text-white">
     <div class="container-fluid px-0">
       <div class="row g-3">
         <aside class="col-12 col-lg-3 col-xl-2">
@@ -580,10 +580,6 @@ const getFlagCode = (team) => {
 </script>
 
 <style scoped>
-.results-page {
-  background: #03110f;
-}
-
 .results-card {
   background: #061a16;
   border: 1px solid rgba(25, 135, 84, 0.35);
