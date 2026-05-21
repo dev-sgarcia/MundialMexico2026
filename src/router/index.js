@@ -51,6 +51,11 @@ const routes = [
     name: "JuegaInfo",
     component: () => import("@/views/JuegaInfo.vue"),
   },
+  {
+    path: "/posiciones",
+    name: "Posiciones",
+    component: () => import("@/views/Posiciones.vue"),
+  },
 ];
 
 const router = createRouter({

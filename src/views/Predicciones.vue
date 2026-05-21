@@ -1,5 +1,5 @@
 <template>
-  <div class="predictions-page min-vh-100 text-white">
+  <div class="bg-black min-vh-100 text-white">
     <!-- <Header /> -->
 
     <div class="container-fluid px-0">
@@ -356,10 +356,6 @@ const getFlagCode = (team) => {
 </script>
 
 <style scoped>
-.predictions-page {
-  background: #03110f;
-}
-
 .prediction-card {
   background: #061a16;
   border: 1px solid rgba(25, 135, 84, 0.35);
