@@ -287,52 +287,191 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { supabase } from '@/supabaseClient';
 
+const loading = ref(true);
+const misLigas = ref([]);
 const codigoInvitacion = ref('');
 const errorInvitacion = ref('');
-const loading = ref(false);
 
-const selectedLeagueDropdown = ref(null);
+const unirseALiga = async () => {
+  errorInvitacion.value = '';
 
-const misLigas = ref([
-  {
-    league_id: 1,
-    leagues: {
-      name: 'Mundialito RA'
-    },
-    champion_team: null,
-    selectedTeam: null
-  },
-  {
-    league_id: 2,
-    leagues: {
-      name: 'Conade 2026'
-    },
-    champion_team: null,
-    selectedTeam: null
+  if (!codigoInvitacion.value) {
+    errorInvitacion.value = 'Por favor, escribe un código.';
+    return;
   }
-]);
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    errorInvitacion.value = 'Debes iniciar sesión primero.';
+    return;
+  }
+
+  const { data: ligas, error: errBusqueda } = await supabase
+    .from('leagues')
+    .select('id, name')
+    .eq('invite_code', codigoInvitacion.value);
+
+  if (errBusqueda || !ligas || ligas.length === 0) {
+    errorInvitacion.value = 'Código no encontrado. Revisa las mayúsculas y guiones.';
+    return;
+  }
+
+  const ligaEncontrada = ligas[0];
+
+  const { data: yaEsMiembro } = await supabase
+    .from('league_members')
+    .select('*')
+    .eq('league_id', ligaEncontrada.id)
+    .eq('user_id', session.user.id);
+
+  if (yaEsMiembro && yaEsMiembro.length > 0) {
+    errorInvitacion.value = 'Ya perteneces a esta liga.';
+    return;
+  }
+
+  const { error: errInscripcion } = await supabase.from('league_members').insert({
+    league_id: ligaEncontrada.id,
+    user_id: session.user.id,
+  });
+
+  if (errInscripcion) {
+    errorInvitacion.value = 'Hubo un problema al inscribirte.';
+    console.error(errInscripcion);
+  } else {
+    alert(`¡Felicidades! Te has unido a: ${ligaEncontrada.name}`);
+    codigoInvitacion.value = '';
+    window.location.reload();
+  }
+};
 
 const worldCupTeams = ref([
   { name: 'México', code: 'mx' },
-  { name: 'Argentina', code: 'ar' },
+  { name: 'Sudáfrica', code: 'za' },
+  { name: 'República de Corea', code: 'kr' },
+  { name: 'Chequia', code: 'cz' },
+  { name: 'Canadá', code: 'ca' },
+  { name: 'Bosnia y Herzegovina', code: 'ba' },
+  { name: 'EE. UU.', code: 'us' },
+  { name: 'Paraguay', code: 'py' },
+  { name: 'Catar', code: 'qa' },
+  { name: 'Suiza', code: 'ch' },
   { name: 'Brasil', code: 'br' },
-  { name: 'Francia', code: 'fr' },
-  { name: 'España', code: 'es' },
+  { name: 'Marruecos', code: 'ma' },
+  { name: 'Haití', code: 'ht' },
+  { name: 'Escocia', code: 'gb-sct' },
+  { name: 'Australia', code: 'au' },
+  { name: 'Turquía', code: 'tr' },
   { name: 'Alemania', code: 'de' },
-  { name: 'Portugal', code: 'pt' },
-  { name: 'Inglaterra', code: 'gb' },
+  { name: 'Curazao', code: 'cw' },
+  { name: 'Países Bajos', code: 'nl' },
+  { name: 'Japón', code: 'jp' },
+  { name: 'Costa de Marfil', code: 'ci' },
+  { name: 'Ecuador', code: 'ec' },
+  { name: 'Suecia', code: 'se' },
+  { name: 'Túnez', code: 'tn' },
+  { name: 'España', code: 'es' },
+  { name: 'Islas de Cabo Verde', code: 'cv' },
+  { name: 'Bélgica', code: 'be' },
+  { name: 'Egipto', code: 'eg' },
+  { name: 'Arabia Saudí', code: 'sa' },
   { name: 'Uruguay', code: 'uy' },
-  { name: 'Croacia', code: 'hr' }
+  { name: 'RI de Irán', code: 'ir' },
+  { name: 'Nueva Zelanda', code: 'nz' },
+  { name: 'Francia', code: 'fr' },
+  { name: 'Senegal', code: 'sn' },
+  { name: 'Irak', code: 'iq' },
+  { name: 'Noruega', code: 'no' },
+  { name: 'Argentina', code: 'ar' },
+  { name: 'Argelia', code: 'dz' },
+  { name: 'Austria', code: 'at' },
+  { name: 'Jordania', code: 'jo' },
+  { name: 'Portugal', code: 'pt' },
+  { name: 'RD Congo', code: 'cd' },
+  { name: 'Inglaterra', code: 'gb-eng' },
+  { name: 'Croacia', code: 'hr' },
+  { name: 'Ghana', code: 'gh' },
+  { name: 'Panamá', code: 'pa' },
+  { name: 'Uzbekistán', code: 'uz' },
+  { name: 'Colombia', code: 'co' }
 ]);
 
-const toggleDropdown = (leagueId) => {
+const qualifiedCodes = [
+  'mx', 'us', 'ca', 'pa', 'cr', 'jm', 'ar', 'br', 'co', 'uy', 'ec', 'pe', 'cl',
+  'fr', 'es', 'gb', 'de', 'it', 'nl', 'be', 'pt', 'hr', 'ch', 'dk', 'pl', 'rs', 'ua', 'tr',
+  'ma', 'sn', 'tn', 'dz', 'eg', 'ng', 'cm', 'ci', 'za', 'jp', 'kr', 'au', 'sa', 'ir', 'qa',
+  'iq', 'uz', 'nz', 'gh', 'ml'
+];
 
+const cargarLigas = async (userId) => {
+  const { data, error } = await supabase
+    .from('league_members')
+    .select('league_id, champion_team, leagues(id, name, invite_code)')
+    .eq('user_id', userId);
+
+  if (!error && data) {
+    misLigas.value = data.map(liga => ({
+      ...liga,
+      selectedTeam: null
+    }));
+  }
+};
+
+const obtenerCampeonAsignado = (championTeamCode) => {
+  if (!championTeamCode) return null;
+  const codeToFind = championTeamCode.toUpperCase();
+  return worldCupTeams.value.find(t => t.code === codeToFind) || null;
+};
+
+const selectTeamForLeague = (country) => {
+  if (!selectedLeagueDropdown.value) return;
+  selectedLeagueDropdown.value.selectedTeam = country;
+  closeDropdown();
+};
+
+const selectedLeagueDropdown = ref(null);
+
+const guardarCampeon = async (liga) => {
+console.log('Campeón guardado');
+};
+
+
+onMounted(async () => {
+  try {    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      await cargarLigas(session.user.id);
+    }
+
+    const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,translations');
+    const data = await res.json();
+
+    worldCupTeams.value = data
+      .filter(c => qualifiedCodes.includes(c.cca2?.toLowerCase()))
+      .map(c => {
+        let name = c.translations.spa.common;
+        if (c.cca2 === 'GB') name = 'Inglaterra';
+        if (c.cca2 === 'US') name = 'Estados Unidos';
+        return { name, code: c.cca2.toLowerCase() };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+  } catch (err) {
+    console.error("Error loading setup:", err);
+  } finally {
+    loading.value = false;
+  }
+});
+
+const selectTeam = (team) => { 
+  selectedTeam.value = team; 
+};
+
+const toggleDropdown = (leagueId) => {
   const liga = misLigas.value.find(
     x => x.league_id === leagueId
   );
-
   selectedLeagueDropdown.value = liga;
 };
 
@@ -340,28 +479,6 @@ const closeDropdown = () => {
   selectedLeagueDropdown.value = null;
 };
 
-const selectTeamForLeague = (country) => {
-
-  if (!selectedLeagueDropdown.value) return;
-
-  selectedLeagueDropdown.value.selectedTeam = country;
-
-  closeDropdown();
-};
-
-const guardarCampeon = (liga) => {
-  console.log('Guardar campeón:', liga.selectedTeam);
-};
-
-const unirseALiga = () => {
-  console.log('Código:', codigoInvitacion.value);
-};
-
-const obtenerCampeonAsignado = (team) => {
-  return worldCupTeams.value.find(
-    x => x.code === team
-  );
-};
 </script>
 
 <style scoped>

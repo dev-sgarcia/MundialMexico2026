@@ -90,9 +90,10 @@ const items = [
 
 .card {
   transition: all 0.3s ease;
-  background: white;
+  background:
+    rgba(255, 255, 255, 0.03);
   padding: 20px;
-  border-radius: 16px;
+  border-radius: 24px;
   text-align: center;
   display: flex;
   flex-direction: column;
