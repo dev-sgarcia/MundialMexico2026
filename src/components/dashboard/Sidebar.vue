@@ -72,7 +72,7 @@ import {
 const menuItems = [
   { label: "Inicio", path: "/", icon: PhHouse },
   { label: "Quinielas", path: "/quinielas", icon: PhTrophy },
-  { label: "Predicciones", path: "/Predicciones", icon: PhSoccerBall },
+  { label: "Predicciones", path: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
   // { label: "Mi perfil", path: "/perfil", icon: PhUser },

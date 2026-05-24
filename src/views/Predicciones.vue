@@ -3,7 +3,9 @@
     <div class="container-fluid px-0 h-100">
       <div class="row g-0 h-100">
         <!-- SIDEBAR -->
-        <aside class="col-12 col-lg-3 col-xl-2 vh-100 overflow-hidden">
+        <aside
+          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
+        >
           <Sidebar />
         </aside>
 
@@ -18,7 +20,7 @@
             <div class="sticky-top bg-black z-3 pb-3">
               <!-- TÍTULO -->
               <div
-                class="d-flex justify-content-between align-items-start mb-4"
+                class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4"
               >
                 <div>
                   <h2 class="fw-bold mb-1">Mis predicciones</h2>
@@ -28,17 +30,21 @@
                     posiciones.
                   </p>
                 </div>
+
+                <UserProfile />
               </div>
 
               <!-- FILTROS -->
               <div
-                class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
+                class="d-flex justify-content-between align-items-center gap-3 mb-4"
               >
-                <div class="d-flex align-items-center gap-2 ms-auto">
+                <div
+                  class="d-flex align-items-center gap-2 ms-lg-auto flex-nowrap"
+                >
                   <!-- TIPO FILTRO -->
                   <select
                     v-model="filterType"
-                    class="form-select bg-dark text-white border-success"
+                    class="form-select bg-dark text-white border-success w-auto"
                   >
                     <option value="group">Filtrar por grupo</option>
                     <option value="team">Filtrar por selección</option>
@@ -48,7 +54,7 @@
                   <select
                     v-if="filterType === 'group'"
                     v-model="selectedGroup"
-                    class="form-select bg-dark text-white border-success"
+                    class="form-select bg-dark text-white border-success w-auto"
                   >
                     <option value="Todos">Todos los grupos</option>
 
@@ -250,6 +256,7 @@
 import { computed, ref } from "vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import matchesData from "@/data/matches.json";
+import UserProfile from "@/components/common/UserProfile.vue";
 
 const filterType = ref("group");
 const selectedGroup = ref("Todos");
