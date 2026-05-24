@@ -1,375 +1,304 @@
 <template>
-  <div class="bg-black min-vh-100 text-white">
-    <div class="container-fluid px-0">
-      <div class="row g-3">
-        <aside class="col-12 col-lg-3 col-xl-2">
+  <div class="bg-black vh-100 text-white overflow-hidden">
+    <div class="container-fluid px-0 h-100">
+      <div class="row g-3 h-100">
+        <!-- SIDEBAR -->
+        <aside class="col-12 col-lg-3 col-xl-2 vh-100 overflow-hidden">
           <Sidebar />
         </aside>
 
-        <main class="col-12 col-lg-9 col-xl-10">
-          <section class="container-fluid">
-            <!-- TÍTULO -->
-            <div class="d-flex justify-content-between align-items-start mb-4">
-              <div>
-                <h2 class="fw-bold mb-1">Resultados</h2>
-
-                <p class="text-white-50 mb-0">
-                  Consulta los marcadores oficiales, quién acertó y cómo cambia
-                  la tabla de la quiniela.
-                </p>
-              </div>
-            </div>
-
-            <!-- FILTROS -->
-            <div
-              class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
-            >
-              <div class="btn-group">
-                <button
-                  class="btn"
-                  :class="
-                    selectedStatus === 'all'
-                      ? 'btn-success'
-                      : 'btn-outline-success'
-                  "
-                  @click="selectedStatus = 'all'"
-                >
-                  Todos
-                </button>
-
-                <button
-                  class="btn"
-                  :class="
-                    selectedStatus === 'live'
-                      ? 'btn-success'
-                      : 'btn-outline-success'
-                  "
-                  @click="selectedStatus = 'live'"
-                >
-                  En vivo
-                </button>
-
-                <button
-                  class="btn"
-                  :class="
-                    selectedStatus === 'finished'
-                      ? 'btn-success'
-                      : 'btn-outline-success'
-                  "
-                  @click="selectedStatus = 'finished'"
-                >
-                  Finalizados
-                </button>
-
-                <button
-                  class="btn"
-                  :class="
-                    selectedStatus === 'pending'
-                      ? 'btn-success'
-                      : 'btn-outline-success'
-                  "
-                  @click="selectedStatus = 'pending'"
-                >
-                  Pendientes
-                </button>
-              </div>
-
-              <div class="d-flex align-items-center gap-2">
-                <select
-                  v-model="filterType"
-                  class="form-select bg-dark text-white border-success"
-                >
-                  <option value="group">Filtrar por grupo</option>
-                  <option value="team">Filtrar por selección</option>
-                </select>
-
-                <select
-                  v-if="filterType === 'group'"
-                  v-model="selectedGroup"
-                  class="form-select bg-dark text-white border-success"
-                >
-                  <option value="Todos">Todos los grupos</option>
-
-                  <option v-for="group in groups" :key="group" :value="group">
-                    {{ group }}
-                  </option>
-                </select>
-
-                <select
-                  v-if="filterType === 'team'"
-                  v-model="selectedTeam"
-                  class="form-select bg-dark text-white border-success"
-                >
-                  <option value="Todas">Todas las selecciones</option>
-
-                  <option v-for="team in teams" :key="team" :value="team">
-                    {{ team }}
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <!-- RESUMEN -->
-            <div class="card results-card text-white rounded-4 mb-4">
-              <div class="card-body">
-                <div
-                  class="d-flex justify-content-between align-items-center flex-wrap gap-3"
-                >
-                  <div>
-                    <strong>
-                      Primera fase
-                      <span class="text-success">· Resultados</span>
-                    </strong>
-
-                    <p class="text-white-50 mb-0">
-                      Los marcadores aparecerán cuando los partidos estén en
-                      vivo o finalizados.
-                    </p>
-                  </div>
-
-                  <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <span class="badge text-bg-success rounded-pill">
-                      {{ finishedMatches.length }} finalizados
-                    </span>
-
-                    <span class="badge text-bg-danger rounded-pill">
-                      {{ liveMatches.length }} en vivo
-                    </span>
-
-                    <span class="badge text-bg-warning rounded-pill">
-                      {{ pendingMatches.length }} pendientes
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="row g-3">
-              <!-- PARTIDOS -->
-              <div class="col-12 col-xl-8">
-                <div class="row g-3">
-                  <div
-                    v-for="match in filteredMatches"
-                    :key="match.id"
-                    class="col-12"
-                  >
-                    <div class="card results-card text-white rounded-4 h-100">
-                      <div class="card-body">
-                        <div class="text-center mb-3">
-                          <small class="text-white-50 fw-semibold">
-                            {{ formatDate(match.date) }} · {{ match.time }} ·
-                            {{ match.group }}
-                          </small>
-                        </div>
-
-                        <div
-                          class="d-flex align-items-center justify-content-center gap-4"
-                        >
-                          <!-- LOCAL -->
-                          <div
-                            class="d-flex align-items-center justify-content-end gap-2 team-side"
-                          >
-                            <span class="fw-bold text-end team-name">
-                              {{ match.homeTeam }}
-                            </span>
-
-                            <img
-                              :src="`https://flagcdn.com/w80/${getFlagCode(
-                                match.homeTeam,
-                              )}.png`"
-                              :alt="match.homeTeam"
-                              class="team-flag"
-                            />
-                          </div>
-
-                          <!-- MARCADOR -->
-                          <div class="fw-bold fs-3 text-success score-box">
-                            {{ formatScore(match.homeScore) }} -
-                            {{ formatScore(match.awayScore) }}
-                          </div>
-
-                          <!-- VISITANTE -->
-                          <div
-                            class="d-flex align-items-center justify-content-start gap-2 team-side"
-                          >
-                            <img
-                              :src="`https://flagcdn.com/w80/${getFlagCode(
-                                match.awayTeam,
-                              )}.png`"
-                              :alt="match.awayTeam"
-                              class="team-flag"
-                            />
-
-                            <span class="fw-bold text-start team-name">
-                              {{ match.awayTeam }}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div class="text-center mt-3">
-                          <span
-                            class="badge rounded-pill"
-                            :class="getStatusClass(match.status)"
-                          >
-                            {{ getStatusLabel(match.status) }}
-                          </span>
-                        </div>
-
-                        <div class="text-center mt-2">
-                          <small class="text-white-50">
-                            {{ match.phase }} · {{ match.stadium }} ·
-                            {{ match.city }}
-                          </small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- DERECHA -->
-              <div class="col-12 col-xl-4">
-                <div class="d-flex flex-column gap-3">
-                  <!-- ACERTARON -->
-                  <div class="card results-card text-white rounded-4">
-                    <div class="card-body">
-                      <h4 class="fw-bold mb-3">Acertaron el marcador</h4>
-
-                      <div
-                        v-for="hit in predictionHits"
-                        :key="hit.id"
-                        class="info-row d-flex justify-content-between align-items-center rounded-4 p-3 mb-2"
-                      >
-                        <div>
-                          <strong>{{ hit.userName }}</strong>
-
-                          <div class="small text-white-50">
-                            {{ hit.match }} · Predijo {{ hit.prediction }}
-                          </div>
-                        </div>
-
-                        <span class="badge text-bg-success rounded-pill">
-                          +{{ hit.points }} pts
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- TABLA -->
-                  <div class="card results-card text-white rounded-4">
-                    <div class="card-body">
-                      <h4 class="fw-bold mb-3">Top 5 de la quiniela</h4>
-
-                      <div
-                        v-for="player in ranking"
-                        :key="player.id"
-                        class="info-row d-flex justify-content-between align-items-center rounded-4 p-3 mb-2"
-                      >
-                        <div>
-                          <strong
-                            >{{ player.position }}. {{ player.name }}</strong
-                          >
-
-                          <div class="small text-white-50">
-                            {{ player.status }}
-                          </div>
-                        </div>
-
-                        <span class="fw-bold text-success">
-                          {{ player.points }} pts
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- PARTIDOS -->
-            <div class="row g-3">
+        <!-- MAIN -->
+        <main class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden">
+          <section
+            class="container-fluid h-100 d-flex flex-column overflow-hidden"
+          >
+            <!-- FIJO -->
+            <div class="sticky-top bg-black z-3 pb-3">
+              <!-- TÍTULO -->
               <div
-                v-for="match in filteredMatches"
-                :key="match.id"
-                class="col-12 col-lg-6"
+                class="d-flex justify-content-between align-items-start mb-4 pt-2"
               >
-                <div class="card results-card text-white rounded-4 h-100">
-                  <div class="card-body">
-                    <div class="text-center mb-3">
-                      <small class="text-white-50 fw-semibold">
-                        {{ formatDate(match.date) }} · {{ match.time }} ·
-                        {{ match.group }}
-                      </small>
+                <div>
+                  <h2 class="fw-bold mb-1">Resultados</h2>
+
+                  <p class="text-white-50 mb-0">
+                    Consulta los marcadores oficiales, quién acertó y cómo
+                    cambia la tabla de la quiniela.
+                  </p>
+                </div>
+              </div>
+
+              <!-- FILTROS -->
+              <div
+                class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
+              >
+                <div class="btn-group">
+                  <button
+                    class="btn"
+                    :class="
+                      selectedStatus === 'all'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
+                    @click="selectedStatus = 'all'"
+                  >
+                    Todos
+                  </button>
+
+                  <button
+                    class="btn"
+                    :class="
+                      selectedStatus === 'live'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
+                    @click="selectedStatus = 'live'"
+                  >
+                    En vivo
+                  </button>
+
+                  <button
+                    class="btn"
+                    :class="
+                      selectedStatus === 'finished'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
+                    @click="selectedStatus = 'finished'"
+                  >
+                    Finalizados
+                  </button>
+
+                  <button
+                    class="btn"
+                    :class="
+                      selectedStatus === 'pending'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
+                    @click="selectedStatus = 'pending'"
+                  >
+                    Pendientes
+                  </button>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  <select
+                    v-model="filterType"
+                    class="form-select bg-dark text-white border-success"
+                  >
+                    <option value="group">Filtrar por grupo</option>
+                    <option value="team">Filtrar por selección</option>
+                  </select>
+
+                  <select
+                    v-if="filterType === 'group'"
+                    v-model="selectedGroup"
+                    class="form-select bg-dark text-white border-success"
+                  >
+                    <option value="Todos">Todos los grupos</option>
+
+                    <option v-for="group in groups" :key="group" :value="group">
+                      {{ group }}
+                    </option>
+                  </select>
+
+                  <select
+                    v-if="filterType === 'team'"
+                    v-model="selectedTeam"
+                    class="form-select bg-dark text-white border-success"
+                  >
+                    <option value="Todas">Todas las selecciones</option>
+
+                    <option v-for="team in teams" :key="team" :value="team">
+                      {{ team }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- RESUMEN -->
+              <div class="card results-card text-white rounded-4 mb-4">
+                <div class="card-body">
+                  <div
+                    class="d-flex justify-content-between align-items-center flex-wrap gap-3"
+                  >
+                    <div>
+                      <strong>
+                        Primera fase
+                        <span class="text-success">· Resultados</span>
+                      </strong>
+
+                      <p class="text-white-50 mb-0">
+                        Los marcadores aparecerán cuando los partidos estén en
+                        vivo o finalizados.
+                      </p>
                     </div>
 
-                    <div
-                      class="d-flex align-items-center justify-content-center gap-4"
-                    >
-                      <!-- LOCAL -->
-                      <div
-                        class="d-flex align-items-center justify-content-end gap-2 team-side"
-                      >
-                        <span class="fw-bold text-end team-name">
-                          {{ match.homeTeam }}
-                        </span>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <span class="badge text-bg-success rounded-pill">
+                        {{ finishedMatches.length }} finalizados
+                      </span>
 
-                        <img
-                          :src="`https://flagcdn.com/w80/${getFlagCode(
-                            match.homeTeam,
-                          )}.png`"
-                          :alt="match.homeTeam"
-                          class="team-flag"
-                        />
-                      </div>
+                      <span class="badge text-bg-danger rounded-pill">
+                        {{ liveMatches.length }} en vivo
+                      </span>
 
-                      <!-- MARCADOR -->
-                      <div class="fw-bold fs-3 text-success score-box">
-                        {{ formatScore(match.homeScore) }} -
-                        {{ formatScore(match.awayScore) }}
-                      </div>
-
-                      <!-- VISITANTE -->
-                      <div
-                        class="d-flex align-items-center justify-content-start gap-2 team-side"
-                      >
-                        <img
-                          :src="`https://flagcdn.com/w80/${getFlagCode(
-                            match.awayTeam,
-                          )}.png`"
-                          :alt="match.awayTeam"
-                          class="team-flag"
-                        />
-
-                        <span class="fw-bold text-start team-name">
-                          {{ match.awayTeam }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div class="text-center mt-3">
-                      <span
-                        class="badge rounded-pill"
-                        :class="getStatusClass(match.status)"
-                      >
-                        {{ getStatusLabel(match.status) }}
+                      <span class="badge text-bg-warning rounded-pill">
+                        {{ pendingMatches.length }} pendientes
                       </span>
                     </div>
-
-                    <div class="text-center mt-2">
-                      <small class="text-white-50">
-                        {{ match.phase }} · {{ match.stadium }} ·
-                        {{ match.city }}
-                      </small>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
+            <!-- SCROLL -->
             <div
-              class="alert alert-success bg-transparent text-white border-success mt-4 rounded-4"
+              class="flex-grow-1 overflow-auto overflow-x-hidden pb-4 scroll-clean"
             >
-              <strong>ⓘ Nota:</strong>
-              Cuando conectemos Supabase, los partidos, predicciones y ranking
-              pueden salir directo de tablas separadas sin cambiar el diseño.
+              <div class="row g-3">
+                <!-- PARTIDOS -->
+                <div class="col-12 col-xl-8">
+                  <div class="row g-3">
+                    <div
+                      v-for="match in filteredMatches"
+                      :key="match.id"
+                      class="col-12 col-md-6"
+                    >
+                      <div class="card results-card text-white rounded-4 h-100">
+                        <div class="card-body">
+                          <div class="text-center mb-3">
+                            <small class="text-white-50 fw-semibold">
+                              {{ formatDate(match.date) }} · {{ match.time }} ·
+                              {{ match.group }}
+                            </small>
+                          </div>
+
+                          <div
+                            class="d-flex align-items-center justify-content-center gap-4"
+                          >
+                            <!-- LOCAL -->
+                            <div
+                              class="d-flex align-items-center justify-content-end gap-2 team-side"
+                            >
+                              <span class="fw-bold text-end team-name">
+                                {{ match.homeTeam }}
+                              </span>
+
+                              <img
+                                :src="`https://flagcdn.com/w80/${getFlagCode(
+                                  match.homeTeam,
+                                )}.png`"
+                                :alt="match.homeTeam"
+                                class="team-flag"
+                              />
+                            </div>
+
+                            <!-- SCORE -->
+                            <div class="fw-bold fs-3 text-success score-box">
+                              {{ formatScore(match.homeScore) }} -
+                              {{ formatScore(match.awayScore) }}
+                            </div>
+
+                            <!-- VISITANTE -->
+                            <div
+                              class="d-flex align-items-center justify-content-start gap-2 team-side"
+                            >
+                              <img
+                                :src="`https://flagcdn.com/w80/${getFlagCode(
+                                  match.awayTeam,
+                                )}.png`"
+                                :alt="match.awayTeam"
+                                class="team-flag"
+                              />
+
+                              <span class="fw-bold text-start team-name">
+                                {{ match.awayTeam }}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div class="text-center mt-3">
+                            <span
+                              class="badge rounded-pill"
+                              :class="getStatusClass(match.status)"
+                            >
+                              {{ getStatusLabel(match.status) }}
+                            </span>
+                          </div>
+
+                          <div class="text-center mt-2">
+                            <small class="text-white-50">
+                              {{ match.phase }} · {{ match.stadium }} ·
+                              {{ match.city }}
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- DERECHA -->
+                <div class="col-12 col-xl-4">
+                  <div class="d-flex flex-column gap-3">
+                    <!-- ACERTARON -->
+                    <div class="card results-card text-white rounded-4">
+                      <div class="card-body">
+                        <h4 class="fw-bold mb-3">Acertaron el marcador</h4>
+
+                        <div
+                          v-for="hit in predictionHits"
+                          :key="hit.id"
+                          class="info-row d-flex justify-content-between align-items-center rounded-4 p-3 mb-2"
+                        >
+                          <div>
+                            <strong>{{ hit.userName }}</strong>
+
+                            <div class="small text-white-50">
+                              {{ hit.match }} · Predijo
+                              {{ hit.prediction }}
+                            </div>
+                          </div>
+
+                          <span class="badge text-bg-success rounded-pill">
+                            +{{ hit.points }} pts
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- TOP -->
+                    <div class="card results-card text-white rounded-4">
+                      <div class="card-body">
+                        <h4 class="fw-bold mb-3">Top 5 de la quiniela</h4>
+
+                        <div
+                          v-for="player in ranking"
+                          :key="player.id"
+                          class="info-row d-flex justify-content-between align-items-center rounded-4 p-3 mb-2"
+                        >
+                          <div>
+                            <strong>
+                              {{ player.position }}.
+                              {{ player.name }}
+                            </strong>
+
+                            <div class="small text-white-50">
+                              {{ player.status }}
+                            </div>
+                          </div>
+
+                          <span class="fw-bold text-success">
+                            {{ player.points }} pts
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
         </main>
@@ -377,13 +306,9 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { computed, ref } from "vue";
-
-import Header from "@/components/dashboard/Header.vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
-
 import matchesData from "@/data/matches.json";
 
 const filterType = ref("group");
@@ -392,13 +317,6 @@ const selectedTeam = ref("Todas");
 const selectedStatus = ref("all");
 
 const matches = ref(matchesData);
-
-/*
-  Después en Supabase:
-  - matches -> tabla de partidos
-  - predictionHits -> tabla/vista de predicciones acertadas
-  - ranking -> tabla/vista de puntos por usuario
-*/
 
 const predictionHits = ref([
   {
@@ -578,7 +496,6 @@ const getFlagCode = (team) => {
   return flagCodes[team] || "un";
 };
 </script>
-
 <style scoped>
 .results-card {
   background: #061a16;
@@ -607,5 +524,13 @@ const getFlagCode = (team) => {
 .score-box {
   min-width: 72px;
   text-align: center;
+}
+
+.scroll-clean {
+  scrollbar-width: none;
+}
+
+.scroll-clean::-webkit-scrollbar {
+  display: none;
 }
 </style>
