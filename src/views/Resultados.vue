@@ -1,31 +1,36 @@
 <template>
-  <div class="bg-black vh-100 text-white overflow-hidden">
-    <div class="container-fluid px-0 h-100">
-      <div class="row g-3 h-100">
+  <div class="bg-black min-vh-100 text-white overflow-lg-hidden">
+    <div class="container-fluid px-0 min-vh-100">
+      <div class="row g-3 min-vh-100">
         <!-- SIDEBAR -->
-        <aside class="col-12 col-lg-3 col-xl-2 vh-100 overflow-hidden">
+        <aside
+          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
+        >
           <Sidebar />
         </aside>
 
         <!-- MAIN -->
-        <main class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden">
+        <main
+          class="col-12 col-lg-9 col-xl-10 min-vh-100 vh-lg-100 overflow-lg-hidden"
+        >
           <section
-            class="container-fluid h-100 d-flex flex-column overflow-hidden"
+            class="container-fluid min-vh-100 h-lg-100 d-flex flex-column overflow-lg-hidden"
           >
             <!-- FIJO -->
-            <div class="sticky-top bg-black z-3 pb-3">
+            <div class="sticky-lg-top bg-black z-3 pb-3">
               <!-- TÍTULO -->
               <div
-                class="d-flex justify-content-between align-items-start mb-4 pt-2"
+                class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4 pt-2"
               >
                 <div>
                   <h2 class="fw-bold mb-1">Resultados</h2>
 
                   <p class="text-white-50 mb-0">
-                    Consulta los marcadores oficiales, quién acertó y cómo
-                    cambia la tabla de la quiniela.
+                    Consulta los marcadores oficiales...
                   </p>
                 </div>
+
+                <UserProfile />
               </div>
 
               <!-- FILTROS -->
@@ -82,10 +87,12 @@
                   </button>
                 </div>
 
-                <div class="d-flex align-items-center gap-2">
+                <div
+                  class="d-flex align-items-center gap-2 flex-wrap ms-lg-auto"
+                >
                   <select
                     v-model="filterType"
-                    class="form-select bg-dark text-white border-success"
+                    class="form-select bg-dark text-white border-success w-auto"
                   >
                     <option value="group">Filtrar por grupo</option>
                     <option value="team">Filtrar por selección</option>
@@ -94,7 +101,7 @@
                   <select
                     v-if="filterType === 'group'"
                     v-model="selectedGroup"
-                    class="form-select bg-dark text-white border-success"
+                    class="form-select bg-dark text-white border-success w-auto"
                   >
                     <option value="Todos">Todos los grupos</option>
 
@@ -106,7 +113,7 @@
                   <select
                     v-if="filterType === 'team'"
                     v-model="selectedTeam"
-                    class="form-select bg-dark text-white border-success"
+                    class="form-select bg-dark text-white border-success w-auto"
                   >
                     <option value="Todas">Todas las selecciones</option>
 
@@ -155,7 +162,7 @@
 
             <!-- SCROLL -->
             <div
-              class="flex-grow-1 overflow-auto overflow-x-hidden pb-4 scroll-clean"
+              class="flex-grow-1 overflow-lg-auto overflow-x-hidden pb-4 scroll-clean"
             >
               <div class="row g-3">
                 <!-- PARTIDOS -->
@@ -194,13 +201,11 @@
                                 class="team-flag"
                               />
                             </div>
-
                             <!-- SCORE -->
                             <div class="fw-bold fs-3 text-success score-box">
                               {{ formatScore(match.homeScore) }} -
                               {{ formatScore(match.awayScore) }}
                             </div>
-
                             <!-- VISITANTE -->
                             <div
                               class="d-flex align-items-center justify-content-start gap-2 team-side"
@@ -310,6 +315,7 @@
 import { computed, ref } from "vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import matchesData from "@/data/matches.json";
+import UserProfile from "@/components/common/UserProfile.vue";
 
 const filterType = ref("group");
 const selectedGroup = ref("Todos");
