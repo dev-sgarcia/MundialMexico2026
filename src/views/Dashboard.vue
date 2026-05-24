@@ -46,7 +46,6 @@
 
 <script setup>
 import Sidebar from "@/components/dashboard/Sidebar.vue";
-import Header from "@/components/dashboard/Header.vue";
 </script>
 
 <style scoped>
