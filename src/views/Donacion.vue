@@ -192,7 +192,7 @@ import Footer from "@/components/common/Footer.vue";
 }
 
 .profile-card {
-  background: white;
+  background: rgba(0, 0, 0, 0.35);
   border-radius: 16px;
   padding: 25px;
   text-align: center;
@@ -201,6 +201,13 @@ import Footer from "@/components/common/Footer.vue";
   position: relative;
   padding: 60px 20px 25px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+}
+
+.profile-card h2 {
+  color: white;
 }
 
 .avatar {
@@ -215,17 +222,18 @@ import Footer from "@/components/common/Footer.vue";
 }
 
 .username {
-  color: #666;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .location {
-  color: #2e7d32;
+  color: #73ff73;
   font-size: 14px;
 }
 
 .bio {
   margin-top: 15px;
   font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .link {
