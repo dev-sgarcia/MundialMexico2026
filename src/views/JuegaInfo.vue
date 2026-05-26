@@ -228,7 +228,6 @@ const processSteps = [
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  backdrop-filter: blur(8px);
 }
 
 .section-icon i {
@@ -254,7 +253,6 @@ const processSteps = [
   border-radius: 22px;
   background: rgba(0, 0, 0, 0.28);
   border: 1px solid rgba(212, 175, 55, 0.25);
-  backdrop-filter: blur(12px);
   text-align: center;
   transition: all 0.3s ease;
 }
@@ -336,7 +334,6 @@ const processSteps = [
   border-radius: 24px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(212, 175, 55, 0.22);
-  backdrop-filter: blur(14px);
 }
 
 .bank-logo {
@@ -386,10 +383,9 @@ const processSteps = [
   border-radius: 22px;
   background: rgba(0, 0, 0, 0.28);
   border: 1px solid rgba(212, 175, 55, 0.22);
-  backdrop-filter: blur(12px);
   transition: all 0.3s ease;
   cursor: pointer;
-  height: 100%;
+  width: 100%;
 }
 
 .process-card:hover {
