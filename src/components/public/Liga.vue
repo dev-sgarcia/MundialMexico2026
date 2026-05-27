@@ -137,22 +137,17 @@
                         v-if="liga.champion_team && obtenerCampeonAsignado(liga.champion_team)"
                         class="d-flex flex-column gap-2"
                       >
-
                         <div
                           class="d-flex align-items-center gap-2 bg-dark bg-opacity-50 p-2 rounded border border-secondary border-opacity-25"
                         >
-
                           <span
                             :class="'fi fi-' + obtenerCampeonAsignado(liga.champion_team).code.toLowerCase()"
                           ></span>
 
                           <span class="small text-white fw-semibold">
-
                             Tu Campeón:
                             {{ obtenerCampeonAsignado(liga.champion_team).name }}
-
                           </span>
-
                         </div>
 
                         <router-link
@@ -161,11 +156,9 @@
                         >
                           Jugar
                         </router-link>
-
                       </div>
 
                       <div v-else>
-
                         <button
                           class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-between select-trigger"
                           type="button"
@@ -176,11 +169,9 @@
                             v-if="liga.selectedTeam"
                             class="d-flex align-items-center gap-2"
                           >
-
                             <span
                               :class="'fi fi-' + liga.selectedTeam.code.toLowerCase()"
                             ></span>
-
                             <span
                               class="text-truncate"
                               style="max-width: 140px;"
@@ -189,15 +180,11 @@
                             </span>
 
                           </div>
-
                           <span v-else>
                             Seleccionar país...
                           </span>
-
                           <i class="bi bi-chevron-down"></i>
-
                         </button>
-
                         <Transition name="fade">
 
                           <button

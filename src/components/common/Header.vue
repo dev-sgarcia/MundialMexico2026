@@ -37,35 +37,72 @@
         </router-link>
       </nav>
 
+      <!-- DESKTOP -->
       <div class="desktop-login">
-        <div v-if="user" class="user-profile-box">
-          <span class="user-name">{{ user.user_metadata.full_name }}</span>
-          <button class="logout-link" @click="handleLogout">Cerrar sesión</button>
+        <div
+          v-if="user"
+          class="user-profile-wrapper"
+        >
+          <UserProfile textColor="#3f6f22" />          
+          <!-- <button
+            class="logout-link"
+            @click="handleLogout"
+          >
+            Cerrar sesión
+          </button> -->
         </div>
-        
-        <button v-else class="google-login-btn" @click="goToAccess">
+
+        <button
+          v-else
+          class="google-login-btn"
+          @click="goToAccess"
+        >
           <img src="@/assets/google.png" alt="Google" />
-          <span>Acceder con Google</span>
+          <span>
+            Acceder con Google
+          </span>
         </button>
       </div>
 
+      <!-- MOBILE -->
       <div class="header-actions">
-        <div v-if="user" class="user-profile-box mobile-profile">
-          <span class="user-name">{{ user.user_metadata.full_name }}</span>
-          <button class="logout-link" @click="handleLogout">Cerrar sesión</button>
+        <div
+          v-if="user"
+          class="user-profile-wrapper mobile-profile"
+        >
+          <UserProfile textColor="#3f6f22" />          
+          <!-- <button
+            class="logout-link"
+            @click="handleLogout"
+          >
+            Cerrar sesión
+          </button> -->
         </div>
 
-        <button v-else class="google-login-btn mobile-login-btn" @click="goToAccess">
+        <button
+          v-else
+          class="google-login-btn mobile-login-btn"
+          @click="goToAccess"
+        >
           <img src="@/assets/google.png" alt="Google" />
-          <span>Acceder con Google</span>
+          <span>
+            Acceder con Google
+          </span>
         </button>
 
-        <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">
+        <button
+          class="menu-toggle"
+          @click="isMenuOpen = !isMenuOpen"
+        >
           <span class="bar"></span>
           <span class="bar"></span>
           <span class="bar"></span>
         </button>
       </div>
+
+
+
+
     </div>
 
     <div
@@ -77,10 +114,23 @@
     <aside class="mobile-menu" :class="{ open: isMenuOpen }">
       <button class="close-menu" @click="isMenuOpen = false">×</button>
 
-      <div v-if="user" class="mobile-menu-user-box">
+      <!-- <div v-if="user" class="mobile-menu-user-box">
         <span class="mobile-user-name">{{ user.user_metadata.full_name }}</span>
         <button class="logout-link" @click="handleLogout(); isMenuOpen = false;">Cerrar sesión</button>
-      </div>
+      </div> -->
+
+      <div
+        v-if="user"
+        class="mobile-menu-user-box"
+      >
+        <UserProfile />
+        <button
+          class="logout-link"
+          @click="handleLogout(); isMenuOpen = false;"
+        >
+          Cerrar sesión
+        </button>
+      </div>      
 
       <router-link to="/" class="mobile-menu-item" @click="isMenuOpen = false">
         <PhHouse class="mobile-icon" weight="fill" />
@@ -121,6 +171,7 @@ import {
   PhSoccerBall,
   PhHandshake,
 } from "@phosphor-icons/vue";
+import UserProfile from "@/components/common/UserProfile.vue";
 
 const router = useRouter();
 const isMenuOpen = ref(false);
@@ -137,15 +188,26 @@ onMounted(async () => {
 
 const goToAccess = async () => {
   try {
+
+    // Guardar la ruta actual
+    localStorage.setItem(
+      'redirectAfterLogin',
+      window.location.pathname
+    )
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/juega`
+        // Regresar al mismo proyecto
+        redirectTo: window.location.origin
       }
     })
+
     if (error) throw error
   } catch (error) {
-    console.error('Error al iniciar sesión:', error.message)
+    console.error(
+      'Error al iniciar sesión:',
+      error.message
+    )
   }
 }
 
@@ -448,13 +510,6 @@ const handleLogout = async () => {
   gap: 2px;
 }
 
-.user-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: #0f5132; /* Sintonizado con el color verde principal de tu marca */
-  text-transform: capitalize;
-}
-
 .logout-link {
   background: none;
   border: none;
@@ -472,6 +527,22 @@ const handleLogout = async () => {
   color: #bb2d3b; /* Variación un poco más oscura para el efecto hover */
 }
 
+
+.logout-link {
+  background: none;
+  border: none;
+  color: #d60000;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.logout-link:hover {
+  opacity: 0.8;
+}
+
 .mobile-menu-user-box {
   display: flex;
   flex-direction: column;
@@ -487,6 +558,7 @@ const handleLogout = async () => {
   color: #0f5132;
   margin-bottom: 4px;
 }
+
 
 /* --- RESPONSIVE / MEDIA QUERIES --- */
 @media (max-width: 1100px) {
@@ -539,6 +611,13 @@ const handleLogout = async () => {
   .user-profile-box.mobile-profile .user-name {
     font-size: 12px;
   }
+
+  .mobile-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -584,6 +663,13 @@ const handleLogout = async () => {
     border-radius: 12px;
     font-size: 22px;
   }
+
+  .mobile-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
 }
 
 @media (max-width: 390px) {
@@ -612,5 +698,13 @@ const handleLogout = async () => {
   .subtitle {
     font-size: 9px;
   }
+
+  .mobile-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
 }
+
 </style>

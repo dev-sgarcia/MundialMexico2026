@@ -5,30 +5,38 @@ import { supabase } from '@/supabaseClient'
 
 const router = useRouter()
 
-onMounted(() => {
-  // Escuchamos activamente cuando el estado de autenticación cambie
-  supabase.auth.onAuthStateChange((event, session) => {
-    // Si el evento es el inicio de sesión y tenemos los datos de la sesión
-    if (event === 'SIGNED_IN' && session) {
-      console.log('¡Inicio de sesión exitoso con Google!', session.user)
-      
-      // Limpiamos los parámetros/tokens que Supabase deja en la URL para que se vea limpia
-      if (window.location.hash) {
-        window.history.replaceState(null, null, window.location.pathname)
-      }
-      
-      // Redirigimos automáticamente al usuario a la vista de la quiniela
-      router.push('/juega')
-    }
-  })
-})
+onMounted(async () => {
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
 
+  // Limpiar hash OAuth
+  if (window.location.hash) {
+    window.history.replaceState(
+      null,
+      null,
+      window.location.pathname
+    )
+  }
+
+  // Si ya hay sesión
+  if (session) {
+    const redirectPath =
+      localStorage.getItem('redirectAfterLogin')
+
+    // Si existe ruta guardada
+    if (redirectPath) {
+      localStorage.removeItem('redirectAfterLogin')
+      // Ir a la ruta original
+      router.replace(redirectPath)
+    } else {
+      // Mantener ruta actual al refrescar
+      router.replace(window.location.pathname)
+    }
+  }
+})
 </script>
 
 <template>
   <router-view />
 </template>
-
-<!-- <template>
-  <Home />
-</template> -->

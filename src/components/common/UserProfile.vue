@@ -10,7 +10,11 @@
     />
 
     <div class="d-flex flex-column align-items-start">
-      <span class="fw-bold text-white lh-sm">
+      <span
+        class="fw-bold lh-sm"
+        :style="{ color: textColor }"
+      >
+      <!-- <span class="fw-bold text-white lh-sm"> -->
         {{ user.user_metadata?.full_name || user.email }}
       </span>
       <button
@@ -50,4 +54,12 @@ const handleLogout = async () => {
 
   router.push("/");
 };
+
+defineProps({
+  textColor: {
+    type: String,
+    default: '#ffffff'
+  }
+})
+
 </script>
