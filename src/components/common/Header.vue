@@ -188,16 +188,12 @@ onMounted(async () => {
 
 const goToAccess = async () => {
   try {
+    // 1. Creamos una bandera indicando que el login fue intencional
+    localStorage.setItem('isLoggingIn', 'true')
 
-    // Guardar la ruta actual
-    localStorage.setItem(
-      'redirectAfterLogin',
-      window.location.pathname
-    )
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // Regresar al mismo proyecto
         redirectTo: window.location.origin
       }
     })
