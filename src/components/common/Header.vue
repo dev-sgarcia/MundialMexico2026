@@ -17,8 +17,8 @@
         </router-link>
 
         <router-link to="/resultados" class="menu-item" active-class="active">
-          <PhChartBar class="icon" weight="fill" />
-          <span>RESULTADOS</span>
+          <PhHandsClapping class="icon" weight="fill" />
+          <span>ZONA FAN</span>
         </router-link>
 
         <router-link to="/reglas" class="menu-item" active-class="active">
@@ -138,8 +138,8 @@
       </router-link>
 
       <router-link to="/resultados" class="mobile-menu-item" @click="isMenuOpen = false">
-        <PhChartBar class="mobile-icon" weight="fill" />
-        <span>RESULTADOS</span>
+        <PhHandsClapping class="mobile-icon" weight="fill" />
+        <span>ZONA FAN</span>
       </router-link>
 
       <router-link to="/reglas" class="mobile-menu-item" @click="isMenuOpen = false">
@@ -166,7 +166,7 @@ import { useRouter } from "vue-router";
 import { supabase } from '@/supabaseClient';
 import {
   PhHouse,
-  PhChartBar,
+  PhHandsClapping, //PhChartBar,
   PhBookOpen,
   PhSoccerBall,
   PhHandshake,
