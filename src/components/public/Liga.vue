@@ -117,6 +117,10 @@
                     Elige el país que consideras será
                     el campeón del Mundial 2026.
                   </p>
+                  <p class="card-text small text-white-50">
+                    Debes hacerlo desde un principio,
+                    en caso de acertar ganaras 10 puntos.
+                  </p>
 
                   <div class="mt-auto pt-3">
                     <div
@@ -408,7 +412,10 @@ const cargarLigas = async (userId) => {
 
 const obtenerCampeonAsignado = (championTeamCode) => {
   if (!championTeamCode) return null;
-  const codeToFind = championTeamCode.toUpperCase();
+  
+  // CORRECCIÓN: Convertir a minúsculas en lugar de mayúsculas
+  const codeToFind = championTeamCode.toLowerCase(); 
+  
   return worldCupTeams.value.find(t => t.code === codeToFind) || null;
 };
 
@@ -421,8 +428,47 @@ const selectTeamForLeague = (country) => {
 const selectedLeagueDropdown = ref(null);
 
 const guardarCampeon = async (liga) => {
-console.log('Campeón guardado');
+  // Verificamos que realmente se haya seleccionado un equipo
+  if (!liga.selectedTeam) return;
+
+  try {
+    // 1. Obtener la sesión actual para sacar el user_id
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      alert("Debes iniciar sesión para realizar tu apuesta.");
+      return;
+    }
+
+    const userId = session.user.id;
+    const teamCode = liga.selectedTeam.code; // Guardamos el código (ej. 'ar')
+
+    // 2. Hacer el UPDATE en supabase a la tabla league_members
+    const { error } = await supabase
+      .from('league_members')
+      .update({ champion_team: teamCode })
+      .eq('league_id', liga.league_id)
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error("Error al actualizar Supabase:", error.message);
+      alert("Hubo un error al registrar tu campeón. Intenta de nuevo.");
+      return;
+    }
+
+    // 3. Actualizar la variable local para que el Frontend (la tarjeta) 
+    // reaccione y muestre "Tu Campeón" inmediatamente sin recargar la página
+    liga.champion_team = teamCode;
+
+    // Opcional: Cerrar el dropdown si estuviera abierto o mostrar mensaje
+    alert(`¡Has apostado por ${liga.selectedTeam.name} exitosamente!`);
+
+  } catch (err) {
+    console.error("Error inesperado en guardarCampeon:", err);
+  }
 };
+
+
 
 
 onMounted(async () => {
