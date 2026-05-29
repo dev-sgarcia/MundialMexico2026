@@ -416,7 +416,12 @@
                           type="button"
                           class="btn btn-outline-success w-100 rounded-3 mt-3"
                         >
-                          Ir a mis predicciones
+                          <router-link
+                            to="/predicciones"
+                            class="text-decoration-none text-success"
+                          >
+                            Ir a mis predicciones
+                          </router-link>
                         </button>
                       </div>
                     </div>

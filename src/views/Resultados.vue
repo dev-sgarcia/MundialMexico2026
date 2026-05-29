@@ -1,10 +1,10 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-lg-hidden">
     <div class="container-fluid px-0 min-vh-100">
-      <div class="row g-3 min-vh-100">
+      <div class="row g-3 min-vh-100 align-items-start">
         <!-- SIDEBAR -->
         <aside
-          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
+          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden position-sticky top-0"
         >
           <Sidebar />
         </aside>

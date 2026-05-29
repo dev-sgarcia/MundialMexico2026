@@ -6,11 +6,13 @@
     <div
       class="w-100 border-bottom border-secondary border-opacity-25 mb-3 overflow-hidden"
     >
-      <img
-        src="@/assets/Logo-Quinielas.png"
-        alt="Quiniela RA"
-        class="sidebar-logo w-100 object-fit-cover d-block"
-      />
+      <RouterLink to="/" class="d-block">
+        <img
+          src="@/assets/Logo-Quinielas.png"
+          alt="Quiniela RA"
+          class="sidebar-logo w-100 object-fit-cover d-block"
+        />
+      </RouterLink>
     </div>
 
     <!-- MENÚ -->
@@ -49,10 +51,10 @@
       </p>
 
       <RouterLink
-        to="/calendario"
+        to="/posiciones"
         class="btn btn-success rounded-4 fw-bold w-100 py-1"
       >
-        Ver calendario
+        Ver posición actual
       </RouterLink>
     </div>
   </aside>
@@ -70,7 +72,7 @@ import {
 } from "@phosphor-icons/vue";
 
 const menuItems = [
-  { label: "Inicio", path: "/", icon: PhHouse },
+  { label: "Inicio", path: "/dashboard", icon: PhHouse },
   { label: "Quinielas", path: "/juega", icon: PhTrophy },
   { label: "Predicciones", path: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
