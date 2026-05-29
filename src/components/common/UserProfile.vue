@@ -1,20 +1,16 @@
 <template>
-  <div v-if="user" class="d-flex align-items-center gap-3 mt-3">
+  <div v-if="user" class="d-flex align-items-center gap-3">
     <img
       v-if="user.user_metadata?.avatar_url"
       :src="user.user_metadata.avatar_url"
       alt="Avatar"
-      class="rounded-circle border border-success object-fit-cover"
+      class="rounded-circle border-light border-opacity-25 object-fit-cover"
       width="46"
       height="46"
     />
 
     <div class="d-flex flex-column align-items-start">
-      <span
-        class="fw-bold lh-sm"
-        :style="{ color: textColor }"
-      >
-      <!-- <span class="fw-bold text-white lh-sm"> -->
+      <span class="fw-bold lh-sm text-white">
         {{ user.user_metadata?.full_name || user.email }}
       </span>
       <button
@@ -41,13 +37,13 @@ onMounted(async () => {
   user.value = data.session?.user || null;
 
   // 2. Revisar INMEDIATAMENTE si tenemos usuario y venimos del flujo de login
-  const isLoggingIn = localStorage.getItem('isLoggingIn');
-  
-  if (user.value && isLoggingIn === 'true') {
+  const isLoggingIn = localStorage.getItem("isLoggingIn");
+
+  if (user.value && isLoggingIn === "true") {
     // Limpiamos la bandera para evitar el bug de las pestañas
-    localStorage.removeItem('isLoggingIn');
+    localStorage.removeItem("isLoggingIn");
     // Redireccionamos
-    router.push('/juega');
+    router.push("/juega");
   }
 
   // 3. Mantener el listener para otros cambios de estado
@@ -55,11 +51,11 @@ onMounted(async () => {
     user.value = session?.user || null;
 
     // Por si acaso el evento SIGNED_IN se dispara un milisegundo después
-    if (event === 'SIGNED_IN') {
-      const isLoggingInEvent = localStorage.getItem('isLoggingIn');
-      if (isLoggingInEvent === 'true') {
-        localStorage.removeItem('isLoggingIn');
-        router.push('/juega');
+    if (event === "SIGNED_IN") {
+      const isLoggingInEvent = localStorage.getItem("isLoggingIn");
+      if (isLoggingInEvent === "true") {
+        localStorage.removeItem("isLoggingIn");
+        router.push("/juega");
       }
     }
   });
@@ -75,12 +71,4 @@ const handleLogout = async () => {
 
   router.push("/");
 };
-
-defineProps({
-  textColor: {
-    type: String,
-    default: '#ffffff'
-  }
-})
-
 </script>
