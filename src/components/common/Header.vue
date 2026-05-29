@@ -1,159 +1,185 @@
 <template>
-  <header class="header">
-    <div class="nav">
-      <router-link to="/" class="logo">
-        <img src="@/assets/logo.png" alt="Mundial 2026" />
-
-        <div class="logo-text">
-          <span class="title">MUNDIAL</span>
-          <span class="subtitle">MÉXICO <b>2026</b></span>
-        </div>
-      </router-link>
-
-      <nav class="menu">
-        <router-link to="/" class="menu-item" active-class="active">
-          <PhHouse class="icon" weight="fill" />
-          <span>INICIO</span>
-        </router-link>
-
-        <router-link to="/resultados" class="menu-item" active-class="active">
-          <PhHandsClapping class="icon" weight="fill" />
-          <span>ZONA FAN</span>
-        </router-link>
-
-        <router-link to="/reglas" class="menu-item" active-class="active">
-          <PhBookOpen class="icon" weight="duotone" />
-          <span>REGLAS</span>
-        </router-link>
-
-        <router-link to="/juega-nosotros" class="menu-item" active-class="active">
-          <PhSoccerBall class="icon soccer-icon" weight="fill" />
-          <span>JUEGA</span>
-        </router-link>
-
-        <router-link to="/donacion" class="menu-item" active-class="active">
-          <PhHandshake class="icon" weight="fill" />
-          <span>DONACIÓN</span>
-        </router-link>
-      </nav>
-
-      <!-- DESKTOP -->
-      <div class="desktop-login">
-        <div
-          v-if="user"
-          class="user-profile-wrapper"
-        >
-          <UserProfile textColor="#3f6f22" />          
-          <!-- <button
-            class="logout-link"
-            @click="handleLogout"
+  <header class="sticky-top w-100 z-3 header-dark">
+    <div class="container-fluid shadow-sm">
+      <div class="row align-items-center py-2 px-5">
+        <!-- LOGO -->
+        <div class="col-auto">
+          <router-link
+            to="/"
+            class="d-flex align-items-center gap-2 text-decoration-none text-white"
           >
-            Cerrar sesión
-          </button> -->
+            <img
+              src="@/assets/logo.png"
+              alt="Mundial 2026"
+              class="header-logo"
+            />
+
+            <div class="d-flex flex-column lh-1">
+              <span class="fw-bold text-success small">MUNDIAL</span>
+              <span class="fw-bold text-white small">
+                MÉXICO <b class="text-danger">2026</b>
+              </span>
+            </div>
+          </router-link>
         </div>
 
-        <button
-          v-else
-          class="google-login-btn"
-          @click="goToAccess"
-        >
-          <img src="@/assets/google.png" alt="Google" />
-          <span>
-            Acceder con Google
-          </span>
-        </button>
-      </div>
-
-      <!-- MOBILE -->
-      <div class="header-actions">
-        <div
-          v-if="user"
-          class="user-profile-wrapper mobile-profile"
-        >
-          <UserProfile textColor="#3f6f22" />          
-          <!-- <button
-            class="logout-link"
-            @click="handleLogout"
+        <!-- MENU DESKTOP -->
+        <nav class="col d-none d-lg-flex justify-content-center gap-5">
+          <router-link
+            to="/"
+            class="menu-item position-relative d-flex flex-column align-items-center gap-1 text-white text-decoration-none fw-bold bg-transparent border-0 p-0"
+            active-class="active"
           >
-            Cerrar sesión
-          </button> -->
+            <PhHouse class="menu-icon" weight="fill" />
+            <span>INICIO</span>
+          </router-link>
+
+          <button
+            type="button"
+            class="menu-item position-relative d-flex flex-column align-items-center gap-1 text-white text-decoration-none fw-bold bg-transparent border-0 p-0"
+            @click="validateZonaFan"
+          >
+            <PhHandsClapping class="menu-icon" weight="fill" />
+            <span>ZONA FAN</span>
+          </button>
+
+          <router-link
+            to="/reglas"
+            class="menu-item menu-item position-relative d-flex flex-column align-items-center gap-1 text-decoration-none fw-bold-items-center gap-1 text-decoration-none text-light fw-bold"
+            active-class="active"
+          >
+            <PhBookOpen class="menu-icon" weight="duotone" />
+            <span>REGLAS</span>
+          </router-link>
+
+          <router-link
+            to="/juega-nosotros"
+            class="menu-item menu-item position-relative d-flex flex-column align-items-center gap-1 text-decoration-none fw-bold-items-center gap-1 text-decoration-none text-light fw-bold"
+            active-class="active"
+          >
+            <PhSoccerBall class="menu-icon" weight="fill" />
+            <span>JUEGA</span>
+          </router-link>
+
+          <router-link
+            to="/donacion"
+            class="menu-item menu-item position-relative d-flex flex-column align-items-center gap-1 text-decoration-none fw-bold-items-center gap-1 text-decoration-none text-light fw-bold"
+            active-class="active"
+          >
+            <PhHandshake class="menu-icon" weight="fill" />
+            <span>DONACIÓN</span>
+          </router-link>
+        </nav>
+
+        <!-- LOGIN DESKTOP -->
+        <div class="col-auto d-none d-lg-flex justify-content-end">
+          <div v-if="user">
+            <UserProfile textColor="#198754" />
+          </div>
+
+          <button
+            v-else
+            class="btn btn-success rounded-pill fw-bold d-flex align-items-center gap-2 px-3"
+            @click="goToAccess"
+          >
+            <img src="@/assets/google.png" alt="Google" class="google-icon" />
+            <span>Acceder con Google</span>
+          </button>
         </div>
 
-        <button
-          v-else
-          class="google-login-btn mobile-login-btn"
-          @click="goToAccess"
+        <!-- MOBILE ACTIONS -->
+        <div
+          class="col d-flex d-lg-none justify-content-end align-items-center"
         >
-          <img src="@/assets/google.png" alt="Google" />
-          <span>
-            Acceder con Google
-          </span>
-        </button>
-
-        <button
-          class="menu-toggle"
-          @click="isMenuOpen = !isMenuOpen"
-        >
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </button>
+          <button
+            class="btn btn-outline-success rounded-3 px-3 py-2"
+            @click="isMenuOpen = !isMenuOpen"
+          >
+            ☰
+          </button>
+        </div>
       </div>
-
-
-
-
     </div>
 
+    <!-- OVERLAY -->
     <div
       class="mobile-overlay"
       :class="{ show: isMenuOpen }"
       @click="isMenuOpen = false"
     ></div>
 
-    <aside class="mobile-menu" :class="{ open: isMenuOpen }">
-      <button class="close-menu" @click="isMenuOpen = false">×</button>
-
-      <!-- <div v-if="user" class="mobile-menu-user-box">
-        <span class="mobile-user-name">{{ user.user_metadata.full_name }}</span>
-        <button class="logout-link" @click="handleLogout(); isMenuOpen = false;">Cerrar sesión</button>
-      </div> -->
-
+    <!-- MOBILE MENU -->
+    <aside
+      class="mobile-menu position-fixed top-0 vh-100 px-3 py-4 bg-dark text-white d-flex flex-column gap-3"
+      :class="{ open: isMenuOpen }"
+    >
       <div
-        v-if="user"
-        class="mobile-menu-user-box"
+        class="d-flex justify-content-between align-items-start border-bottom border-secondary border-opacity-25 pb-3 mb-2"
       >
-        <UserProfile />
-        <button
-          class="logout-link"
-          @click="handleLogout(); isMenuOpen = false;"
-        >
-          Cerrar sesión
-        </button>
-      </div>      
+        <div v-if="user" class="me-3">
+          <UserProfile />
+        </div>
 
-      <router-link to="/" class="mobile-menu-item" @click="isMenuOpen = false">
-        <PhHouse class="mobile-icon" weight="fill" />
+        <div v-else class="me-3 flex-grow-1">
+          <button
+            class="btn btn-success w-100 rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2"
+            @click="goToAccess"
+          >
+            <img src="@/assets/google.png" alt="Google" class="google-icon" />
+            <span>Acceder</span>
+          </button>
+        </div>
+
+        <button
+          class="btn-close btn-close-white mt-1 flex-shrink-0"
+          @click="isMenuOpen = false"
+        ></button>
+      </div>
+
+      <router-link
+        to="/"
+        class="mobile-menu-item d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3"
+        @click="isMenuOpen = false"
+      >
+        <PhHouse class="menu-icon" weight="fill" />
         <span>INICIO</span>
       </router-link>
 
-      <router-link to="/resultados" class="mobile-menu-item" @click="isMenuOpen = false">
-        <PhHandsClapping class="mobile-icon" weight="fill" />
+      <button
+        type="button"
+        class="mobile-menu-item btn btn-link d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3 w-100 text-start bg-transparent border-0 shadow-none"
+        @click="
+          validateZonaFan();
+          isMenuOpen = false;
+        "
+      >
+        <PhHandsClapping class="menu-icon" weight="fill" />
         <span>ZONA FAN</span>
-      </router-link>
-
-      <router-link to="/reglas" class="mobile-menu-item" @click="isMenuOpen = false">
-        <PhBookOpen class="mobile-icon" weight="duotone" />
+      </button>
+      <router-link
+        to="/reglas"
+        class="mobile-menu-item d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3"
+        @click="isMenuOpen = false"
+      >
+        <PhBookOpen class="menu-icon" weight="duotone" />
         <span>REGLAS</span>
       </router-link>
 
-      <router-link to="/juega-nosotros" class="mobile-menu-item" @click="isMenuOpen = false">
-        <PhSoccerBall class="mobile-icon" weight="fill" />
+      <router-link
+        to="/juega-nosotros"
+        class="mobile-menu-item d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3"
+        @click="isMenuOpen = false"
+      >
+        <PhSoccerBall class="menu-icon" weight="fill" />
         <span>JUEGA</span>
       </router-link>
 
-      <router-link to="/donacion" class="mobile-menu-item" @click="isMenuOpen = false">
-        <PhHandshake class="mobile-icon" weight="fill" />
+      <router-link
+        to="/donacion"
+        class="mobile-menu-item d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3"
+        @click="isMenuOpen = false"
+      >
+        <PhHandshake class="menu-icon" weight="fill" />
         <span>DONACIÓN</span>
       </router-link>
     </aside>
@@ -163,22 +189,26 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { supabase } from '@/supabaseClient';
+import { supabase } from "@/supabaseClient";
 import {
   PhHouse,
-  PhHandsClapping, //PhChartBar,
+  PhHandsClapping,
   PhBookOpen,
   PhSoccerBall,
   PhHandshake,
 } from "@phosphor-icons/vue";
 import UserProfile from "@/components/common/UserProfile.vue";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 const isMenuOpen = ref(false);
 const user = ref(null);
 
 onMounted(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   user.value = session?.user || null;
 
   supabase.auth.onAuthStateChange((event, session) => {
@@ -188,206 +218,61 @@ onMounted(async () => {
 
 const goToAccess = async () => {
   try {
-    // 1. Creamos una bandera indicando que el login fue intencional
-    localStorage.setItem('isLoggingIn', 'true')
+    localStorage.setItem("isLoggingIn", "true");
 
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: "google",
       options: {
-        redirectTo: window.location.origin
-      }
-    })
+        redirectTo: window.location.origin,
+      },
+    });
 
-    if (error) throw error
+    if (error) throw error;
   } catch (error) {
-    console.error(
-      'Error al iniciar sesión:',
-      error.message
-    )
+    console.error("Error al iniciar sesión:", error.message);
   }
-}
+};
 
 const handleLogout = async () => {
   try {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    router.push('/'); 
+    router.push("/");
   } catch (error) {
-    console.error('Error al cerrar sesión:', error.message);
+    console.error("Error al cerrar sesión:", error.message);
   }
-}
+};
+
+const validateZonaFan = async () => {
+  if (!user.value) {
+    await Swal.fire({
+      icon: "warning",
+      title: "¡Atención!",
+      text: "Para acceder a la Zona Fan, debes iniciar sesión y pertenecer a una liga activa.",
+      confirmButtonText: "Entendido",
+      confirmButtonColor: "#198754",
+      background: "#0b1f1a",
+      color: "#fff",
+    });
+
+    return;
+  }
+
+  router.push("/resultados");
+};
 </script>
 
 <style scoped>
-.header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
+.header-dark {
+  background: linear-gradient(180deg, #0b1f1a, #071411);
 }
 
-.nav {
-  width: 100%;
-  min-width: 0;
-  padding: 10px 32px;
-  box-sizing: border-box;
-  display: grid;
-  grid-template-columns: 220px 1fr auto;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-.logo {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: inherit;
-}
-
-.logo img {
-  flex: 0 0 auto;
+.header-logo {
   height: 38px;
   width: auto;
 }
 
-.logo-text {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-}
-
-.title {
-  font-size: 16px;
-  font-weight: 800;
-  color: #0f5132;
-  letter-spacing: 0.5px;
-}
-
-.subtitle {
-  margin-top: 3px;
-  font-size: 13px;
-  color: #198754;
-  font-weight: 700;
-}
-
-.subtitle b {
-  color: #dc3545;
-}
-
-.menu {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 26px;
-}
-
-.menu-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 10px;
-  text-decoration: none;
-  color: #143d2d;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  transition: all 0.25s ease;
-}
-
-.icon {
-  width: 22px;
-  height: 22px;
-  color: #32620e;
-  transition: all 0.25s ease;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12));
-}
-
-.menu-item span {
-  position: relative;
-}
-
-.menu-item span::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -7px;
-  width: 0;
-  height: 2px;
-  transform: translateX(-50%);
-  border-radius: 999px;
-  background: #32620e;
-  box-shadow: 0 0 4px rgba(46, 125, 50, 0.15);
-  transition: width 0.25s ease;
-}
-
-.menu-item:hover {
-  color: #32620e;
-  transform: translateY(-3px);
-}
-
-.menu-item:hover .icon {
-  color: #32620e;
-  transform: scale(1.08);
-  filter: drop-shadow(0 0 4px rgba(46, 125, 50, 0.18));
-}
-
-.menu-item.active {
-  color: #32620e;
-}
-
-.menu-item.active .icon {
-  color: #32620e;
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 5px rgba(46, 125, 50, 0.2));
-}
-
-.menu-item.active span::after {
-  width: 100%;
-}
-
-.desktop-login {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.header-actions {
-  justify-self: end;
-  display: none;
-  align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
-}
-
-.google-login-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: none;
-  border-radius: 999px;
-  padding: 10px 18px;
-  background: linear-gradient(135deg, #198754, #0f5132);
-  color: white;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.25s ease;
-  box-shadow:
-    0 10px 22px rgba(15, 81, 50, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-.google-login-btn img {
+.google-icon {
   width: 18px;
   height: 18px;
   background: white;
@@ -395,33 +280,45 @@ const handleLogout = async () => {
   padding: 2px;
 }
 
-.google-login-btn:hover {
-  transform: translateY(-2px);
+.menu-icon {
+  width: 28px;
+  height: 28px;
+  color: #198754;
+  flex-shrink: 0;
 }
 
-.menu-toggle {
-  display: none;
-  flex: 0 0 auto;
-  border: none;
-  background: #0f7a45;
-  color: white;
-  border-radius: 12px;
-  width: 46px;
-  height: 46px;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgba(0, 122, 69, 0.25);
+.menu-item {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+
+.menu-item::after {
+  content: "";
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: #198754;
+  transition: width 0.25s ease;
+}
+
+.menu-item:hover,
+.menu-item.active {
+  color: #198754 !important;
+}
+
+.menu-item:hover::after,
+.menu-item.active::after {
+  width: 100%;
 }
 
 .mobile-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.55);
   opacity: 0;
   pointer-events: none;
   transition: 0.25s ease;
-  z-index: 150;
+  z-index: 1040;
 }
 
 .mobile-overlay.show {
@@ -435,272 +332,22 @@ const handleLogout = async () => {
   right: -280px;
   width: 260px;
   height: 100vh;
-  background: white;
-  padding: 28px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  transition: 0.3s ease;
-  z-index: 200;
-  box-shadow: -12px 0 30px rgba(0, 0, 0, 0.18);
+  padding: 24px 20px;
+  transition: right 0.3s ease;
+  z-index: 1050;
 }
 
 .mobile-menu.open {
   right: 0;
 }
 
-.close-menu {
-  align-self: flex-end;
-  border: none;
-  background: transparent;
-  font-size: 32px;
-  cursor: pointer;
-  color: #143d2d;
-}
-
 .mobile-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 10px;
-  border-radius: 14px;
-  text-decoration: none;
-  color: #143d2d;
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  transition: all 0.25s ease;
 }
 
-.mobile-menu-item:hover {
-  background: rgba(50, 98, 14, 0.08);
-  color: #32620e;
-}
-
+.mobile-menu-item:hover,
 .mobile-menu-item.router-link-active {
-  background: rgba(46, 125, 50, 0.1);
-  color: #32620e;
+  background: rgba(25, 135, 84, 0.15);
+  color: #198754 !important;
 }
-
-.mobile-icon {
-  width: 22px;
-  height: 22px;
-  color: #32620e;
-  transition: all 0.25s ease;
-}
-
-.logo:hover,
-.logo:focus,
-.logo:active,
-.logo:visited {
-  text-decoration: none;
-  color: inherit;
-}
-
-/* --- ESTILOS DE AUTENTICACIÓN --- */
-.user-profile-box {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 2px;
-}
-
-.logout-link {
-  background: none;
-  border: none;
-  color: #dc3545; /* El color rojo oficial que querías para el botón */
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-  transition: color 0.2s ease;
-}
-
-.logout-link:hover {
-  color: #bb2d3b; /* Variación un poco más oscura para el efecto hover */
-}
-
-
-.logout-link {
-  background: none;
-  border: none;
-  color: #d60000;
-  font-size: 12px;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
-  white-space: nowrap;
-}
-
-.logout-link:hover {
-  opacity: 0.8;
-}
-
-.mobile-menu-user-box {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  margin-bottom: 10px;
-}
-
-.mobile-user-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: #0f5132;
-  margin-bottom: 4px;
-}
-
-
-/* --- RESPONSIVE / MEDIA QUERIES --- */
-@media (max-width: 1100px) {
-  .menu {
-    gap: 22px;
-  }
-
-  .menu-item {
-    font-size: 11px;
-  }
-
-  .icon {
-    width: 23px;
-    height: 23px;
-  }
-}
-
-@media (max-width: 900px) {
-  .nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 10px 12px;
-  }
-
-  .menu,
-  .desktop-login {
-    display: none !important;
-  }
-
-  .header-actions {
-    display: flex;
-    margin-left: auto;
-  }
-
-  /* CORRECCIÓN: El botón móvil ya no hereda display flex si está oculto */
-  .mobile-login-btn {
-    display: inline-flex; 
-    height: 42px;
-    padding: 0 14px;
-    font-size: 12px;
-  }
-
-  .user-profile-box.mobile-profile {
-    align-items: center;
-    margin-right: 12px;
-  }
-  
-  .user-profile-box.mobile-profile .user-name {
-    font-size: 12px;
-  }
-
-  .mobile-profile {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-}
-
-@media (max-width: 480px) {
-  .nav {
-    padding: 10px 10px;
-    gap: 8px;
-  }
-
-  .logo {
-    gap: 7px;
-  }
-
-  .logo img {
-    height: 34px;
-  }
-
-  .title {
-    font-size: 13px;
-  }
-
-  .subtitle {
-    font-size: 10px;
-  }
-
-  .header-actions {
-    gap: 7px;
-  }
-
-  .mobile-login-btn {
-    height: 40px;
-    padding: 0 12px;
-    font-size: 11px;
-  }
-
-  .mobile-login-btn img {
-    width: 17px;
-    height: 17px;
-  }
-
-  .menu-toggle {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    font-size: 22px;
-  }
-
-  .mobile-profile {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-}
-
-@media (max-width: 390px) {
-  /* Si la pantalla es ultra chica, ocultamos el perfil del header externo */
-  .header-actions .user-profile-box.mobile-profile {
-    display: none;
-  }
-
-  .mobile-login-btn {
-    width: 42px;
-    padding: 0;
-  }
-
-  .mobile-login-btn span {
-    display: none;
-  }
-
-  .logo img {
-    height: 32px;
-  }
-
-  .title {
-    font-size: 12px;
-  }
-
-  .subtitle {
-    font-size: 9px;
-  }
-
-  .mobile-profile {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-}
-
 </style>
