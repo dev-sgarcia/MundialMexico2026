@@ -154,12 +154,18 @@
                           </span>
                         </div>
 
-                        <router-link
+                        <!-- <router-link
                           to="/predicciones"
                           class="btn btn-success btn-sm w-100 fw-bold mt-1"
                         >
                           Jugar
-                        </router-link>
+                        </router-link> -->
+                        <router-link
+                          :to="{ path: '/predicciones', query: { ligaId: liga.league_id, ligaNombre: liga.leagues?.name } }"
+                          class="btn btn-success btn-sm w-100 fw-bold mt-1"
+                        >
+                          Jugar
+                        </router-link>                        
                       </div>
 
                       <div v-else>
