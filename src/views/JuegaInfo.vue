@@ -64,7 +64,7 @@
 
             <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
               <a
-                href="https://wa.me/525547214435?text=Hola,%20necesito%20ayuda%20con%20la%20quiniela%20en%20MexasLeague."
+                href="https://wa.me/525547214435?text=Hola,%20necesito%20ayuda%20con%20la%20quiniela%20en%20FansLeague."
                 target="_blank"
                 rel="noopener noreferrer"
                 class="contact-btn whatsapp-btn text-decoration-none"

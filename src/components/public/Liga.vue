@@ -154,14 +154,8 @@
                           </span>
                         </div>
 
-                        <!-- <router-link
-                          to="/predicciones"
-                          class="btn btn-success btn-sm w-100 fw-bold mt-1"
-                        >
-                          Jugar
-                        </router-link> -->
                         <router-link
-                          :to="{ path: '/predicciones', query: { ligaId: liga.league_id, ligaNombre: liga.leagues?.name } }"
+                          :to="{ path: '/dashboard', query: { ligaId: liga.league_id, ligaNombre: liga.leagues?.name } }"
                           class="btn btn-success btn-sm w-100 fw-bold mt-1"
                         >
                           Jugar
@@ -473,9 +467,6 @@ const guardarCampeon = async (liga) => {
     console.error("Error inesperado en guardarCampeon:", err);
   }
 };
-
-
-
 
 onMounted(async () => {
   try {    const { data: { session } } = await supabase.auth.getSession();

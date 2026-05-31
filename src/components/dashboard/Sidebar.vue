@@ -20,7 +20,7 @@
       <RouterLink
         v-for="item in menuItems"
         :key="item.label"
-        :to="item.path"
+        :to="obtenerRutaConLiga(item.path)"
         class="menu-link nav-link d-flex align-items-center gap-2 rounded-4 px-3 py-2 fw-semibold text-white-50"
         active-class="text-white bg-success bg-opacity-25"
       >
@@ -51,7 +51,7 @@
       </p>
 
       <RouterLink
-        to="/posiciones"
+        :to="obtenerRutaConLiga('/posiciones')"
         class="btn btn-success rounded-4 fw-bold w-100 py-1"
       >
         Ver posición actual
@@ -61,6 +61,7 @@
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router';
 import {
   PhHouse,
   PhTrophy,
@@ -71,6 +72,8 @@ import {
   PhRanking,
 } from "@phosphor-icons/vue";
 
+const route = useRoute();
+
 const menuItems = [
   { label: "Inicio", path: "/dashboard", icon: PhHouse },
   { label: "Quinielas", path: "/juega", icon: PhTrophy },
@@ -79,6 +82,31 @@ const menuItems = [
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
   // { label: "Mi perfil", path: "/perfil", icon: PhUser },
 ];
+
+// Función para inyectar las variables de la URL actual en el nuevo enlace
+// const obtenerRutaConLiga = (basePath) => {
+//   return {
+//     path: basePath,
+//     query: {
+//       ligaId: route.query.ligaId,
+//       ligaNombre: route.query.ligaNombre
+//     }
+//   };
+// };
+
+const obtenerRutaConLiga = (basePath) => {
+  // Rescatamos de la URL o de la memoria caché
+  const currentLigaId = route.query.ligaId || localStorage.getItem('ligaIdActiva');
+  const currentLigaNombre = route.query.ligaNombre || localStorage.getItem('ligaNombreActiva');
+
+  return {
+    path: basePath,
+    query: {
+      ligaId: currentLigaId,
+      ligaNombre: currentLigaNombre
+    }
+  };
+};
 </script>
 
 <style scoped>

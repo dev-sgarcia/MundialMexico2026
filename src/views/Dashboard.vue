@@ -9,26 +9,27 @@
           <section
             class="hero-card position-relative rounded-4 overflow-hidden border border-success border-opacity-25"
           >
-            <!-- Imagen -->
             <img
               src="@/assets/bg-dashboard.png"
               alt="Mundial"
               class="hero-image w-100"
             />
 
-            <!-- Overlay -->
             <div class="hero-overlay"></div>
 
-            <!-- Contenido -->
             <div
               class="position-absolute top-50 start-0 translate-middle-y text-white px-4 px-lg-5"
             >
               <h1 class="fw-bold mb-0">MUNDIAL</h1>
 
-              <h2 class="fw-bold mb-3">
+              <h2 class="fw-bold mb-2">
                 <span class="text-success">MÉXICO</span>
                 <span class="text-danger"> 2026</span>
               </h2>
+
+              <h4 v-if="nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'" class="text-gold fw-bold mb-3">
+                Liga: {{ nombreLigaActiva }}
+              </h4>
 
               <p class="fw-semibold mb-4">11 JUN - 19 JUL</p>
 
@@ -45,7 +46,47 @@
 </template>
 
 <script setup>
+import { ref, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
+// Importa tu Header si lo estás usando directamente aquí
+// import Header from "@/components/common/Header.vue"; 
+
+const route = useRoute();
+
+// 1. Variable segura para el usuario
+const userId = ref(null);
+
+// 2. Rescatamos de la URL o de la memoria caché (protección contra F5)
+const idLigaActiva = ref(route.query.ligaId || localStorage.getItem('ligaIdActiva') || null);
+const nombreLigaActiva = ref(route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela");
+
+// 3. Guardamos inmediatamente en caché si detectamos una liga válida proveniente de "Juega"
+if (idLigaActiva.value && idLigaActiva.value !== 'null') {
+  localStorage.setItem('ligaIdActiva', idLigaActiva.value);
+  localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
+}
+
+onMounted(async () => {
+  // Obtenemos la sesión del usuario de forma segura
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    userId.value = session.user.id;
+  }
+});
+
+// 4. Mantenemos el vigilante por si la URL cambia sin recargar la página
+watch(() => route.query.ligaId, (newId) => {
+  if (newId && newId !== 'null') {
+    idLigaActiva.value = newId;
+    nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela";
+    
+    // Actualizamos la caché con los nuevos datos
+    localStorage.setItem('ligaIdActiva', newId);
+    localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
+  }
+}, { immediate: false });
 </script>
 
 <style scoped>
@@ -71,5 +112,10 @@ import Sidebar from "@/components/dashboard/Sidebar.vue";
     rgba(0, 0, 0, 0.35) 50%,
     rgba(0, 0, 0, 0.85) 100%
   );
+}
+
+/* Agregamos el color dorado para el título de la liga */
+.text-gold {
+  color: #d4af37;
 }
 </style>

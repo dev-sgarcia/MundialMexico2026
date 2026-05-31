@@ -156,6 +156,7 @@
         <PhHandsClapping class="menu-icon" weight="fill" />
         <span>ZONA FAN</span>
       </button>
+
       <router-link
         to="/reglas"
         class="mobile-menu-item d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3"
@@ -258,7 +259,7 @@ const validateZonaFan = async () => {
     return;
   }
 
-  router.push("/resultados");
+  router.push("/juega");
 };
 </script>
 

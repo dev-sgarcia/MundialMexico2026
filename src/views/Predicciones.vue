@@ -11,11 +11,23 @@
             <div class="sticky-top bg-black z-3 pb-3">
               <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
                 <div>
-                  <h2 class="fw-bold mb-1">Mis predicciones</h2>
+                  <!-- <h2 class="fw-bold mb-1">
+                    Mis predicciones
+                    <span v-if="route.query.ligaNombre" class="text-gold ms-2">
+                      : {{ route.query.ligaNombre }}
+                    </span>
+                  </h2> -->
+
+                  <h2 class="fw-bold mb-1">
+                    Mis predicciones
+                    <span v-if="nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'" class="text-gold ms-2">
+                      : {{ nombreLigaActiva }}
+                    </span>
+                  </h2>                  
                   <p class="text-white-50 mb-0">
                     Realiza tus predicciones para sumar puntos y escalar posiciones.
                   </p>
-                </div>
+                </div>                
                 <UserProfile />
               </div>
 
@@ -144,8 +156,300 @@
   </div>
 </template>
 
-
 <script setup>
+import { computed, ref, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import { supabase } from "@/supabaseClient"; 
+import Sidebar from "@/components/dashboard/Sidebar.vue";
+import UserProfile from "@/components/common/UserProfile.vue";
+
+const route = useRoute();
+const filterType = ref("group");
+const selectedGroup = ref("Todos");
+const selectedTeam = ref("Todas");
+const cargando = ref(true);
+
+// 1. Nueva variable segura para el usuario
+const userId = ref(null);
+
+//const idLigaActiva = ref(route.query.ligaId || null);
+//const nombreLigaActiva = ref(route.query.ligaNombre || "Mi Quiniela");
+
+// 1. Intentamos leer de la URL, si está vacía (por el F5), leemos de la memoria caché
+const idLigaActiva = ref(route.query.ligaId || localStorage.getItem('ligaIdActiva') || null);
+const nombreLigaActiva = ref(route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela");
+
+// 2. Si detectamos una liga válida, la guardamos inmediatamente en la memoria caché
+if (idLigaActiva.value && idLigaActiva.value !== 'null') {
+  localStorage.setItem('ligaIdActiva', idLigaActiva.value);
+  localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
+}
+
+const matches = ref([]);
+
+const normalizarFecha = (fechaTexto) => {
+  if (!fechaTexto) return "9999-99-99"; 
+  const partes = fechaTexto.includes("/") ? fechaTexto.split("/") : fechaTexto.split("-");
+  if (partes.length === 3 && partes[0].length <= 2) {
+    return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+  }
+  return fechaTexto; 
+};
+
+const cargarPartidosYPredicciones = async () => {
+  cargando.value = true;
+  try {
+    // Verificación extra de seguridad
+    if (!userId.value) {
+      console.warn("No hay sesión activa.");
+      return;
+    }
+
+    const { data: dbMatches, error: errMatches } = await supabase
+      .from("matches")
+      .select("*");
+
+    if (errMatches) throw errMatches;
+
+    // ORDEN CRONOLÓGICO ESTRICTO CON TIMESTAMPS
+    dbMatches.sort((a, b) => {
+      const fechaNormalA = normalizarFecha(a.match_date);
+      const fechaNormalB = normalizarFecha(b.match_date);
+      
+      if (fechaNormalA === "9999-99-99") return 1;
+      if (fechaNormalB === "9999-99-99") return -1;
+
+      const dateA = new Date(`${fechaNormalA}T${a.match_time || "00:00"}`).getTime();
+      const dateB = new Date(`${fechaNormalB}T${b.match_time || "00:00"}`).getTime();
+      
+      return dateA - dateB;
+    });
+
+    let misPredicciones = [];
+    if (idLigaActiva.value && idLigaActiva.value !== 'null') {
+      const { data: preds, error: errPreds } = await supabase
+        .from("predictions")
+        .select("*")
+        .eq("user_id", userId.value) // Usamos la variable global
+        .eq("league_id", idLigaActiva.value);
+
+      if (errPreds) throw errPreds;
+      misPredicciones = preds || [];
+    }
+
+    matches.value = dbMatches.map((partidoBD) => {
+      const pronosticoGuardado = misPredicciones.find((p) => p.match_id === partidoBD.id);
+
+      let nombreGrupo = partidoBD.group_name || "";
+      nombreGrupo = nombreGrupo.replace(/Grupo /i, '').trim();
+
+      let fechaLimpia = normalizarFecha(partidoBD.match_date);
+
+      return {
+        id: partidoBD.id,
+        date: fechaLimpia !== "9999-99-99" ? fechaLimpia : "Fecha por definir",
+        time: partidoBD.match_time || "00:00",
+        homeTeam: partidoBD.home_team, 
+        awayTeam: partidoBD.away_team,
+        group: nombreGrupo,
+        stadium: partidoBD.stadium,
+        city: partidoBD.city || "",
+        homeScore: pronosticoGuardado ? pronosticoGuardado.home_score : "",
+        awayScore: pronosticoGuardado ? pronosticoGuardado.away_score : "",
+        saved: !!pronosticoGuardado 
+      };
+    });
+
+  } catch (error) {
+    console.error("Error al cargar datos:", error);
+  } finally {
+    cargando.value = false;
+  }
+};
+
+onMounted(async () => {
+  // 2. Extraemos la sesión una sola vez de forma segura
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    userId.value = session.user.id;
+  }
+
+  // 3. Validamos que tengamos AMBOS datos antes de arrancar
+  if (userId.value && idLigaActiva.value && idLigaActiva.value !== 'null') {
+    await cargarPartidosYPredicciones();
+  } else {
+    cargando.value = false;
+  }
+});
+
+watch(() => route.query.ligaId, async (newId) => {
+  if (newId && newId !== 'null') {
+    idLigaActiva.value = newId;
+    
+    // Le decimos que si no viene en la URL, lo rescate de la caché
+    nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela";
+    
+    // Actualizamos la caché con el valor validado
+    localStorage.setItem('ligaIdActiva', newId);
+    localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
+    
+    if (userId.value) {
+      await cargarPartidosYPredicciones();
+    }
+  }
+}, { immediate: false });
+
+
+const esPartidoBloqueado = (match) => {
+  if (!match.date || !match.time || match.date === "Fecha por definir") return false;
+
+  const fechaPartido = new Date(`${match.date}T${match.time}`);
+  const ahora = new Date();
+  
+  const limiteDeApuesta = fechaPartido.getTime() - (60 * 60 * 1000);
+
+  return ahora.getTime() >= limiteDeApuesta;
+};
+
+const guardarPronostico = async (match) => {
+  if (!idLigaActiva.value || idLigaActiva.value === 'null') {
+    alert("Error: No se detectó la liga. Por favor regresa a 'Mis Ligas' y vuelve a entrar.");
+    match.saved = false;
+    return;
+  }
+
+  if (!userId.value) {
+    alert("Error: Usuario no autenticado.");
+    match.saved = false;
+    return;
+  }
+
+  if (esPartidoBloqueado(match)) {
+    alert("Este partido ya está bloqueado.");
+    await cargarPartidosYPredicciones(); 
+    return;
+  }
+
+  if (match.homeScore === "" || match.homeScore === null || match.awayScore === "" || match.awayScore === null) {
+    match.saved = false;
+    return;
+  }
+
+  try {
+    const { error } = await supabase.from("predictions").upsert(
+      {
+        user_id: userId.value, // Usamos la variable segura
+        match_id: match.id,
+        league_id: idLigaActiva.value,
+        home_score: parseInt(match.homeScore),
+        away_score: parseInt(match.awayScore),
+      },
+      {
+        onConflict: "user_id, match_id, league_id",
+      }
+    );
+
+    if (error) {
+      console.error("Error al guardar pronóstico:", error);
+      match.saved = false;
+    } else {
+      match.saved = true;
+    }
+  } catch (error) {
+    console.error("Error inesperado:", error);
+    match.saved = false;
+  }
+};
+
+const teams = computed(() => {
+  const allTeams = matches.value.flatMap((match) => [match.homeTeam, match.awayTeam]);
+  return [...new Set(allTeams)].sort();
+});
+
+const groups = computed(() => {
+  return [...new Set(matches.value.map((match) => match.group))].sort();
+});
+
+const filteredMatches = computed(() => {
+  return matches.value.filter((match) => {
+    if (filterType.value === "group") {
+      return selectedGroup.value === "Todos" || match.group === selectedGroup.value;
+    }
+    if (filterType.value === "team") {
+      return selectedTeam.value === "Todas" || match.homeTeam === selectedTeam.value || match.awayTeam === selectedTeam.value;
+    }
+    return true;
+  });
+});
+
+// NUEVO ARREGLO AGRUPADO Y ORDENADO
+const partidosAgrupados = computed(() => {
+  const gruposObj = filteredMatches.value.reduce((grupos, match) => {
+    const fecha = match.date;
+    if (!grupos[fecha]) {
+      grupos[fecha] = [];
+    }
+    grupos[fecha].push(match);
+    return grupos;
+  }, {});
+
+  // Forzamos el acomodo ordenado en un arreglo para que el HTML no se confunda
+  return Object.keys(gruposObj)
+    .sort((a, b) => {
+      if (a === "Fecha por definir") return 1;
+      if (b === "Fecha por definir") return -1;
+      return new Date(`${a}T00:00:00`).getTime() - new Date(`${b}T00:00:00`).getTime();
+    })
+    .map(fecha => ({
+      fecha: fecha,
+      partidos: gruposObj[fecha]
+    }));
+});
+
+const savedMatches = computed(() => {
+  return filteredMatches.value.filter((match) => match.saved);
+});
+
+const progressPercentage = computed(() => {
+  if (!filteredMatches.value.length) return 0;
+  return Math.round((savedMatches.value.length / filteredMatches.value.length) * 100);
+});
+
+const formatDate = (date) => {
+  if (!date || date === "Fecha por definir") return "Fecha por definir";
+  
+  const parsedDate = new Date(`${date}T00:00:00`);
+  
+  if (isNaN(parsedDate)) return date;
+
+  return parsedDate.toLocaleDateString("es-MX", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+  });
+};
+
+const getFlagCode = (team) => {
+  const flagCodes = {
+    México: "mx", Sudáfrica: "za", "República de Corea": "kr", Chequia: "cz",
+    Canadá: "ca", "Bosnia y Herzegovina": "ba", "EE. UU.": "us", Paraguay: "py",
+    Catar: "qa", Suiza: "ch", Brasil: "br", Marruecos: "ma", Haití: "ht",
+    Escocia: "gb-sct", Australia: "au", Turquía: "tr", Alemania: "de",
+    Curazao: "cw", "Países Bajos": "nl", Japón: "jp", "Costa de Marfil": "ci",
+    Ecuador: "ec", Suecia: "se", Túnez: "tn", España: "es",
+    "Islas de Cabo Verde": "cv", Bélgica: "be", Egipto: "eg", "Arabia Saudí": "sa",
+    Uruguay: "uy", "RI de Irán": "ir", "Nueva Zelanda": "nz", Francia: "fr",
+    Senegal: "sn", Irak: "iq", Noruega: "no", Argentina: "ar", Argelia: "dz",
+    Austria: "at", Jordania: "jo", Portugal: "pt", "RD Congo": "cd",
+    Inglaterra: "gb-eng", Croacia: "hr", Ghana: "gh", Panamá: "pa",
+    Uzbekistán: "uz", Colombia: "co",
+  };
+  return flagCodes[team] || "un"; 
+};
+</script>
+
+
+<!-- <script setup>
 import { computed, ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient"; 
@@ -404,7 +708,7 @@ const getFlagCode = (team) => {
   };
   return flagCodes[team] || "un"; 
 };
-</script>
+</script> -->
 
 <style scoped>
 .prediction-card {
@@ -459,4 +763,9 @@ input:disabled {
 .scroll-clean::-webkit-scrollbar {
   display: none;
 }
+
+.text-gold {
+  color: #d4af37;
+}
+
 </style>
