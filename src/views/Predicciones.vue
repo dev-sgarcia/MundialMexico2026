@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black vh-100 text-white overflow-hidden">
+  <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
     <div class="container-fluid px-0 h-100">
       <div class="row g-0 h-100">
         <aside
@@ -9,7 +9,7 @@
         </aside>
 
         <main
-          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-1 pb-1"
+          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
         >
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
@@ -42,7 +42,7 @@
                     posiciones.
                   </p>
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 d-none d-md-block">
                   <UserProfile />
                 </div>
               </div>
@@ -51,7 +51,7 @@
                 class="d-flex justify-content-between align-items-center gap-3 mb-4"
               >
                 <div
-                  class="d-flex align-items-center gap-2 ms-lg-auto flex-nowrap"
+                  class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 ms-lg-auto"
                 >
                   <select
                     v-model="filterType"
@@ -263,6 +263,7 @@
         </main>
       </div>
     </div>
+    <BottomNav />
   </div>
 </template>
 
@@ -272,6 +273,7 @@ import { useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
+import BottomNav from "@/components/dashboard/BottomNav.vue";
 
 const route = useRoute();
 const filterType = ref("group");
