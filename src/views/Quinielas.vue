@@ -1,7 +1,7 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
-    <div class="container-fluid px-0 h-100">
-      <div class="row g-0 h-100">
+    <div class="container-fluid px-3 py-3">
+      <div class="row g-0 h-100">      
         <aside
           class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
         >

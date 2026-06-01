@@ -1,6 +1,6 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
-    <div class="container-fluid px-0 h-100">
+    <div class="container-fluid px-3 py-3">
       <div class="row g-0 h-100">
         <aside
           class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
@@ -19,13 +19,6 @@
                 class="d-flex justify-content-between align-items-start flex-wrap gap-3"
               >
                 <div>
-                  <!-- <h2 class="fw-bold mb-1">
-                    Mis predicciones
-                    <span v-if="route.query.ligaNombre" class="text-gold ms-2">
-                      : {{ route.query.ligaNombre }}
-                    </span>
-                  </h2> -->
-
                   <h2 class="fw-bold mb-1">
                     Mis predicciones
                     <span
@@ -588,13 +581,13 @@ const getFlagCode = (team) => {
   const flagCodes = {
     México: "mx",
     Sudáfrica: "za",
-    "República de Corea": "kr",
-    Chequia: "cz",
+    "Corea del Sur": "kr",
+    "República Checa": "cz",
     Canadá: "ca",
     "Bosnia y Herzegovina": "ba",
-    "EE. UU.": "us",
+    "Estados Unidos": "us",
     Paraguay: "py",
-    Catar: "qa",
+    Qatar: "qa",
     Suiza: "ch",
     Brasil: "br",
     Marruecos: "ma",
@@ -603,7 +596,7 @@ const getFlagCode = (team) => {
     Australia: "au",
     Turquía: "tr",
     Alemania: "de",
-    Curazao: "cw",
+    Curacao: "cw",
     "Países Bajos": "nl",
     Japón: "jp",
     "Costa de Marfil": "ci",
@@ -611,12 +604,12 @@ const getFlagCode = (team) => {
     Suecia: "se",
     Túnez: "tn",
     España: "es",
-    "Islas de Cabo Verde": "cv",
+    "Cabo Verde": "cv",
     Bélgica: "be",
     Egipto: "eg",
-    "Arabia Saudí": "sa",
+    "Arabia Saudita": "sa",
     Uruguay: "uy",
-    "RI de Irán": "ir",
+    "Irán": "ir",
     "Nueva Zelanda": "nz",
     Francia: "fr",
     Senegal: "sn",
@@ -627,7 +620,7 @@ const getFlagCode = (team) => {
     Austria: "at",
     Jordania: "jo",
     Portugal: "pt",
-    "RD Congo": "cd",
+    "RD del Congo": "cd",
     Inglaterra: "gb-eng",
     Croacia: "hr",
     Ghana: "gh",
@@ -638,267 +631,6 @@ const getFlagCode = (team) => {
   return flagCodes[team] || "un";
 };
 </script>
-
-<!-- <script setup>
-import { computed, ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
-import { supabase } from "@/supabaseClient"; 
-import Sidebar from "@/components/dashboard/Sidebar.vue";
-import UserProfile from "@/components/common/UserProfile.vue";
-
-const route = useRoute();
-const filterType = ref("group");
-const selectedGroup = ref("Todos");
-const selectedTeam = ref("Todas");
-const cargando = ref(true);
-
-const idLigaActiva = ref(route.query.ligaId || null);
-const nombreLigaActiva = ref(route.query.ligaNombre || "Mi Quiniela");
-
-const matches = ref([]);
-
-const normalizarFecha = (fechaTexto) => {
-  if (!fechaTexto) return "9999-99-99"; 
-  const partes = fechaTexto.includes("/") ? fechaTexto.split("/") : fechaTexto.split("-");
-  if (partes.length === 3 && partes[0].length <= 2) {
-    return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
-  }
-  return fechaTexto; 
-};
-
-const cargarPartidosYPredicciones = async () => {
-  cargando.value = true;
-  try {
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !session) {
-      console.warn("No hay sesión activa.");
-      return;
-    }
-
-    const userId = session.user.id;
-
-    const { data: dbMatches, error: errMatches } = await supabase
-      .from("matches")
-      .select("*");
-
-    if (errMatches) throw errMatches;
-
-    // ORDEN CRONOLÓGICO ESTRICTO CON TIMESTAMPS
-    dbMatches.sort((a, b) => {
-      const fechaNormalA = normalizarFecha(a.match_date);
-      const fechaNormalB = normalizarFecha(b.match_date);
-      
-      if (fechaNormalA === "9999-99-99") return 1;
-      if (fechaNormalB === "9999-99-99") return -1;
-
-      const dateA = new Date(`${fechaNormalA}T${a.match_time || "00:00"}`).getTime();
-      const dateB = new Date(`${fechaNormalB}T${b.match_time || "00:00"}`).getTime();
-      
-      return dateA - dateB;
-    });
-
-    let misPredicciones = [];
-    if (idLigaActiva.value && idLigaActiva.value !== 'null') {
-      const { data: preds, error: errPreds } = await supabase
-        .from("predictions")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("league_id", idLigaActiva.value);
-
-      if (errPreds) throw errPreds;
-      misPredicciones = preds || [];
-    }
-
-    matches.value = dbMatches.map((partidoBD) => {
-      const pronosticoGuardado = misPredicciones.find((p) => p.match_id === partidoBD.id);
-
-      let nombreGrupo = partidoBD.group_name || "";
-      nombreGrupo = nombreGrupo.replace(/Grupo /i, '').trim();
-
-      let fechaLimpia = normalizarFecha(partidoBD.match_date);
-
-      return {
-        id: partidoBD.id,
-        date: fechaLimpia !== "9999-99-99" ? fechaLimpia : "Fecha por definir",
-        time: partidoBD.match_time || "00:00",
-        homeTeam: partidoBD.home_team, 
-        awayTeam: partidoBD.away_team,
-        group: nombreGrupo,
-        stadium: partidoBD.stadium,
-        city: partidoBD.city || "",
-        homeScore: pronosticoGuardado ? pronosticoGuardado.home_score : "",
-        awayScore: pronosticoGuardado ? pronosticoGuardado.away_score : "",
-        saved: !!pronosticoGuardado 
-      };
-    });
-
-  } catch (error) {
-    console.error("Error al cargar datos:", error);
-  } finally {
-    cargando.value = false;
-  }
-};
-
-onMounted(async () => {
-  if (idLigaActiva.value && idLigaActiva.value !== 'null') {
-    await cargarPartidosYPredicciones();
-  } else {
-    cargando.value = false;
-  }
-});
-
-watch(() => route.query.ligaId, async (newId) => {
-  if (newId && newId !== 'null') {
-    idLigaActiva.value = newId;
-    nombreLigaActiva.value = route.query.ligaNombre;
-    await cargarPartidosYPredicciones();
-  }
-}, { immediate: true });
-
-const esPartidoBloqueado = (match) => {
-  if (!match.date || !match.time || match.date === "Fecha por definir") return false;
-
-  const fechaPartido = new Date(`${match.date}T${match.time}`);
-  const ahora = new Date();
-  
-  const limiteDeApuesta = fechaPartido.getTime() - (60 * 60 * 1000);
-
-  return ahora.getTime() >= limiteDeApuesta;
-};
-
-const guardarPronostico = async (match) => {
-  if (!idLigaActiva.value || idLigaActiva.value === 'null') {
-    alert("Error: No se detectó la liga. Por favor regresa a 'Mis Ligas' y vuelve a entrar.");
-    match.saved = false;
-    return;
-  }
-
-  if (esPartidoBloqueado(match)) {
-    alert("Este partido ya está bloqueado.");
-    await cargarPartidosYPredicciones(); 
-    return;
-  }
-
-  if (match.homeScore === "" || match.homeScore === null || match.awayScore === "" || match.awayScore === null) {
-    match.saved = false;
-    return;
-  }
-
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { error } = await supabase.from("predictions").upsert(
-      {
-        user_id: session.user.id,
-        match_id: match.id,
-        league_id: idLigaActiva.value,
-        home_score: parseInt(match.homeScore),
-        away_score: parseInt(match.awayScore),
-      },
-      {
-        onConflict: "user_id, match_id, league_id",
-      }
-    );
-
-    if (error) {
-      console.error("Error al guardar pronóstico:", error);
-      match.saved = false;
-    } else {
-      match.saved = true;
-    }
-  } catch (error) {
-    console.error("Error inesperado:", error);
-    match.saved = false;
-  }
-};
-
-const teams = computed(() => {
-  const allTeams = matches.value.flatMap((match) => [match.homeTeam, match.awayTeam]);
-  return [...new Set(allTeams)].sort();
-});
-
-const groups = computed(() => {
-  return [...new Set(matches.value.map((match) => match.group))].sort();
-});
-
-const filteredMatches = computed(() => {
-  return matches.value.filter((match) => {
-    if (filterType.value === "group") {
-      return selectedGroup.value === "Todos" || match.group === selectedGroup.value;
-    }
-    if (filterType.value === "team") {
-      return selectedTeam.value === "Todas" || match.homeTeam === selectedTeam.value || match.awayTeam === selectedTeam.value;
-    }
-    return true;
-  });
-});
-
-// NUEVO ARREGLO AGRUPADO Y ORDENADO
-const partidosAgrupados = computed(() => {
-  const gruposObj = filteredMatches.value.reduce((grupos, match) => {
-    const fecha = match.date;
-    if (!grupos[fecha]) {
-      grupos[fecha] = [];
-    }
-    grupos[fecha].push(match);
-    return grupos;
-  }, {});
-
-  // Forzamos el acomodo ordenado en un arreglo para que el HTML no se confunda
-  return Object.keys(gruposObj)
-    .sort((a, b) => {
-      if (a === "Fecha por definir") return 1;
-      if (b === "Fecha por definir") return -1;
-      return new Date(`${a}T00:00:00`).getTime() - new Date(`${b}T00:00:00`).getTime();
-    })
-    .map(fecha => ({
-      fecha: fecha,
-      partidos: gruposObj[fecha]
-    }));
-});
-
-const savedMatches = computed(() => {
-  return filteredMatches.value.filter((match) => match.saved);
-});
-
-const progressPercentage = computed(() => {
-  if (!filteredMatches.value.length) return 0;
-  return Math.round((savedMatches.value.length / filteredMatches.value.length) * 100);
-});
-
-const formatDate = (date) => {
-  if (!date || date === "Fecha por definir") return "Fecha por definir";
-  
-  const parsedDate = new Date(`${date}T00:00:00`);
-  
-  if (isNaN(parsedDate)) return date;
-
-  return parsedDate.toLocaleDateString("es-MX", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-  });
-};
-
-const getFlagCode = (team) => {
-  const flagCodes = {
-    México: "mx", Sudáfrica: "za", "República de Corea": "kr", Chequia: "cz",
-    Canadá: "ca", "Bosnia y Herzegovina": "ba", "EE. UU.": "us", Paraguay: "py",
-    Catar: "qa", Suiza: "ch", Brasil: "br", Marruecos: "ma", Haití: "ht",
-    Escocia: "gb-sct", Australia: "au", Turquía: "tr", Alemania: "de",
-    Curazao: "cw", "Países Bajos": "nl", Japón: "jp", "Costa de Marfil": "ci",
-    Ecuador: "ec", Suecia: "se", Túnez: "tn", España: "es",
-    "Islas de Cabo Verde": "cv", Bélgica: "be", Egipto: "eg", "Arabia Saudí": "sa",
-    Uruguay: "uy", "RI de Irán": "ir", "Nueva Zelanda": "nz", Francia: "fr",
-    Senegal: "sn", Irak: "iq", Noruega: "no", Argentina: "ar", Argelia: "dz",
-    Austria: "at", Jordania: "jo", Portugal: "pt", "RD Congo": "cd",
-    Inglaterra: "gb-eng", Croacia: "hr", Ghana: "gh", Panamá: "pa",
-    Uzbekistán: "uz", Colombia: "co",
-  };
-  return flagCodes[team] || "un"; 
-};
-</script> -->
 
 <style scoped>
 .prediction-card {

@@ -1,6 +1,6 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
-    <div class="container-fluid px-0 h-100">
+    <div class="container-fluid px-3 py-3">
       <div class="row g-0 h-100">
         <aside
           class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
@@ -606,13 +606,13 @@ const getFlagCode = (team) => {
   const flagCodes = {
     México: "mx",
     Sudáfrica: "za",
-    "República de Corea": "kr",
-    Chequia: "cz",
+    "Corea del Sur": "kr",
+    "República Checa": "cz",
     Canadá: "ca",
     "Bosnia y Herzegovina": "ba",
-    "EE. UU.": "us",
+    "Estados Unidos": "us",
     Paraguay: "py",
-    Catar: "qa",
+    Qatar: "qa",
     Suiza: "ch",
     Brasil: "br",
     Marruecos: "ma",
@@ -621,7 +621,7 @@ const getFlagCode = (team) => {
     Australia: "au",
     Turquía: "tr",
     Alemania: "de",
-    Curazao: "cw",
+    Curacao: "cw",
     "Países Bajos": "nl",
     Japón: "jp",
     "Costa de Marfil": "ci",
@@ -629,12 +629,12 @@ const getFlagCode = (team) => {
     Suecia: "se",
     Túnez: "tn",
     España: "es",
-    "Islas de Cabo Verde": "cv",
+    "Cabo Verde": "cv",
     Bélgica: "be",
     Egipto: "eg",
-    "Arabia Saudí": "sa",
+    "Arabia Saudita": "sa",
     Uruguay: "uy",
-    "RI de Irán": "ir",
+    "Irán": "ir",
     "Nueva Zelanda": "nz",
     Francia: "fr",
     Senegal: "sn",
@@ -645,7 +645,7 @@ const getFlagCode = (team) => {
     Austria: "at",
     Jordania: "jo",
     Portugal: "pt",
-    "RD Congo": "cd",
+    "RD del Congo": "cd",
     Inglaterra: "gb-eng",
     Croacia: "hr",
     Ghana: "gh",

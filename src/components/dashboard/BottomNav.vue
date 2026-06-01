@@ -6,7 +6,7 @@
       <RouterLink
         v-for="item in menuItems"
         :key="item.to"
-        :to="item.to"
+        :to="obtenerRutaConLiga(item.to)"
         class="bottom-nav-item text-decoration-none d-flex flex-column align-items-center gap-1 px-1 py-1 rounded-3"
         :class="isActive(item.to) ? 'text-success' : 'text-secondary'"
       >
@@ -28,32 +28,49 @@ import {
   PhSoccerBall,
   PhChartBar,
   PhRanking,
+  PhActivity,
+  PhAddressBookTabs,
+  PhArchiveBox,
+  PhCheckerboard,
+  PhCheckSquare,
+  PhFlagCheckered,
+  PhCalendarHeart,
+  PhCalendarCheck,
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
 
+// Ajusta las rutas si es necesario (ej. "/juega" o "/quinielas" según tu configuración)
 const menuItems = [
-  { label: "Inicio", to: "/dashboard", icon: PhHouse },
-  { label: "Quinielas", to: "/quinielas", icon: PhTrophy },
+  { label: "Reglas", to: "/dashboard", icon: PhCalendarCheck },
+  { label: "Quinielas", to: "/quinielas", icon: PhTrophy }, 
   { label: "Predicciones", to: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", to: "/resultados", icon: PhChartBar },
   { label: "Posiciones", to: "/posiciones", icon: PhRanking },
 ];
 
 const isActive = (path) => route.path === path;
+
+// --- FUNCIÓN PARA MANTENER LAS VARIABLES DE LA LIGA ---
+const obtenerRutaConLiga = (basePath) => {
+  // Rescatamos de la URL o de la memoria caché
+  const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
+
+  return {
+    path: basePath,
+    query: {
+      ligaId: currentLigaId,
+      ligaNombre: currentLigaNombre,
+    },
+  };
+};
 </script>
 
 <style scoped>
 .bottom-nav-item {
-  min-width: 54px;
+  font-size: 0.75rem;
   transition: all 0.2s ease;
-}
-
-.bottom-nav-item.router-link-active {
-  background-color: rgba(25, 135, 84, 0.12);
-}
-
-.bottom-nav-item span {
-  font-size: 0.62rem;
+  min-width: 60px;
 }
 </style>

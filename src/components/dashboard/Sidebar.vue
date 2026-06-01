@@ -7,12 +7,8 @@
       class="w-100 border-bottom border-secondary border-opacity-25 mb-3 overflow-hidden"
     >
       <RouterLink to="/" class="d-block">
-        <img
-          src="@/assets/Logo-Quinielas.png"
-          alt="Quiniela RA"
-          class="sidebar-logo w-100 object-fit-cover d-block"
-        />
-      </RouterLink>
+      <img src="@/assets/zonafan.png" alt="Zona Fan" class="logo-zona-fan" />        
+    </RouterLink>
     </div>
 
     <!-- MENÚ -->
@@ -70,29 +66,19 @@ import {
   PhUser,
   PhGearSix,
   PhRanking,
+  PhCalendarCheck,
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
 
 const menuItems = [
-  { label: "Inicio", path: "/dashboard", icon: PhHouse },
-  { label: "Quinielas", path: "/quinielas", icon: PhTrophy },
+  { label: "Reglas", path: "/dashboard", icon: PhCalendarCheck },
+  { label: "Mis Quinielas", path: "/quinielas", icon: PhTrophy },
   { label: "Predicciones", path: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
   // { label: "Mi perfil", path: "/perfil", icon: PhUser },
 ];
-
-// Función para inyectar las variables de la URL actual en el nuevo enlace
-// const obtenerRutaConLiga = (basePath) => {
-//   return {
-//     path: basePath,
-//     query: {
-//       ligaId: route.query.ligaId,
-//       ligaNombre: route.query.ligaNombre
-//     }
-//   };
-// };
 
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
@@ -128,5 +114,11 @@ const obtenerRutaConLiga = (basePath) => {
 
 .menu-link {
   font-size: 0.9rem;
+}
+
+.logo-zona-fan {
+  height: 60px; /* Ajusta el alto según prefieras */
+  width: auto;
+  mix-blend-mode: screen; /* Esta es la magia que oculta el fondo negro */
 }
 </style>
