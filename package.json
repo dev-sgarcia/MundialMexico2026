@@ -18,6 +18,7 @@
     "sweetalert2": "^11.26.25",
     "vue": "^3.5.32",
     "vue-router": "^5.0.6",
+    "vue-toastification": "^2.0.0-rc.5",
     "vuetify": "^4.0.6"
   },
   "devDependencies": {

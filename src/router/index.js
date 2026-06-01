@@ -56,6 +56,11 @@ const routes = [
     name: "Posiciones",
     component: () => import("@/views/Posiciones.vue"),
   },
+  {
+    path: "/quinielas",
+    name: "Quinielas",
+    component: () => import("@/views/Quinielas.vue"),
+  },
 ];
 
 const router = createRouter({
