@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black vh-100 text-white overflow-hidden">
+  <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
     <div class="container-fluid px-0 h-100">
       <div class="row g-0 h-100">
         <aside
@@ -9,7 +9,7 @@
         </aside>
 
         <main
-          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-1 pb-1"
+          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
         >
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
@@ -35,7 +35,7 @@
                     tiempo real.
                   </p>
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 d-none d-md-block">
                   <UserProfile />
                 </div>
               </div>
@@ -91,11 +91,11 @@
                 </div>
 
                 <div
-                  class="d-flex align-items-center gap-2 flex-wrap ms-lg-auto"
+                  class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 ms-lg-auto w-100 w-lg-auto"
                 >
                   <select
                     v-model="filterType"
-                    class="form-select bg-dark text-white border-success w-auto"
+                    class="form-select bg-dark text-white border-success w-100 w-md-auto"
                   >
                     <option value="group">Filtrar por grupo</option>
                     <option value="team">Filtrar por selección</option>
@@ -104,7 +104,7 @@
                   <select
                     v-if="filterType === 'group'"
                     v-model="selectedGroup"
-                    class="form-select bg-dark text-white border-success w-auto"
+                    class="form-select bg-dark text-white border-success w-100 w-md-auto"
                   >
                     <option value="Todos">Todos los grupos</option>
                     <option v-for="group in groups" :key="group" :value="group">
@@ -115,7 +115,7 @@
                   <select
                     v-if="filterType === 'team'"
                     v-model="selectedTeam"
-                    class="form-select bg-dark text-white border-success w-auto"
+                    class="form-select bg-dark text-white border-success w-100 w-md-auto"
                   >
                     <option value="Todas">Todas las selecciones</option>
                     <option v-for="team in teams" :key="team" :value="team">
@@ -315,6 +315,7 @@
         </main>
       </div>
     </div>
+    <bottom-nav />
   </div>
 </template>
 
@@ -324,6 +325,7 @@ import { useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
+import BottomNav from "@/components/dashboard/BottomNav.vue";
 
 const route = useRoute();
 

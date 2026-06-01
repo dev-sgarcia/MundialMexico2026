@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black vh-100 text-white overflow-hidden">
+  <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
     <div class="container-fluid px-0 h-100">
       <div class="row g-0 h-100">
         <aside
@@ -9,7 +9,7 @@
         </aside>
 
         <main
-          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-1 pb-1"
+          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
         >
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
@@ -25,12 +25,11 @@
                     Administra las ligas en las que estás participando.
                   </p>
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 d-none d-md-block">
                   <UserProfile />
                 </div>
               </div>
             </div>
-
             <!-- BODY -->
             <div
               class="flex-grow-1 overflow-auto overflow-x-hidden scroll-clean"
@@ -491,6 +490,7 @@
         </main>
       </div>
     </div>
+    <BottomNav />
   </div>
 </template>
 
@@ -500,6 +500,8 @@ import { useRouter } from "vue-router";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
 import { useToast } from "vue-toastification";
+import BottomNav from "@/components/dashboard/BottomNav.vue";
+
 import {
   PhArrowRight,
   PhCalendarBlank,
@@ -562,7 +564,7 @@ const quinielas = ref([
     campeonElegido: "Francia",
     bandera: "fr",
     imagen:
-      "https://images.unsplash.com/photo-1626248801379-51a0748a5f96?q=80&w=300",
+      "https://media.admagazine.com/photos/68d61f6167c9727d65c37b3d/16:9/w_2560%2Cc_limit/Mascotas%2520Mundial%25202026.jpg",
   },
 ]);
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black text-white vh-100 overflow-hidden">
+  <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
     <div class="container-fluid px-0 h-100">
       <div class="row g-0 h-100">
         <!-- SIDEBAR -->
@@ -9,7 +9,7 @@
 
         <!-- CONTENIDO -->
         <main
-          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-1 pb-1"
+          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
         >
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
@@ -28,7 +28,7 @@
                     Ranking general de participantes de la Quiniela RA.
                   </p>
                 </div>
-                <div class="mt-2">
+                <div class="mt-2 d-none d-md-block">
                   <UserProfile />
                 </div>
               </div>
@@ -166,7 +166,7 @@
               <!-- CONTENIDO -->
               <div class="row g-4 align-items-start">
                 <!-- IZQUIERDA -->
-                <div class="col-12 col-xl-9">
+                <div class="col-12 col-lg-8 col-xl-9">
                   <!-- FILTROS -->
                   <div class="card prediction-card text-white rounded-4 mb-3">
                     <div class="card-body p-3">
@@ -216,9 +216,12 @@
                             <th>Participante</th>
                             <th>Marc. exactos</th>
                             <th>Aciertos</th>
-                            <th>Errores</th>
+
+                            <th class="d-none d-md-table-cell">Errores</th>
+
                             <th>Puntos</th>
-                            <th>Movimiento</th>
+
+                            <th class="d-none d-md-table-cell">Movimiento</th>
                           </tr>
                         </thead>
 
@@ -268,13 +271,15 @@
 
                             <td>{{ player.exactScores }}</td>
                             <td>{{ player.correctResults }}</td>
-                            <td>{{ player.failedPredictions }}</td>
+                            <td class="d-none d-md-table-cell">
+                              {{ player.failedPredictions }}
+                            </td>
 
                             <td class="fw-bold text-success fs-5">
                               {{ player.points }}
                             </td>
 
-                            <td>
+                            <td class="d-none d-md-table-cell">
                               <span :class="getMovementClass(player.movement)">
                                 {{ getMovementIcon(player.movement) }}
                                 {{ Math.abs(player.movement) || "" }}
@@ -348,7 +353,7 @@
                 </div>
 
                 <!-- DERECHA -->
-                <div class="col-12 col-xl-3">
+                <div class="col-12 col-lg-4 col-xl-3">
                   <div class="d-flex flex-column gap-4 w-100">
                     <!-- PARTIDOS -->
                     <div class="card prediction-card text-white rounded-4">
@@ -495,12 +500,13 @@
         </main>
       </div>
     </div>
+    <BottomNav />
   </div>
 </template>
 <script setup>
 import { computed, ref, watch } from "vue";
 import UserProfile from "@/components/common/UserProfile.vue";
-
+import BottomNav from "@/components/dashboard/BottomNav.vue";
 import {
   PhCalendarBlank,
   PhChartLineUp,
