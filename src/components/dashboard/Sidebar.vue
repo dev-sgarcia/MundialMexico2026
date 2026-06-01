@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 import {
   PhHouse,
   PhTrophy,
@@ -76,7 +76,7 @@ const route = useRoute();
 
 const menuItems = [
   { label: "Inicio", path: "/dashboard", icon: PhHouse },
-  { label: "Quinielas", path: "/juega", icon: PhTrophy },
+  { label: "Quinielas", path: "/quinielas", icon: PhTrophy },
   { label: "Predicciones", path: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
@@ -96,15 +96,17 @@ const menuItems = [
 
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
-  const currentLigaId = route.query.ligaId || localStorage.getItem('ligaIdActiva');
-  const currentLigaNombre = route.query.ligaNombre || localStorage.getItem('ligaNombreActiva');
+  const currentLigaId =
+    route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  const currentLigaNombre =
+    route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
 
   return {
     path: basePath,
     query: {
       ligaId: currentLigaId,
-      ligaNombre: currentLigaNombre
-    }
+      ligaNombre: currentLigaNombre,
+    },
   };
 };
 </script>

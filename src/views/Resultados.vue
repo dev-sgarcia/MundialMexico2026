@@ -1,65 +1,89 @@
 <template>
-  <div class="bg-black min-vh-100 text-white overflow-lg-hidden">
-    <div class="container-fluid px-0 min-vh-100">
-      <div class="row g-3 min-vh-100 align-items-start">
+  <div class="bg-black vh-100 text-white overflow-hidden">
+    <div class="container-fluid px-0 h-100">
+      <div class="row g-0 h-100">
         <aside
-          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden position-sticky top-0"
+          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
         >
           <Sidebar />
         </aside>
 
         <main
-          class="col-12 col-lg-9 col-xl-10 min-vh-100 vh-lg-100 overflow-lg-hidden"
+          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-1 pb-1"
         >
           <section
-            class="container-fluid min-vh-100 h-lg-100 d-flex flex-column overflow-lg-hidden"
+            class="container-fluid h-100 d-flex flex-column overflow-hidden"
           >
-            <div class="sticky-lg-top bg-black z-3 pb-3">
+            <div class="sticky-top bg-black z-3">
               <div
-                class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4 pt-2"
+                class="d-flex justify-content-between align-items-start flex-wrap gap-3"
               >
                 <div>
                   <h2 class="fw-bold mb-1">
                     Resultados
-                    <span v-if="nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'" class="text-gold ms-2">
+                    <span
+                      v-if="
+                        nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
+                      "
+                      class="text-gold ms-2"
+                    >
                       : {{ nombreLigaActiva }}
                     </span>
-                  </h2>                  
+                  </h2>
                   <p class="text-white-50 mb-0">
-                    Consulta los marcadores oficiales y sigue el torneo en tiempo real.
+                    Consulta los marcadores oficiales y sigue el torneo en
+                    tiempo real.
                   </p>
                 </div>
-                <UserProfile />
+                <div class="mt-2">
+                  <UserProfile />
+                </div>
               </div>
 
               <div
-                class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
+                class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-1 mb-4"
               >
                 <div class="btn-group">
                   <button
                     class="btn"
-                    :class="selectedStatus === 'all' ? 'btn-success' : 'btn-outline-success'"
+                    :class="
+                      selectedStatus === 'all'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
                     @click="selectedStatus = 'all'"
                   >
                     Todos
                   </button>
                   <button
                     class="btn"
-                    :class="selectedStatus === 'live' ? 'btn-success' : 'btn-outline-success'"
+                    :class="
+                      selectedStatus === 'live'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
                     @click="selectedStatus = 'live'"
                   >
                     En vivo
                   </button>
                   <button
                     class="btn"
-                    :class="selectedStatus === 'finished' ? 'btn-success' : 'btn-outline-success'"
+                    :class="
+                      selectedStatus === 'finished'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
                     @click="selectedStatus = 'finished'"
                   >
                     Finalizados
                   </button>
                   <button
                     class="btn"
-                    :class="selectedStatus === 'pending' ? 'btn-success' : 'btn-outline-success'"
+                    :class="
+                      selectedStatus === 'pending'
+                        ? 'btn-success'
+                        : 'btn-outline-success'
+                    "
                     @click="selectedStatus = 'pending'"
                   >
                     Pendientes
@@ -130,23 +154,32 @@
             </div>
 
             <div
-              class="flex-grow-1 overflow-lg-auto overflow-x-hidden pb-4 scroll-clean"
+              class="flex-grow-1 overflow-auto overflow-x-hidden pb-4 scroll-clean"
             >
               <div v-if="cargando" class="text-center py-5">
                 <div class="spinner-border text-success" role="status"></div>
-                <p class="mt-3 text-white-50">Cargando marcadores oficiales...</p>
+                <p class="mt-3 text-white-50">
+                  Cargando marcadores oficiales...
+                </p>
               </div>
 
               <div v-else class="row g-3">
-                
                 <div class="col-12 col-xl-8">
-                  <div v-if="partidosAgrupados.length === 0" class="text-center text-white-50 py-4">
+                  <div
+                    v-if="partidosAgrupados.length === 0"
+                    class="text-center text-white-50 py-4"
+                  >
                     No hay partidos que coincidan con los filtros seleccionados.
                   </div>
 
-                  <div v-for="grupo in partidosAgrupados" :key="grupo.fecha" class="mb-5">
-                    
-                    <h5 class="fw-bold mb-3 text-gold text-capitalize border-bottom border-success border-opacity-25 pb-2">
+                  <div
+                    v-for="grupo in partidosAgrupados"
+                    :key="grupo.fecha"
+                    class="mb-5"
+                  >
+                    <h5
+                      class="fw-bold mb-3 text-gold text-capitalize border-bottom border-success border-opacity-25 pb-2"
+                    >
                       📅 {{ formatDateLong(grupo.fecha) }}
                     </h5>
 
@@ -156,7 +189,9 @@
                         :key="match.id"
                         class="col-12 col-md-6"
                       >
-                        <div class="card results-card text-white rounded-4 h-100">
+                        <div
+                          class="card results-card text-white rounded-4 h-100"
+                        >
                           <div class="card-body">
                             <div class="text-center mb-3">
                               <small class="text-white-50 fw-semibold">
@@ -170,7 +205,9 @@
                               <div
                                 class="d-flex align-items-center justify-content-end gap-2 team-side"
                               >
-                                <span class="fw-bold text-end team-name text-truncate">
+                                <span
+                                  class="fw-bold text-end team-name text-truncate"
+                                >
                                   {{ match.homeTeam }}
                                 </span>
                                 <img
@@ -179,11 +216,12 @@
                                   class="team-flag"
                                 />
                               </div>
-                              
+
                               <div class="fw-bold fs-3 text-success score-box">
-                                {{ formatScore(match.homeScore) }} - {{ formatScore(match.awayScore) }}
+                                {{ formatScore(match.homeScore) }} -
+                                {{ formatScore(match.awayScore) }}
                               </div>
-                              
+
                               <div
                                 class="d-flex align-items-center justify-content-start gap-2 team-side"
                               >
@@ -192,7 +230,9 @@
                                   :alt="match.awayTeam"
                                   class="team-flag"
                                 />
-                                <span class="fw-bold text-start team-name text-truncate">
+                                <span
+                                  class="fw-bold text-start team-name text-truncate"
+                                >
                                   {{ match.awayTeam }}
                                 </span>
                               </div>
@@ -210,7 +250,9 @@
                             <div class="text-center mt-2">
                               <small class="text-white-50">
                                 {{ match.phase }} · {{ match.stadium }}
-                                <span v-if="match.city">· {{ match.city }}</span>
+                                <span v-if="match.city"
+                                  >· {{ match.city }}</span
+                                >
                               </small>
                             </div>
                           </div>
@@ -267,7 +309,6 @@
                     </div>
                   </div>
                 </div>
-                
               </div>
             </div>
           </section>
@@ -288,13 +329,19 @@ const route = useRoute();
 
 // --- VARIABLES SEGURAS DE SESIÓN Y LIGA ---
 const userId = ref(null);
-const idLigaActiva = ref(route.query.ligaId || localStorage.getItem('ligaIdActiva') || null);
-const nombreLigaActiva = ref(route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela");
+const idLigaActiva = ref(
+  route.query.ligaId || localStorage.getItem("ligaIdActiva") || null,
+);
+const nombreLigaActiva = ref(
+  route.query.ligaNombre ||
+    localStorage.getItem("ligaNombreActiva") ||
+    "Mi Quiniela",
+);
 
 // Caché al inicio
-if (idLigaActiva.value && idLigaActiva.value !== 'null') {
-  localStorage.setItem('ligaIdActiva', idLigaActiva.value);
-  localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
+if (idLigaActiva.value && idLigaActiva.value !== "null") {
+  localStorage.setItem("ligaIdActiva", idLigaActiva.value);
+  localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
 }
 
 // --- ESTADOS DE LA PANTALLA ---
@@ -307,25 +354,63 @@ const matches = ref([]);
 
 // --- VARIABLES ESTÁTICAS (A REEMPLAZAR LUEGO CON CONSULTAS DE RANKING) ---
 const predictionHits = ref([
-  { id: 1, userName: "Javi", match: "México vs Sudáfrica", prediction: "2 - 1", points: 3 },
-  { id: 2, userName: "Nancy", match: "Brasil vs Marruecos", prediction: "1 - 0", points: 3 },
-  { id: 3, userName: "Daniel", match: "Canadá vs Catar", prediction: "2 - 0", points: 1 },
+  {
+    id: 1,
+    userName: "Javi",
+    match: "México vs Sudáfrica",
+    prediction: "2 - 1",
+    points: 3,
+  },
+  {
+    id: 2,
+    userName: "Nancy",
+    match: "Brasil vs Marruecos",
+    prediction: "1 - 0",
+    points: 3,
+  },
+  {
+    id: 3,
+    userName: "Daniel",
+    match: "Canadá vs Catar",
+    prediction: "2 - 0",
+    points: 1,
+  },
 ]);
 
 const ranking = ref([
-  { id: 1, position: 1, name: "Javi", points: 48, status: "Racha de 3 aciertos" },
-  { id: 2, position: 2, name: "Nancy", points: 42, status: "Subió 2 posiciones" },
-  { id: 3, position: 3, name: "Daniel", points: 39, status: "Marcador exacto reciente" },
+  {
+    id: 1,
+    position: 1,
+    name: "Javi",
+    points: 48,
+    status: "Racha de 3 aciertos",
+  },
+  {
+    id: 2,
+    position: 2,
+    name: "Nancy",
+    points: 42,
+    status: "Subió 2 posiciones",
+  },
+  {
+    id: 3,
+    position: 3,
+    name: "Daniel",
+    points: 39,
+    status: "Marcador exacto reciente",
+  },
 ]);
 
 // --- FUNCIONES DE UTILIDAD ---
 const normalizarFecha = (fechaTexto) => {
-  if (!fechaTexto) return "9999-99-99"; 
-  const partes = fechaTexto.includes("/") ? fechaTexto.split("/") : fechaTexto.split("-");
+  if (!fechaTexto) return "9999-99-99";
+  const partes = fechaTexto.includes("/")
+    ? fechaTexto.split("/")
+    : fechaTexto.split("-");
   if (partes.length === 3 && partes[0].length <= 2) {
-    return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+    return `${partes[2]}-${partes[1].padStart(2, "0")}-${partes[0].padStart(2, "0")}`;
   }
-  return fechaTexto; 
+  return fechaTexto;
 };
 
 // --- CONSULTA A SUPABASE ---
@@ -341,7 +426,7 @@ const cargarResultados = async () => {
     // Normalizar y Mapear los datos de Supabase a la estructura del frontend
     matches.value = dbMatches.map((partidoBD) => {
       let nombreGrupo = partidoBD.group_name || partidoBD.group || "";
-      nombreGrupo = nombreGrupo.replace(/Grupo /i, '').trim();
+      nombreGrupo = nombreGrupo.replace(/Grupo /i, "").trim();
 
       let fechaLimpia = normalizarFecha(partidoBD.match_date || partidoBD.date);
 
@@ -349,18 +434,23 @@ const cargarResultados = async () => {
         id: partidoBD.id,
         date: fechaLimpia !== "9999-99-99" ? fechaLimpia : "Fecha por definir",
         time: partidoBD.match_time || partidoBD.time || "00:00",
-        homeTeam: partidoBD.home_team || partidoBD.homeTeam, 
+        homeTeam: partidoBD.home_team || partidoBD.homeTeam,
         awayTeam: partidoBD.away_team || partidoBD.awayTeam,
         group: nombreGrupo,
         stadium: partidoBD.stadium,
         city: partidoBD.city || "",
-        homeScore: partidoBD.home_score !== null && partidoBD.home_score !== undefined ? partidoBD.home_score : null,
-        awayScore: partidoBD.away_score !== null && partidoBD.away_score !== undefined ? partidoBD.away_score : null,
-        status: partidoBD.status || 'pending', // Asume que la columna se llama "status"
-        phase: partidoBD.phase || 'Primera fase'
+        homeScore:
+          partidoBD.home_score !== null && partidoBD.home_score !== undefined
+            ? partidoBD.home_score
+            : null,
+        awayScore:
+          partidoBD.away_score !== null && partidoBD.away_score !== undefined
+            ? partidoBD.away_score
+            : null,
+        status: partidoBD.status || "pending", // Asume que la columna se llama "status"
+        phase: partidoBD.phase || "Primera fase",
       };
     });
-
   } catch (error) {
     console.error("Error al cargar marcadores oficiales:", error);
   } finally {
@@ -370,35 +460,47 @@ const cargarResultados = async () => {
 
 // --- CICLO DE VIDA ---
 onMounted(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (session) {
     userId.value = session.user.id;
   }
-  
-  if (userId.value && idLigaActiva.value && idLigaActiva.value !== 'null') {
+
+  if (userId.value && idLigaActiva.value && idLigaActiva.value !== "null") {
     await cargarResultados();
   } else {
     cargando.value = false;
   }
 });
 
-watch(() => route.query.ligaId, async (newId) => {
-  if (newId && newId !== 'null') {
-    idLigaActiva.value = newId;
-    nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela";
-    
-    localStorage.setItem('ligaIdActiva', newId);
-    localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
-    
-    if (userId.value) {
-      await cargarResultados();
+watch(
+  () => route.query.ligaId,
+  async (newId) => {
+    if (newId && newId !== "null") {
+      idLigaActiva.value = newId;
+      nombreLigaActiva.value =
+        route.query.ligaNombre ||
+        localStorage.getItem("ligaNombreActiva") ||
+        "Mi Quiniela";
+
+      localStorage.setItem("ligaIdActiva", newId);
+      localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
+
+      if (userId.value) {
+        await cargarResultados();
+      }
     }
-  }
-}, { immediate: false });
+  },
+  { immediate: false },
+);
 
 // --- COMPUTADOS Y FILTROS ---
 const teams = computed(() => {
-  const allTeams = matches.value.flatMap((match) => [match.homeTeam, match.awayTeam]);
+  const allTeams = matches.value.flatMap((match) => [
+    match.homeTeam,
+    match.awayTeam,
+  ]);
   return [...new Set(allTeams)].sort();
 });
 
@@ -408,13 +510,19 @@ const groups = computed(() => {
 
 const filteredMatches = computed(() => {
   return matches.value.filter((match) => {
-    const statusValid = selectedStatus.value === "all" || match.status === selectedStatus.value;
+    const statusValid =
+      selectedStatus.value === "all" || match.status === selectedStatus.value;
 
     const groupValid =
-      filterType.value !== "group" || selectedGroup.value === "Todos" || match.group === selectedGroup.value;
+      filterType.value !== "group" ||
+      selectedGroup.value === "Todos" ||
+      match.group === selectedGroup.value;
 
     const teamValid =
-      filterType.value !== "team" || selectedTeam.value === "Todas" || match.homeTeam === selectedTeam.value || match.awayTeam === selectedTeam.value;
+      filterType.value !== "team" ||
+      selectedTeam.value === "Todas" ||
+      match.homeTeam === selectedTeam.value ||
+      match.awayTeam === selectedTeam.value;
 
     return statusValid && groupValid && teamValid;
   });
@@ -435,19 +543,30 @@ const partidosAgrupados = computed(() => {
     .sort((a, b) => {
       if (a === "Fecha por definir") return 1;
       if (b === "Fecha por definir") return -1;
-      return new Date(`${a}T00:00:00`).getTime() - new Date(`${b}T00:00:00`).getTime();
+      return (
+        new Date(`${a}T00:00:00`).getTime() -
+        new Date(`${b}T00:00:00`).getTime()
+      );
     })
-    .map(fecha => ({
+    .map((fecha) => ({
       fecha: fecha,
       // Se ordenan los partidos de ese día por hora
-      partidos: gruposObj[fecha].sort((p1, p2) => p1.time.localeCompare(p2.time))
+      partidos: gruposObj[fecha].sort((p1, p2) =>
+        p1.time.localeCompare(p2.time),
+      ),
     }));
 });
 
 // INDICADORES DE BANDERAS
-const finishedMatches = computed(() => matches.value.filter((m) => m.status === "finished"));
-const liveMatches = computed(() => matches.value.filter((m) => m.status === "live"));
-const pendingMatches = computed(() => matches.value.filter((m) => m.status === "pending"));
+const finishedMatches = computed(() =>
+  matches.value.filter((m) => m.status === "finished"),
+);
+const liveMatches = computed(() =>
+  matches.value.filter((m) => m.status === "live"),
+);
+const pendingMatches = computed(() =>
+  matches.value.filter((m) => m.status === "pending"),
+);
 
 // --- FORMATOS Y CLASES VISUALES ---
 const formatScore = (score) => {
@@ -483,18 +602,54 @@ const getStatusClass = (status) => {
 
 const getFlagCode = (team) => {
   const flagCodes = {
-    México: "mx", Sudáfrica: "za", "República de Corea": "kr", Chequia: "cz",
-    Canadá: "ca", "Bosnia y Herzegovina": "ba", "EE. UU.": "us", Paraguay: "py",
-    Catar: "qa", Suiza: "ch", Brasil: "br", Marruecos: "ma", Haití: "ht",
-    Escocia: "gb-sct", Australia: "au", Turquía: "tr", Alemania: "de",
-    Curazao: "cw", "Países Bajos": "nl", Japón: "jp", "Costa de Marfil": "ci",
-    Ecuador: "ec", Suecia: "se", Túnez: "tn", España: "es",
-    "Islas de Cabo Verde": "cv", Bélgica: "be", Egipto: "eg", "Arabia Saudí": "sa",
-    Uruguay: "uy", "RI de Irán": "ir", "Nueva Zelanda": "nz", Francia: "fr",
-    Senegal: "sn", Irak: "iq", Noruega: "no", Argentina: "ar", Argelia: "dz",
-    Austria: "at", Jordania: "jo", Portugal: "pt", "RD Congo": "cd",
-    Inglaterra: "gb-eng", Croacia: "hr", Ghana: "gh", Panamá: "pa",
-    Uzbekistán: "uz", Colombia: "co",
+    México: "mx",
+    Sudáfrica: "za",
+    "República de Corea": "kr",
+    Chequia: "cz",
+    Canadá: "ca",
+    "Bosnia y Herzegovina": "ba",
+    "EE. UU.": "us",
+    Paraguay: "py",
+    Catar: "qa",
+    Suiza: "ch",
+    Brasil: "br",
+    Marruecos: "ma",
+    Haití: "ht",
+    Escocia: "gb-sct",
+    Australia: "au",
+    Turquía: "tr",
+    Alemania: "de",
+    Curazao: "cw",
+    "Países Bajos": "nl",
+    Japón: "jp",
+    "Costa de Marfil": "ci",
+    Ecuador: "ec",
+    Suecia: "se",
+    Túnez: "tn",
+    España: "es",
+    "Islas de Cabo Verde": "cv",
+    Bélgica: "be",
+    Egipto: "eg",
+    "Arabia Saudí": "sa",
+    Uruguay: "uy",
+    "RI de Irán": "ir",
+    "Nueva Zelanda": "nz",
+    Francia: "fr",
+    Senegal: "sn",
+    Irak: "iq",
+    Noruega: "no",
+    Argentina: "ar",
+    Argelia: "dz",
+    Austria: "at",
+    Jordania: "jo",
+    Portugal: "pt",
+    "RD Congo": "cd",
+    Inglaterra: "gb-eng",
+    Croacia: "hr",
+    Ghana: "gh",
+    Panamá: "pa",
+    Uzbekistán: "uz",
+    Colombia: "co",
   };
   return flagCodes[team] || "un";
 };

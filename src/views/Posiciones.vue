@@ -3,38 +3,39 @@
     <div class="container-fluid px-0 h-100">
       <div class="row g-0 h-100">
         <!-- SIDEBAR -->
-        <aside
-          class="d-none d-lg-block col-lg-3 col-xl-2 bg-black border-end border-success border-opacity-25"
-        >
+        <aside class="d-none d-lg-block col-lg-3 col-xl-2 bg-black">
           <Sidebar />
         </aside>
 
         <!-- CONTENIDO -->
         <main
-          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-3 pt-3 pb-4"
+          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-1 pb-1"
         >
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
           >
             <!-- HEADER FIJO -->
-            <div class="sticky-top bg-black z-3 pb-0">
+            <div class="sticky-top bg-black z-3">
               <div
-                class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-0"
+                class="d-flex justify-content-between align-items-start flex-wrap gap-3"
               >
                 <div>
-                  <h4 class="fw-bold mb-1">🏆 Tabla de posiciones</h4>
-
+                  <h2 class="fw-bold mb-1">
+                    <PhTrophy size="26" weight="fill" class="text-warning" />
+                    Tabla de posiciones
+                  </h2>
                   <p class="text-white-50 mb-0">
                     Ranking general de participantes de la Quiniela RA.
                   </p>
                 </div>
-
-                <UserProfile />
+                <div class="mt-2">
+                  <UserProfile />
+                </div>
               </div>
             </div>
 
             <!-- TODO ESTO SÍ SE MUEVE -->
-            <div class="flex-grow-1 overflow-auto overflow-x-hidden pt-4 pb-4">
+            <div class="flex-grow-1 overflow-auto overflow-x-hidden pb-4 pt-1">
               <!-- CARDS -->
               <div class="row g-4 mb-4">
                 <!-- LIDER -->
