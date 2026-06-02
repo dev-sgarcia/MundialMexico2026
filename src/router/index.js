@@ -82,28 +82,21 @@ const router = createRouter({
 });
 
 // --- EL GUARDIÁN DE RUTAS (El cadenero) ---
-router.beforeEach(async (to, from, next) => {
-  // 1. Obtenemos la sesión actual de forma segura
+router.beforeEach(async (to, from) => {
   const { data: { session } } = await supabase.auth.getSession();
 
-  // 2. ¿Requiere login pero NO hay sesión?
   if (to.meta.requiresAuth && !session) {
-    // Si no está logueado, lo mandamos a la página de acceso (o a home '/')
-    return next('/'); 
+    return '/acceso'; // Regresas la ruta en lugar de llamar next()
   }
 
-  // 3. ¿Requiere liga pero no detectamos el ID en la URL o caché?
   if (to.meta.requiresLiga) {
     const ligaId = to.query.ligaId || localStorage.getItem('ligaIdActiva');
-    
     if (!ligaId || ligaId === 'null') {
-      // Si está logueado pero no tiene liga activa, lo mandamos a que elija una
-      return next('/juega'); 
+      return '/juega'; // Regresas la ruta
     }
   }
 
-  // Si pasó todos los filtros, lo dejamos continuar a su destino
-  next();
+  return true; // Si todo está bien, regresas true para continuar
 });
 
 export default router;

@@ -1,6 +1,5 @@
 <template>
   <div class="bg-black min-vh-100">
-    <Header />
     <div class="container-fluid px-3 py-3">
       <div class="d-flex gap-3 align-items-start">
         <aside

@@ -496,7 +496,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { supabase } from "@/supabaseClient";
+import Swal from 'sweetalert2';
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
 import { useToast } from "vue-toastification";
@@ -568,7 +570,47 @@ const quinielas = ref([
   },
 ]);
 
-onMounted(() => {
+const validarAcceso = async (userId) => {
+  try {
+    // Verificamos si el usuario tiene al menos una liga inscrita
+    const { data, error } = await supabase
+      .from('league_members')
+      .select('user_id')
+      .eq('user_id', userId)
+      .limit(1);
+
+    return !error && data && data.length > 0;
+  } catch (err) {
+    console.error("Error en validación:", err);
+    return false;
+  }
+};
+
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    router.push('/acceso');
+    return;
+  }
+
+  // Validación de seguridad
+  const tieneAcceso = await validarAcceso(session.user.id);
+  
+  if (!tieneAcceso) {
+    Swal.fire({
+      title: 'Acceso Restringido',
+      text: 'No tienes ligas activas. Únete a una para ver tus quinielas.',
+      icon: 'info',
+      background: '#1a1d20',
+      color: '#fff',
+      confirmButtonColor: '#198754'
+    });
+    router.push('/juega');
+    return;
+  }
+
+  // Si todo está bien, cargamos los datos
   if (quinielas.value.length) {
     quinielaSeleccionada.value = quinielas.value[0];
   }

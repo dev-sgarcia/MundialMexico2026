@@ -503,8 +503,9 @@
     <BottomNav />
   </div>
 </template>
+
 <script setup>
-import { computed, ref, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import UserProfile from "@/components/common/UserProfile.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 import {
@@ -519,6 +520,71 @@ import {
 
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import { standingsMock } from "@/data/standings.mock";
+import { useRouter, useRoute } from "vue-router";
+import { supabase } from "@/supabaseClient";
+import Swal from 'sweetalert2';
+
+const router = useRouter();
+const route = useRoute();
+
+// Variables de estado
+const userId = ref(null);
+const idLigaActiva = ref(route.query.ligaId || localStorage.getItem('ligaIdActiva') || null);
+
+// 3. Función cadenero
+const validarAcceso = async (userId) => {
+  try {
+    // Buscamos un registro cualquiera; si no hay, el arreglo será vacío
+    const { data, error } = await supabase
+      .from('league_members')
+      .select('league_id') // Seleccionamos una columna que SÍ existe
+      .eq('user_id', String(userId))
+      .limit(1);
+
+    if (error) throw error;
+
+    // Si data tiene elementos, tiene acceso. Si está vacío, no.
+    return data && data.length > 0;
+  } catch (err) {
+    console.error("Error en validación:", err);
+    return false;
+  }
+};
+
+// 3. El onMounted blindado
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    router.push('/');
+    return;
+  }
+  
+  userId.value = session.user.id;
+
+  // 1. Validar si tiene al menos una liga
+  const tieneLiga = await validarAcceso(userId.value);
+  
+  if (!tieneLiga) {
+    Swal.fire({
+      title: '¡Aún no tienes ligas!',
+      text: 'Debes unirte a una liga para ver las posiciones.',
+      icon: 'info',
+      background: '#1a1d20',
+      color: '#fff'
+    });
+    router.push('/juega');
+    return;
+  }
+
+  // 2. Si tiene liga, validamos la liga específica activa
+  if (idLigaActiva.value && idLigaActiva.value !== "null") {
+    // ... aquí tu lógica de cargarPosiciones()
+    await cargarPosiciones(); 
+  } else {
+    router.push('/juega');
+  }
+});
 
 const search = ref("");
 const sortBy = ref("points");
@@ -676,7 +742,10 @@ const getInitials = (name) => {
 };
 
 const getPerformance = (points) => {
-  if (!leader.value?.points) return 0;
+  // 👇 AGREGAMOS ESTA VALIDACIÓN
+  if (!leader.value || !leader.value.points || leader.value.points === 0) {
+    return 0;
+  }
 
   return Math.round((points / leader.value.points) * 100);
 };

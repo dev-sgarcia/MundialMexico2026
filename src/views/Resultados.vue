@@ -321,13 +321,15 @@
 
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
+import Swal from 'sweetalert2';
 
 const route = useRoute();
+const router = useRouter();
 
 // --- VARIABLES SEGURAS DE SESIÓN Y LIGA ---
 const userId = ref(null);
@@ -467,20 +469,55 @@ const cargarResultados = async () => {
   }
 };
 
-// --- CICLO DE VIDA ---
-onMounted(async () => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (session) {
-    userId.value = session.user.id;
-  }
+const validarAccesoALiga = async (uId, lId) => {
+  if (!uId || !lId) return false;
+  try {
+    const { data, error } = await supabase
+      .from('league_members')
+      .select('user_id') // Campo que sí existe en tu tabla
+      .eq('user_id', String(uId))
+      .eq('league_id', String(lId))
+      .maybeSingle();
 
-  if (userId.value && idLigaActiva.value && idLigaActiva.value !== "null") {
+    return !!data;
+  } catch (err) {
+    console.error("Error en validación:", err);
+    return false;
+  }
+};
+
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  if (!session) {
+    router.push('/acceso');
+    return;
+  }
+  
+  userId.value = session.user.id;
+  
+  // Validamos antes de cargar resultados
+  if (idLigaActiva.value && idLigaActiva.value !== "null") {
+    const tieneAcceso = await validarAccesoALiga(userId.value, idLigaActiva.value);
+    
+    if (!tieneAcceso) {
+      Swal.fire({
+        title: 'Acceso Denegado',
+        text: 'No tienes permisos para ver esta liga.',
+        icon: 'error',
+        background: '#1a1d20',
+        color: '#fff'
+      });
+      router.push('/juega');
+      return; 
+    }
+
     await cargarResultados();
   } else {
-    cargando.value = false;
+    router.push('/juega');
   }
+  
+  cargando.value = false;
 });
 
 watch(

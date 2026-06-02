@@ -1,6 +1,5 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
-    <Header />    
     <div class="container-fluid px-3 py-3">
       <div class="row g-0 h-100">
         <aside
@@ -263,13 +262,15 @@
 
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
+import Swal from 'sweetalert2';
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 
 const route = useRoute();
+const router = useRouter();
 const filterType = ref("group");
 const selectedGroup = ref("Todos");
 const selectedTeam = ref("Todas");
@@ -299,21 +300,39 @@ const matches = ref([]);
 // --- NUEVA VARIABLE: Desfase de tiempo ---
 const timeOffset = ref(0);
 
-// --- NUEVA FUNCIÓN: Obtener la hora real de internet ---
+
+// --- VALIDACIÓN ESTRICTA DE PERTENENCIA ---
+const validarAccesoALiga = async (uId, lId) => {
+  if (!uId || !lId) return false;
+  
+  try {
+    // Usamos 'user_id' porque confirmamos que esa columna SÍ existe en tu tabla
+    const { data, error } = await supabase
+      .from('league_members')
+      .select('user_id') 
+      .eq('user_id', String(uId))
+      .eq('league_id', String(lId))
+      .maybeSingle();
+
+    return !!data; // Retorna true si encuentra el registro, false si es null
+  } catch (err) {
+    console.error("Error en validación:", err);
+    return false;
+  }
+};
+
 const sincronizarHoraReal = async () => {
   try {
-    // Consultamos un servidor de tiempo confiable (WorldTimeAPI)
     const response = await fetch("https://worldtimeapi.org/api/timezone/America/Mexico_City");
+    if (!response.ok) throw new Error("API falló"); // Forzamos el salto al catch
     const data = await response.json();
     
-    // Hora real del servidor vs Hora tramposa/local de la PC
     const horaReal = new Date(data.datetime).getTime();
     const horaLocal = new Date().getTime();
-    
-    // Guardamos la diferencia
     timeOffset.value = horaReal - horaLocal;
   } catch (error) {
-    console.warn("No se pudo sincronizar con el servidor de tiempo, usando hora local.", error);
+    console.warn("La API de tiempo no respondió, continuando con hora local segura.");
+    timeOffset.value = 0; // Aseguramos que sea 0 y no un error
   }
 };
 
@@ -405,39 +424,43 @@ const cargarPartidosYPredicciones = async () => {
 };
 
 onMounted(async () => {
+  // 1. Primero, obtenemos la sesión
   const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    userId.value = session.user.id;
+  
+  if (!session) {
+    router.push('/acceso');
+    return;
   }
-
-  // 1. Sincronizamos la hora apenas entra a la pantalla
+  
+  // 2. Asignamos el ID
+  userId.value = session.user.id;
+  
+  // 3. Sincronizamos tiempo
   await sincronizarHoraReal();
 
-  if (userId.value && idLigaActiva.value && idLigaActiva.value !== "null") {
+  // 4. SOLO validamos y cargamos si ya tenemos userId y liga
+  if (idLigaActiva.value && idLigaActiva.value !== "null") {
+  const tieneAcceso = await validarAccesoALiga(userId.value, idLigaActiva.value);  
+    if (!tieneAcceso) {
+      Swal.fire({
+        title: 'Acceso Denegado',
+        text: 'No tienes permisos para ver esta liga.',
+        icon: 'error',
+        background: '#1a1d20',
+        color: '#fff'
+      });
+      router.push('/juega');
+      return; 
+    }
+
     await cargarPartidosYPredicciones();
   } else {
-    cargando.value = false;
+    // Si no hay liga activa, mandamos a elegir una
+    router.push('/juega');
   }
+  
+  cargando.value = false; // Finalizamos carga en cualquier caso
 });
-
-// watch(
-//   () => route.query.ligaId,
-//   async (newId) => {
-//     if (newId && newId !== "null") {
-//       idLigaActiva.value = newId;
-
-//       nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Mi Quiniela";
-
-//       localStorage.setItem("ligaIdActiva", newId);
-//       localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
-
-//       if (userId.value) {
-//         await cargarPartidosYPredicciones();
-//       }
-//     }
-//   },
-//   { immediate: false },
-// );
 
 watch(
   () => route.query.ligaId,
@@ -445,8 +468,6 @@ watch(
     if (newId && newId !== "null") {
       idLigaActiva.value = newId;
       nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Mi Quiniela";
-      
-      // 👇 Actualizamos el evento en el watch
       eventoIdActiva.value = route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
 
       localStorage.setItem("ligaIdActiva", newId);
@@ -454,6 +475,12 @@ watch(
       if (eventoIdActiva.value) localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
 
       if (userId.value) {
+        // 👇 EL CADENERO EN EL WATCH TAMBIÉN
+        const tieneAcceso = await validarAccesoALiga();
+        if (!tieneAcceso) {
+          router.push('/juega');
+          return;
+        }
         await cargarPartidosYPredicciones();
       }
     }

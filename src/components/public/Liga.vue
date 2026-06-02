@@ -284,61 +284,153 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { supabase } from '@/supabaseClient';
+import Swal from 'sweetalert2';
+
 
 const loading = ref(true);
 const misLigas = ref([]);
 const codigoInvitacion = ref('');
 const errorInvitacion = ref('');
 
+// const unirseALiga = async () => {
+//   errorInvitacion.value = '';
+
+//   if (!codigoInvitacion.value) {
+//     errorInvitacion.value = 'Por favor, escribe un código.';
+//     return;
+//   }
+
+//   const { data: { session } } = await supabase.auth.getSession();
+//   if (!session) {
+//     errorInvitacion.value = 'Debes iniciar sesión primero.';
+//     return;
+//   }
+
+//   const { data: ligas, error: errBusqueda } = await supabase
+//     .from('leagues')
+//     .select('id, name')
+//     .eq('invite_code', codigoInvitacion.value);
+
+//   if (errBusqueda || !ligas || ligas.length === 0) {
+//     errorInvitacion.value = 'Código no encontrado. Revisa las mayúsculas y guiones.';
+//     return;
+//   }
+
+//   const ligaEncontrada = ligas[0];
+
+//   const { data: yaEsMiembro } = await supabase
+//     .from('league_members')
+//     .select('*')
+//     .eq('league_id', ligaEncontrada.id)
+//     .eq('user_id', session.user.id);
+
+//   if (yaEsMiembro && yaEsMiembro.length > 0) {
+//     errorInvitacion.value = 'Ya perteneces a esta liga.';
+//     return;
+//   }
+
+//   const { error: errInscripcion } = await supabase.from('league_members').insert({
+//     league_id: ligaEncontrada.id,
+//     user_id: session.user.id,
+//   });
+
+//   if (errInscripcion) {
+//     errorInvitacion.value = 'Hubo un problema al inscribirte.';
+//     console.error(errInscripcion);
+//   } else {
+//     alert(`¡Felicidades! Te has unido a: ${ligaEncontrada.name}`);
+//     codigoInvitacion.value = '';
+//     window.location.reload();
+//   }
+// };
+
 const unirseALiga = async () => {
-  errorInvitacion.value = '';
-
-  if (!codigoInvitacion.value) {
-    errorInvitacion.value = 'Por favor, escribe un código.';
+  if (!codigoInvitacion.value.trim()) {
+    errorInvitacion.value = "Ingresa un código válido.";
     return;
   }
 
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    errorInvitacion.value = 'Debes iniciar sesión primero.';
-    return;
-  }
+  errorInvitacion.value = "";
+  loading.value = true;
 
-  const { data: ligas, error: errBusqueda } = await supabase
-    .from('leagues')
-    .select('id, name')
-    .eq('invite_code', codigoInvitacion.value);
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error("No hay sesión activa");
+    
+    const userId = session.user.id;
 
-  if (errBusqueda || !ligas || ligas.length === 0) {
-    errorInvitacion.value = 'Código no encontrado. Revisa las mayúsculas y guiones.';
-    return;
-  }
+    // 1. Buscar la liga para obtener su ID y su Límite Máximo
+    const { data: liga, error: errLiga } = await supabase
+      .from('leagues')
+      .select('id, max_members')
+      .eq('invite_code', codigoInvitacion.value.trim())
+      .single();
 
-  const ligaEncontrada = ligas[0];
+    if (errLiga || !liga) {
+      errorInvitacion.value = "Código inválido o liga no encontrada.";
+      loading.value = false;
+      return;
+    }
 
-  const { data: yaEsMiembro } = await supabase
-    .from('league_members')
-    .select('*')
-    .eq('league_id', ligaEncontrada.id)
-    .eq('user_id', session.user.id);
+    // 2. Contar cuántos usuarios están inscritos actualmente en esa liga
+    const { count, error: errCount } = await supabase
+      .from('league_members')
+      .select('*', { count: 'exact', head: true })
+      .eq('league_id', liga.id);
 
-  if (yaEsMiembro && yaEsMiembro.length > 0) {
-    errorInvitacion.value = 'Ya perteneces a esta liga.';
-    return;
-  }
+    if (errCount) throw errCount;
 
-  const { error: errInscripcion } = await supabase.from('league_members').insert({
-    league_id: ligaEncontrada.id,
-    user_id: session.user.id,
-  });
+    // 3. ¡LA VALIDACIÓN MAGISTRAL! ¿La liga está llena?
+    if (count >= liga.max_members) {
+      loading.value = false;
+      // Disparamos la alerta bonita en Modo Oscuro
+      Swal.fire({
+        title: '¡Liga Llena!',
+        text: 'Esta liga ha alcanzado su número máximo de participantes. Por favor, ponte en contacto con el organizador para ampliar el cupo de invitados.',
+        icon: 'warning',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#d33', // Botón rojo
+        background: '#1a1d20',      // Fondo oscuro para que combine con Mexasleague
+        color: '#fff'               // Texto blanco
+      });
+      return;
+    }
 
-  if (errInscripcion) {
-    errorInvitacion.value = 'Hubo un problema al inscribirte.';
-    console.error(errInscripcion);
-  } else {
-    alert(`¡Felicidades! Te has unido a: ${ligaEncontrada.name}`);
-    codigoInvitacion.value = '';
-    window.location.reload();
+    // 4. Si hay lugar, inscribimos al usuario
+    const { error: errJoin } = await supabase
+      .from('league_members')
+      .insert([
+        { user_id: userId, league_id: liga.id }
+      ]);
+
+    if (errJoin) {
+      if (errJoin.code === '23505') { 
+         // Código de error de Postgres cuando intentan meterse a la misma liga 2 veces
+         errorInvitacion.value = "Ya estás inscrito en esta liga.";
+      } else {
+         throw errJoin;
+      }
+    } else {
+      // Mensaje de éxito
+      Swal.fire({
+        title: '¡Bienvenido!',
+        text: 'Te has unido a la liga exitosamente.',
+        icon: 'success',
+        confirmButtonText: '¡Genial!',
+        confirmButtonColor: '#198754', // Botón verde success
+        background: '#1a1d20',
+        color: '#fff'
+      });
+      
+      codigoInvitacion.value = "";
+      await cargarLigas(userId); // Recargamos las tarjetas
+    }
+
+  } catch (error) {
+    console.error("Error al unirse a la liga:", error);
+    errorInvitacion.value = "Hubo un error al intentar unirte. Intenta de nuevo.";
+  } finally {
+    loading.value = false;
   }
 };
 
