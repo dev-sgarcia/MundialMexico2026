@@ -1,7 +1,6 @@
 <template>
   <div class="bg-black min-vh-100">
     <Header />
-
     <div class="container-fluid px-3 py-3">
       <div class="d-flex gap-3 align-items-start">
         <aside
@@ -9,43 +8,7 @@
         >
           <Sidebar />
         </aside>
-
-        <main class="flex-grow-1 overflow-hidden">
-          
-          <!-- BANNER PRINCIPAL -->
-          <!-- <section
-            class="hero-card position-relative rounded-4 overflow-hidden border border-success border-opacity-25 mb-4"
-          >
-            <img
-              src="@/assets/bg-dashboard.png"
-              alt="Mundial"
-              class="hero-image w-100"
-            />
-            <div class="hero-overlay"></div>
-
-            <div
-              class="position-absolute top-50 start-0 translate-middle-y text-white px-4 px-lg-5"
-            >
-              <h1 class="fw-bold mb-0">MUNDIAL</h1>
-              <h2 class="fw-bold mb-2">
-                <span class="text-success">MÉXICO</span>
-                <span class="text-danger"> 2026</span>
-              </h2>
-
-              <h4 v-if="nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'" class="text-gold fw-bold mb-3">
-                Liga: {{ nombreLigaActiva }}
-              </h4>
-
-              <p class="fw-semibold mb-4">11 JUN - 19 JUL</p>
-
-              <button class="btn btn-danger rounded-3 px-4 py-2">
-                <i class="bi bi-calendar-event me-2"></i>
-                Ver calendario
-              </button>
-            </div>
-          </section> -->
-
-          <!-- SECCIÓN DE REGLAS -->
+        <main class="flex-grow-1 overflow-hidden">          
           <section class="rules-section">
             <div class="card bg-dark text-white border-success border-opacity-25 rounded-4 shadow">
               <div class="card-header bg-transparent border-bottom border-success border-opacity-25 py-3 px-4">
@@ -55,7 +18,6 @@
               </div>
               
               <div class="card-body p-4">
-                <!-- Dinámica de Premios -->
                 <h5 class="fw-bold text-success mb-3">🏆 Dinámica de Premios</h5>
                 <p class="text-white-50 mb-4">
                   Todo el monto acumulado de nuestra quiniela se dividirá en <strong>dos bolsas iguales (50% y 50%)</strong>. Tienes dos grandes oportunidades de ganar:
@@ -89,7 +51,6 @@
                   </div>
                 </div>
 
-                <!-- EJEMPLO PRÁCTICO -->
                 <div class="alert bg-success bg-opacity-10 border border-success border-opacity-25 text-white-50 mb-5 rounded-4 p-4">
                   <h6 class="fw-bold text-success mb-3">💡 Ejemplo para que quede clarísimo:</h6>
                   <p class="mb-3">
@@ -103,7 +64,6 @@
                   </p>
                 </div>
 
-                <!-- Sistema de Puntuación -->
                 <h5 class="fw-bold text-success mb-3">📊 Sistema de Puntuación</h5>
                 <div class="bg-black rounded-4 border border-secondary border-opacity-25 p-3 mb-5">
                   <ul class="text-white-50 mb-0 ps-3">
@@ -116,7 +76,6 @@
                   </ul>
                 </div>
 
-                <!-- Bono de Oro -->
                 <h5 class="fw-bold text-success mb-3">🌟 El Bono de Oro</h5>
                 <p class="text-white-50 mb-0">
                   Antes de que ruede el primer balón del Mundial, deberás registrar qué selección crees que levantará la Copa. Si tu equipo elegido resulta ser el Campeón del Mundo, sumarás <strong>10 puntos extra</strong> a tu conteo general final. ¡Este bono puede ser el empujón definitivo para llevarte la bolsa principal!
@@ -143,9 +102,17 @@ const userId = ref(null);
 const idLigaActiva = ref(route.query.ligaId || localStorage.getItem('ligaIdActiva') || null);
 const nombreLigaActiva = ref(route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela");
 
-if (idLigaActiva.value && idLigaActiva.value !== 'null') {
-  localStorage.setItem('ligaIdActiva', idLigaActiva.value);
-  localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
+// 👇 SOLUCIÓN: Faltaba declarar la variable eventoIdActiva
+const eventoIdActiva = ref(route.query.eventoId || localStorage.getItem("eventoIdActiva") || null);
+
+// Caché al inicio
+if (idLigaActiva.value && idLigaActiva.value !== "null") {
+  localStorage.setItem("ligaIdActiva", idLigaActiva.value);
+  localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
+}
+
+if (eventoIdActiva.value && eventoIdActiva.value !== 'null') {
+  localStorage.setItem('eventoIdActiva', eventoIdActiva.value);
 }
 
 onMounted(async () => {
@@ -160,8 +127,15 @@ watch(() => route.query.ligaId, (newId) => {
     idLigaActiva.value = newId;
     nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela";
     
+    // 👇 También la atrapamos aquí por si cambian de liga en el menú
+    eventoIdActiva.value = route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
+    
     localStorage.setItem('ligaIdActiva', newId);
     localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
+    
+    if (eventoIdActiva.value) {
+      localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
+    }
   }
 }, { immediate: false });
 </script>

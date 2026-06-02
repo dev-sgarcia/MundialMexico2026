@@ -52,16 +52,33 @@ const menuItems = [
 const isActive = (path) => route.path === path;
 
 // --- FUNCIÓN PARA MANTENER LAS VARIABLES DE LA LIGA ---
+// const obtenerRutaConLiga = (basePath) => {
+//   // Rescatamos de la URL o de la memoria caché
+//   const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
+//   const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
+
+//   return {
+//     path: basePath,
+//     query: {
+//       ligaId: currentLigaId,
+//       ligaNombre: currentLigaNombre,
+//     },
+//   };
+// };
+
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
   const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
   const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
+  // 👇 Rescatamos el eventoId
+  const currentEventoId = route.query.eventoId || localStorage.getItem("eventoIdActiva");
 
   return {
     path: basePath,
     query: {
       ligaId: currentLigaId,
       ligaNombre: currentLigaNombre,
+      eventoId: currentEventoId, // 👇 Lo inyectamos en la URL de destino
     },
   };
 };

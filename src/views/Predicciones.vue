@@ -1,5 +1,6 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
+    <Header />    
     <div class="container-fluid px-3 py-3">
       <div class="row g-0 h-100">
         <aside
@@ -20,14 +21,14 @@
               >
                 <div>
                   <h2 class="fw-bold mb-1">
-                    Mis predicciones
+                    Mis predicciones :
                     <span
                       v-if="
                         nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
                       "
                       class="text-gold ms-2"
                     >
-                      : {{ nombreLigaActiva }}
+                      {{ nombreLigaActiva }}
                     </span>
                   </h2>
                   <p class="text-white-50 mb-0">
@@ -92,7 +93,7 @@
                       >
                       <p class="text-white-50 mb-0">
                         <strong>Recuerda:</strong> Solo se contabilizan las
-                        predicciones realizadas con al menos 1 hora antes del
+                        predicciones realizadas con al menos 10 minutos antes del
                         inicio de cada partido.
                       </p>
                     </div>
@@ -274,29 +275,47 @@ const selectedGroup = ref("Todos");
 const selectedTeam = ref("Todas");
 const cargando = ref(true);
 
-// 1. Nueva variable segura para el usuario
 const userId = ref(null);
 
-//const idLigaActiva = ref(route.query.ligaId || null);
-//const nombreLigaActiva = ref(route.query.ligaNombre || "Mi Quiniela");
-
-// 1. Intentamos leer de la URL, si está vacía (por el F5), leemos de la memoria caché
-const idLigaActiva = ref(
-  route.query.ligaId || localStorage.getItem("ligaIdActiva") || null,
-);
-const nombreLigaActiva = ref(
-  route.query.ligaNombre ||
-    localStorage.getItem("ligaNombreActiva") ||
-    "Mi Quiniela",
+const idLigaActiva = ref(route.query.ligaId || localStorage.getItem("ligaIdActiva") || null);
+const nombreLigaActiva = ref(route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Mi Quiniela");
+// 1. Atrapamos el eventoId de la URL o la caché
+const eventoIdActiva = ref(
+  route.query.eventoId || localStorage.getItem("eventoIdActiva") || null
 );
 
-// 2. Si detectamos una liga válida, la guardamos inmediatamente en la memoria caché
+// 2. Lo guardamos en caché junto con los otros
+if (eventoIdActiva.value && eventoIdActiva.value !== "null") {
+  localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
+}
+
 if (idLigaActiva.value && idLigaActiva.value !== "null") {
   localStorage.setItem("ligaIdActiva", idLigaActiva.value);
   localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
 }
 
 const matches = ref([]);
+
+// --- NUEVA VARIABLE: Desfase de tiempo ---
+const timeOffset = ref(0);
+
+// --- NUEVA FUNCIÓN: Obtener la hora real de internet ---
+const sincronizarHoraReal = async () => {
+  try {
+    // Consultamos un servidor de tiempo confiable (WorldTimeAPI)
+    const response = await fetch("https://worldtimeapi.org/api/timezone/America/Mexico_City");
+    const data = await response.json();
+    
+    // Hora real del servidor vs Hora tramposa/local de la PC
+    const horaReal = new Date(data.datetime).getTime();
+    const horaLocal = new Date().getTime();
+    
+    // Guardamos la diferencia
+    timeOffset.value = horaReal - horaLocal;
+  } catch (error) {
+    console.warn("No se pudo sincronizar con el servidor de tiempo, usando hora local.", error);
+  }
+};
 
 const normalizarFecha = (fechaTexto) => {
   if (!fechaTexto) return "9999-99-99";
@@ -312,19 +331,23 @@ const normalizarFecha = (fechaTexto) => {
 const cargarPartidosYPredicciones = async () => {
   cargando.value = true;
   try {
-    // Verificación extra de seguridad
     if (!userId.value) {
       console.warn("No hay sesión activa.");
       return;
     }
 
+    // const { data: dbMatches, error: errMatches } = await supabase
+    //   .from("matches")
+    //   .select("*");
+    // if (errMatches) throw errMatches;
+
     const { data: dbMatches, error: errMatches } = await supabase
       .from("matches")
-      .select("*");
+      .select("*")
+      .eq("event_id", eventoIdActiva.value); 
 
-    if (errMatches) throw errMatches;
+    if (errMatches) throw errMatches;    
 
-    // ORDEN CRONOLÓGICO ESTRICTO CON TIMESTAMPS
     dbMatches.sort((a, b) => {
       const fechaNormalA = normalizarFecha(a.match_date);
       const fechaNormalB = normalizarFecha(b.match_date);
@@ -332,12 +355,8 @@ const cargarPartidosYPredicciones = async () => {
       if (fechaNormalA === "9999-99-99") return 1;
       if (fechaNormalB === "9999-99-99") return -1;
 
-      const dateA = new Date(
-        `${fechaNormalA}T${a.match_time || "00:00"}`,
-      ).getTime();
-      const dateB = new Date(
-        `${fechaNormalB}T${b.match_time || "00:00"}`,
-      ).getTime();
+      const dateA = new Date(`${fechaNormalA}T${a.match_time || "00:00"}`).getTime();
+      const dateB = new Date(`${fechaNormalB}T${b.match_time || "00:00"}`).getTime();
 
       return dateA - dateB;
     });
@@ -347,7 +366,7 @@ const cargarPartidosYPredicciones = async () => {
       const { data: preds, error: errPreds } = await supabase
         .from("predictions")
         .select("*")
-        .eq("user_id", userId.value) // Usamos la variable global
+        .eq("user_id", userId.value)
         .eq("league_id", idLigaActiva.value);
 
       if (errPreds) throw errPreds;
@@ -386,15 +405,14 @@ const cargarPartidosYPredicciones = async () => {
 };
 
 onMounted(async () => {
-  // 2. Extraemos la sesión una sola vez de forma segura
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   if (session) {
     userId.value = session.user.id;
   }
 
-  // 3. Validamos que tengamos AMBOS datos antes de arrancar
+  // 1. Sincronizamos la hora apenas entra a la pantalla
+  await sincronizarHoraReal();
+
   if (userId.value && idLigaActiva.value && idLigaActiva.value !== "null") {
     await cargarPartidosYPredicciones();
   } else {
@@ -402,21 +420,38 @@ onMounted(async () => {
   }
 });
 
+// watch(
+//   () => route.query.ligaId,
+//   async (newId) => {
+//     if (newId && newId !== "null") {
+//       idLigaActiva.value = newId;
+
+//       nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Mi Quiniela";
+
+//       localStorage.setItem("ligaIdActiva", newId);
+//       localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
+
+//       if (userId.value) {
+//         await cargarPartidosYPredicciones();
+//       }
+//     }
+//   },
+//   { immediate: false },
+// );
+
 watch(
   () => route.query.ligaId,
   async (newId) => {
     if (newId && newId !== "null") {
       idLigaActiva.value = newId;
+      nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Mi Quiniela";
+      
+      // 👇 Actualizamos el evento en el watch
+      eventoIdActiva.value = route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
 
-      // Le decimos que si no viene en la URL, lo rescate de la caché
-      nombreLigaActiva.value =
-        route.query.ligaNombre ||
-        localStorage.getItem("ligaNombreActiva") ||
-        "Mi Quiniela";
-
-      // Actualizamos la caché con el valor validado
       localStorage.setItem("ligaIdActiva", newId);
       localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
+      if (eventoIdActiva.value) localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
 
       if (userId.value) {
         await cargarPartidosYPredicciones();
@@ -426,23 +461,23 @@ watch(
   { immediate: false },
 );
 
+// --- VALIDACIÓN BLINDADA CONTRA TRAMPAS ---
 const esPartidoBloqueado = (match) => {
-  if (!match.date || !match.time || match.date === "Fecha por definir")
-    return false;
+  if (!match.date || !match.time || match.date === "Fecha por definir") return false;
 
   const fechaPartido = new Date(`${match.date}T${match.time}`);
-  const ahora = new Date();
+  
+  // Le sumamos a su reloj local la diferencia real que sacamos de internet
+  const ahoraReal = new Date(new Date().getTime() + timeOffset.value);
 
-  const limiteDeApuesta = fechaPartido.getTime() - 60 * 60 * 1000;
+  const limiteDeApuesta = fechaPartido.getTime() - 10 * 60 * 1000;
 
-  return ahora.getTime() >= limiteDeApuesta;
+  return ahoraReal.getTime() >= limiteDeApuesta;
 };
 
 const guardarPronostico = async (match) => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") {
-    alert(
-      "Error: No se detectó la liga. Por favor regresa a 'Mis Ligas' y vuelve a entrar.",
-    );
+    alert("Error: No se detectó la liga. Por favor regresa a 'Mis Ligas' y vuelve a entrar.");
     match.saved = false;
     return;
   }
@@ -453,8 +488,9 @@ const guardarPronostico = async (match) => {
     return;
   }
 
+  // Validamos nuevamente antes de ir a base de datos usando la hora sincronizada
   if (esPartidoBloqueado(match)) {
-    alert("Este partido ya está bloqueado.");
+    alert("¡Estás intentando hacer trampa! Este partido ya está bloqueado según la hora oficial.");
     await cargarPartidosYPredicciones();
     return;
   }
@@ -472,7 +508,7 @@ const guardarPronostico = async (match) => {
   try {
     const { error } = await supabase.from("predictions").upsert(
       {
-        user_id: userId.value, // Usamos la variable segura
+        user_id: userId.value,
         match_id: match.id,
         league_id: idLigaActiva.value,
         home_score: parseInt(match.homeScore),
@@ -503,8 +539,15 @@ const teams = computed(() => {
   return [...new Set(allTeams)].sort();
 });
 
+// const groups = computed(() => {
+//   return [...new Set(matches.value.map((match) => match.group))].sort();
+// });
+
 const groups = computed(() => {
-  return [...new Set(matches.value.map((match) => match.group))].sort();
+  return [...new Set(matches.value.map((match) => match.group))].sort((a, b) => {
+    // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
+    return String(a).localeCompare(String(b), undefined, { numeric: true });
+  });
 });
 
 const filteredMatches = computed(() => {
@@ -525,7 +568,6 @@ const filteredMatches = computed(() => {
   });
 });
 
-// NUEVO ARREGLO AGRUPADO Y ORDENADO
 const partidosAgrupados = computed(() => {
   const gruposObj = filteredMatches.value.reduce((grupos, match) => {
     const fecha = match.date;
@@ -536,7 +578,6 @@ const partidosAgrupados = computed(() => {
     return grupos;
   }, {});
 
-  // Forzamos el acomodo ordenado en un arreglo para que el HTML no se confunda
   return Object.keys(gruposObj)
     .sort((a, b) => {
       if (a === "Fecha por definir") return 1;
@@ -565,11 +606,8 @@ const progressPercentage = computed(() => {
 
 const formatDate = (date) => {
   if (!date || date === "Fecha por definir") return "Fecha por definir";
-
   const parsedDate = new Date(`${date}T00:00:00`);
-
   if (isNaN(parsedDate)) return date;
-
   return parsedDate.toLocaleDateString("es-MX", {
     weekday: "long",
     day: "2-digit",
@@ -579,54 +617,17 @@ const formatDate = (date) => {
 
 const getFlagCode = (team) => {
   const flagCodes = {
-    México: "mx",
-    Sudáfrica: "za",
-    "Corea del Sur": "kr",
-    "República Checa": "cz",
-    Canadá: "ca",
-    "Bosnia y Herzegovina": "ba",
-    "Estados Unidos": "us",
-    Paraguay: "py",
-    Qatar: "qa",
-    Suiza: "ch",
-    Brasil: "br",
-    Marruecos: "ma",
-    Haití: "ht",
-    Escocia: "gb-sct",
-    Australia: "au",
-    Turquía: "tr",
-    Alemania: "de",
-    Curacao: "cw",
-    "Países Bajos": "nl",
-    Japón: "jp",
-    "Costa de Marfil": "ci",
-    Ecuador: "ec",
-    Suecia: "se",
-    Túnez: "tn",
-    España: "es",
-    "Cabo Verde": "cv",
-    Bélgica: "be",
-    Egipto: "eg",
-    "Arabia Saudita": "sa",
-    Uruguay: "uy",
-    "Irán": "ir",
-    "Nueva Zelanda": "nz",
-    Francia: "fr",
-    Senegal: "sn",
-    Irak: "iq",
-    Noruega: "no",
-    Argentina: "ar",
-    Argelia: "dz",
-    Austria: "at",
-    Jordania: "jo",
-    Portugal: "pt",
-    "RD del Congo": "cd",
-    Inglaterra: "gb-eng",
-    Croacia: "hr",
-    Ghana: "gh",
-    Panamá: "pa",
-    Uzbekistán: "uz",
-    Colombia: "co",
+    México: "mx", Sudáfrica: "za", "Corea del Sur": "kr", "República Checa": "cz",
+    Canadá: "ca", "Bosnia y Herzegovina": "ba", "Estados Unidos": "us",
+    Paraguay: "py", Qatar: "qa", Suiza: "ch", Brasil: "br", Marruecos: "ma",
+    Haití: "ht", Escocia: "gb-sct", Australia: "au", Turquía: "tr", Alemania: "de",
+    Curacao: "cw", "Países Bajos": "nl", Japón: "jp", "Costa de Marfil": "ci",
+    Ecuador: "ec", Suecia: "se", Túnez: "tn", España: "es", "Cabo Verde": "cv",
+    Bélgica: "be", Egipto: "eg", "Arabia Saudita": "sa", Uruguay: "uy",
+    "Irán": "ir", "Nueva Zelanda": "nz", Francia: "fr", Senegal: "sn",
+    Irak: "iq", Noruega: "no", Argentina: "ar", Argelia: "dz", Austria: "at",
+    Jordania: "jo", Portugal: "pt", "RD del Congo": "cd", Inglaterra: "gb-eng",
+    Croacia: "hr", Ghana: "gh", Panamá: "pa", Uzbekistán: "uz", Colombia: "co",
   };
   return flagCodes[team] || "un";
 };

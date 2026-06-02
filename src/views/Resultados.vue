@@ -20,14 +20,14 @@
               >
                 <div>
                   <h2 class="fw-bold mb-1">
-                    Resultados
+                    Resultados :
                     <span
                       v-if="
                         nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
                       "
                       class="text-gold ms-2"
                     >
-                      : {{ nombreLigaActiva }}
+                      {{ nombreLigaActiva }}
                     </span>
                   </h2>
                   <p class="text-white-50 mb-0">
@@ -340,10 +340,16 @@ const nombreLigaActiva = ref(
     "Mi Quiniela",
 );
 
+const eventoIdActiva = ref(route.query.eventoId || localStorage.getItem("eventoIdActiva") || null);
+
 // Caché al inicio
 if (idLigaActiva.value && idLigaActiva.value !== "null") {
   localStorage.setItem("ligaIdActiva", idLigaActiva.value);
   localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
+}
+
+if (eventoIdActiva.value && eventoIdActiva.value !== 'null') {
+  localStorage.setItem('eventoIdActiva', eventoIdActiva.value);
 }
 
 // --- ESTADOS DE LA PANTALLA ---
@@ -421,7 +427,8 @@ const cargarResultados = async () => {
   try {
     const { data: dbMatches, error: errMatches } = await supabase
       .from("matches")
-      .select("*");
+      .select("*")
+      .eq("event_id", eventoIdActiva.value);
 
     if (errMatches) throw errMatches;
 
@@ -489,6 +496,10 @@ watch(
       localStorage.setItem("ligaIdActiva", newId);
       localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
 
+      if (eventoIdActiva.value) {
+        localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
+      }
+
       if (userId.value) {
         await cargarResultados();
       }
@@ -506,8 +517,15 @@ const teams = computed(() => {
   return [...new Set(allTeams)].sort();
 });
 
+// const groups = computed(() => {
+//   return [...new Set(matches.value.map((match) => match.group))].sort();
+// });
+
 const groups = computed(() => {
-  return [...new Set(matches.value.map((match) => match.group))].sort();
+  return [...new Set(matches.value.map((match) => match.group))].sort((a, b) => {
+    // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
+    return String(a).localeCompare(String(b), undefined, { numeric: true });
+  });
 });
 
 const filteredMatches = computed(() => {

@@ -13,8 +13,10 @@
       <div class="profile-card">
         <img class="avatar" :src="samImg" @click="openImage(samImg)" />
         <h2>Samuel Arturo García Sánchez</h2>
-        <a href="https://github.com/dev-sgarcia" target="_blank" class="link">
-          https://github.com/dev-sgarcia
+        <a href="https://www.linkedin.com/in/dev-sgarcia/" target="_blank" class="link">
+        <p class="location">
+          LinkedIn
+        </p>
         </a>
         <p class="bio">
           Desarrollador de software especialista en Delphi y creador de esta
@@ -25,9 +27,11 @@
       <div class="profile-card">
         <img class="avatar" :src="javiImg" @click="openImage(javiImg)" />
         <h2>Javier González Reyes</h2>
-        <a href="https://github.com/J4vi3rGR" target="_blank" class="link">
+        <a href="https://www.linkedin.com/in/javier-gonz%C3%A1lez-reyes-b407b7132/" target="_blank" class="link">
           <br />
-          https://github.com/J4vi3rGR
+        <p class="location">
+          LinkedIn
+        </p>          
         </a>
         <p class="bio">
           Desarrollador de software especialista en .Net e integrante de este
@@ -38,8 +42,10 @@
       <div class="profile-card">
         <img class="avatar" :src="erikImg" @click="openImage(erikImg)" />
         <h2>Erik Ruben Cruz Cortes</h2>
-        <a href="https://github.com/Erik" target="_blank" class="link">
-          https://github.com/Erik
+        <a href="https://www.linkedin.com/in/erik-ruben-cruz-cortes-1707b5158/" target="_blank" class="link">
+        <p class="location">
+          LinkedIn
+        </p>
         </a>
         <p class="bio">
           Full Stack Developer especialista en desarrollo de sistemas e
@@ -53,19 +59,23 @@
         <h2>Gracias por tu apoyo</h2>
         <p>
           Esta quiniela fue desarrollada con el objetivo de crear una
-          experiencia divertida y competitiva para el Mundial de México 2026.
+          experiencia divertida y competitiva entre compañeros de oficina y amigos durante
+          el Mundial de México 2026.
         </p>
       </div>
 
       <!-- PAYPAL -->
       <div class="profile-card">
         <img class="avatar" src="@/assets/paypal-blue.png" />
-        <h2>Donar con PayPal</h2>
+        <h2>Donar con PayPal</h2>        
+
+
         <a href="https://paypal.me/sammomx" target="_blank" class="link">
+        <p class="location">
           ¡Invitanos una cerveza!
+        </p>
         </a>
 
-        <p class="location">Ciudad de México</p>
         <p class="bio">
           Puedes apoyar el proyecto de forma rápida y segura, usando PayPal.
         </p>
@@ -284,4 +294,9 @@ body.modal-open {
     grid-template-columns: 1fr;
   }
 }
+
+.avatar {
+  cursor: pointer;
+}
+
 </style>

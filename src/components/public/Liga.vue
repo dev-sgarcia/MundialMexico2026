@@ -154,12 +154,16 @@
                           </span>
                         </div>
 
-                        <router-link
+                        <!-- <router-link
                           :to="{ path: '/dashboard', query: { ligaId: liga.league_id, ligaNombre: liga.leagues?.name } }"
+                          class="btn btn-success btn-sm w-100 fw-bold mt-1"
+                        > -->
+                        <router-link
+                          :to="{ path: '/dashboard', query: { ligaId: liga.league_id, ligaNombre: liga.leagues?.name, eventoId: liga.leagues?.event_id } }"
                           class="btn btn-success btn-sm w-100 fw-bold mt-1"
                         >
                           Jugar
-                        </router-link>                        
+                        </router-link>
                       </div>
 
                       <div v-else>
@@ -396,10 +400,25 @@ const qualifiedCodes = [
   'iq', 'uz', 'nz', 'gh', 'ml'
 ];
 
+// const cargarLigas = async (userId) => {
+//   const { data, error } = await supabase
+//     .from('league_members')
+//     .select('league_id, champion_team, leagues(id, name, invite_code)')
+//     .eq('user_id', userId);
+
+//   if (!error && data) {
+//     misLigas.value = data.map(liga => ({
+//       ...liga,
+//       selectedTeam: null
+//     }));
+//   }
+// };
+
 const cargarLigas = async (userId) => {
   const { data, error } = await supabase
     .from('league_members')
-    .select('league_id, champion_team, leagues(id, name, invite_code)')
+    // 👇 Agregamos event_id a la consulta
+    .select('league_id, champion_team, leagues(id, name, invite_code, event_id)') 
     .eq('user_id', userId);
 
   if (!error && data) {
