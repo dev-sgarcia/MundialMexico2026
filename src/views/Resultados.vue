@@ -150,83 +150,89 @@
                         </option>
                       </select>
 
-                  <select
-                    v-if="filterType === 'team'"
-                    v-model="selectedTeam"
-                    class="form-select bg-dark text-white border-success w-100 w-md-auto"
-                  >
-                    <option value="Todas">Todas las selecciones</option>
-                    <option v-for="team in teams" :key="team" :value="team">
-                      {{ team }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="card results-card text-white rounded-4 mb-3">
-                <div class="card-body">
-                  <div
-                    class="d-flex justify-content-between align-items-start align-items-md-center flex-column flex-md-row gap-3"
-                  >
-                    <strong>
-                      Fase de Grupos
-                      <span class="text-success">· Resultados Oficiales</span>
-                    </strong>
-
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                      <span class="badge text-bg-success rounded-pill">
-                        {{ finishedMatches.length }} finalizados
-                      </span>
-                      <span class="badge text-bg-danger rounded-pill">
-                        {{ liveMatches.length }} en vivo
-                      </span>
-                      <span class="badge text-bg-warning rounded-pill">
-                        {{ pendingMatches.length }} pendientes
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row justify-content-end g-2 mb-0">
-                <div class="col-12 col-lg-6">
-                  <div class="row g-2">
-                    <div class="col-12 col-sm-6">
                       <select
-                        v-model="filterType"
-                        class="form-select form-select-sm bg-dark text-white border-success"
-                      >
-                        <option value="group">Filtrar por grupo</option>
-                        <option value="team">Filtrar por selección</option>
-                      </select>
-                    </div>
-
-                    <div class="col-12 col-sm-6">
-                      <select
-                        v-if="filterType === 'group'"
-                        v-model="selectedGroup"
-                        class="form-select form-select-sm bg-dark text-white border-success"
-                      >
-                        <option value="Todos">Todos los grupos</option>
-                        <option
-                          v-for="group in groups"
-                          :key="group"
-                          :value="group"
-                        >
-                          Grupo {{ group }}
-                        </option>
-                      </select>
-
-                      <select
-                        v-else
+                        v-if="filterType === 'team'"
                         v-model="selectedTeam"
-                        class="form-select form-select-sm bg-dark text-white border-success"
+                        class="form-select bg-dark text-white border-success w-100 w-md-auto"
                       >
                         <option value="Todas">Todas las selecciones</option>
                         <option v-for="team in teams" :key="team" :value="team">
                           {{ team }}
                         </option>
                       </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card results-card text-white rounded-4 mb-3">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-start align-items-md-center flex-column flex-md-row gap-3"
+                    >
+                      <strong>
+                        Fase de Grupos
+                        <span class="text-success">· Resultados Oficiales</span>
+                      </strong>
+
+                      <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="badge text-bg-success rounded-pill">
+                          {{ finishedMatches.length }} finalizados
+                        </span>
+                        <span class="badge text-bg-danger rounded-pill">
+                          {{ liveMatches.length }} en vivo
+                        </span>
+                        <span class="badge text-bg-warning rounded-pill">
+                          {{ pendingMatches.length }} pendientes
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row justify-content-end g-2 mb-0">
+                  <div class="col-12 col-lg-6">
+                    <div class="row g-2">
+                      <div class="col-12 col-sm-6">
+                        <select
+                          v-model="filterType"
+                          class="form-select form-select-sm bg-dark text-white border-success"
+                        >
+                          <option value="group">Filtrar por grupo</option>
+                          <option value="team">Filtrar por selección</option>
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-sm-6">
+                        <select
+                          v-if="filterType === 'group'"
+                          v-model="selectedGroup"
+                          class="form-select form-select-sm bg-dark text-white border-success"
+                        >
+                          <option value="Todos">Todos los grupos</option>
+                          <option
+                            v-for="group in groups"
+                            :key="group"
+                            :value="group"
+                          >
+                            Grupo {{ group }}
+                          </option>
+                        </select>
+
+                        <select
+                          v-else
+                          v-model="selectedTeam"
+                          class="form-select form-select-sm bg-dark text-white border-success"
+                        >
+                          <option value="Todas">Todas las selecciones</option>
+                          <option
+                            v-for="team in teams"
+                            :key="team"
+                            :value="team"
+                          >
+                            {{ team }}
+                          </option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -251,219 +257,225 @@
                   >
                     No hay partidos que coincidan con los filtros seleccionados.
                   </div>
-
-                  <!-- <div
-                    v-for="grupo in partidosAgrupados"
-                    :key="grupo.fecha"
-                    class="mb-4 mb-lg-5"
+                  <div
+                    v-for="match in grupo.partidos"
+                    :key="match.id"
+                    class="col-12 col-md-6 col-xl-4"
                   >
-                    <h5
-                      class="fw-bold mb-3 text-gold text-capitalize border-bottom border-success border-opacity-25 pb-2 fs-6 fs-lg-5"
+                    <div
+                      class="card results-card text-white rounded-4 h-100"
+                      :class="{ 'admin-clickable': isAdmin }"
+                      @click="abrirModalAdministrador(match)"
                     >
-                      📅 {{ formatDateLong(grupo.fecha) }}
-                    </h5>
+                      <div class="card-body">
+                        <div class="text-center mb-3">
+                          <small class="text-white-50 fw-semibold">
+                            {{ match.time }} · Grupo {{ match.group }}
+                          </small>
+                        </div>
 
-                    <div class="row g-3">
-                      <!-- <div
-                        v-for="match in grupo.partidos"
-                        :key="match.id"
-                        class="col-12 col-md-6 col-xl-4"
-                      > -->
-                      <div v-for="match in grupo.partidos" :key="match.id" class="col-12 col-md-6 col-xl-4">
-                        <div
-                          class="card results-card text-white rounded-4 h-100"
-                          :class="{ 'admin-clickable': isAdmin }"
-                          @click="abrirModalAdministrador(match)"
-                        >                      
-                          <div class="card-body">
-                            <div class="text-center mb-3">
-                              <small class="text-white-50 fw-semibold">
-                                {{ match.time }} · Grupo {{ match.group }}
-                              </small>
-                            </div>
-
-                            <div class="d-md-none">
-                              <div
-                                class="row align-items-center text-center g-2"
-                              >
-                                <div class="col-4">
-                                  <img
-                                    :src="`https://flagcdn.com/w80/${getFlagCode(match.homeTeam)}.png`"
-                                    :alt="match.homeTeam"
-                                    class="team-flag mb-1"
-                                  />
-                                  <div class="fw-bold small text-truncate">
-                                    {{ match.homeTeam }}
-                                  </div>
-                                </div>
-
-                                <div class="col-4">
-                                  <div class="fw-bold fs-4 text-success">
-                                    {{ formatScore(match.homeScore) }} -
-                                    {{ formatScore(match.awayScore) }}
-                                  </div>
-                                </div>
-
-                                <div class="col-4">
-                                  <img
-                                    :src="`https://flagcdn.com/w80/${getFlagCode(match.awayTeam)}.png`"
-                                    :alt="match.awayTeam"
-                                    class="team-flag mb-1"
-                                  />
-                                  <div class="fw-bold small text-truncate">
-                                    {{ match.awayTeam }}
-                                  </div>
-                                </div>
+                        <div class="d-md-none">
+                          <div class="row align-items-center text-center g-2">
+                            <div class="col-4">
+                              <img
+                                :src="`https://flagcdn.com/w80/${getFlagCode(match.homeTeam)}.png`"
+                                :alt="match.homeTeam"
+                                class="team-flag mb-1"
+                              />
+                              <div class="fw-bold small text-truncate">
+                                {{ match.homeTeam }}
                               </div>
                             </div>
 
-                            <div
-                              class="d-none d-md-flex align-items-center justify-content-center gap-4"
-                            >
-                              <div
-                                class="d-flex align-items-center justify-content-end gap-2 team-side"
-                              >
-                                <span
-                                  class="fw-bold text-end team-name text-truncate"
-                                >
-                                  {{ match.homeTeam }}
-                                </span>
-                                <img
-                                  :src="`https://flagcdn.com/w80/${getFlagCode(match.homeTeam)}.png`"
-                                  :alt="match.homeTeam"
-                                  class="team-flag"
-                                />
-                              </div>
-
-                              <div class="fw-bold fs-3 text-success score-box">
+                            <div class="col-4">
+                              <div class="fw-bold fs-4 text-success">
                                 {{ formatScore(match.homeScore) }} -
                                 {{ formatScore(match.awayScore) }}
                               </div>
+                            </div>
 
-                              <div
-                                class="d-flex align-items-center justify-content-start gap-2 team-side"
-                              >
-                                <img
-                                  :src="`https://flagcdn.com/w80/${getFlagCode(match.awayTeam)}.png`"
-                                  :alt="match.awayTeam"
-                                  class="team-flag"
-                                />
-                                <span
-                                  class="fw-bold text-start team-name text-truncate"
-                                >
-                                  {{ match.awayTeam }}
-                                </span>
+                            <div class="col-4">
+                              <img
+                                :src="`https://flagcdn.com/w80/${getFlagCode(match.awayTeam)}.png`"
+                                :alt="match.awayTeam"
+                                class="team-flag mb-1"
+                              />
+                              <div class="fw-bold small text-truncate">
+                                {{ match.awayTeam }}
                               </div>
-                            </div>
-
-                            <div class="text-center mt-3">
-                              <span
-                                class="badge rounded-pill"
-                                :class="getStatusClass(match.status)"
-                              >
-                                {{ getStatusLabel(match.status) }}
-                              </span>
-                            </div>
-
-                            <div class="text-center mt-2">
-                              <small class="text-white-50">
-                                {{ match.phase }} · {{ match.stadium }}
-                                <span v-if="match.city">
-                                  · {{ match.city }}
-                                </span>
-                              </small>
-                            </div>
-
-                            <!-- ACERTANTES ACORDEÓN -->
-                            <div v-if="match.status === 'finished'" class="mt-3 border-top border-success border-opacity-25 pt-2">
-                              <button
-                                class="btn btn-sm text-success w-100 d-flex justify-content-between align-items-center px-1"
-                                style="box-shadow: none;"
-                                @click.stop="match.mostrarAcertantes = !match.mostrarAcertantes"
-                              >
-                                <span class="small fw-bold">
-                                  🎯 {{ obtenerAcertantes(match).length }} Acertaron
-                                </span>
-                                <span class="small fw-bold">{{ match.mostrarAcertantes ? '▲' : '▼' }}</span>
-                              </button>
-                              
-                              <!-- Lista desplegable -->
-                              <div v-show="match.mostrarAcertantes" class="mt-2 bg-dark rounded-3 p-2 text-start shadow-sm border border-secondary border-opacity-25">
-                                <div v-if="obtenerAcertantes(match).length === 0" class="small text-white-50 text-center py-2">
-                                  Nadie acertó el marcador exacto.
-                                </div>
-                                <div v-else>
-                                  <div 
-                                    v-for="(user, index) in obtenerAcertantes(match)" 
-                                    :key="index"
-                                    class="small d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10"
-                                  >
-                                    <span class="text-white text-truncate" style="max-width: 70%;">{{ user.name }}</span>
-                                    <span class="badge text-bg-success rounded-pill">+3 pts</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                <div class="col-12 col-xl-4 pt-xl-5 order-2">
-                  <div class="d-xl-none mb-3">
-                    <h5
-                      class="fw-bold text-success border-start border-success border-4 ps-2"
-                    >
-                      Resumen de la quiniela
-                    </h5>
-                  </div>
-                  <div class="d-flex flex-column gap-3">
-                    <div class="card results-card text-white rounded-4">
-                      <div class="card-body">
-                        <h4 class="fw-bold mb-3 fs-6 fs-xl-4">
-                          Acertaron el marcador
-                        </h4>
-
-                        <div
-                          v-for="hit in predictionHits"
-                          :key="hit.id"
-                          class="info-row d-flex justify-content-between align-items-center rounded-4 p-2 p-xl-3 mb-2 gap-2"
-                        >
-                          <div class="overflow-hidden">
-                            <strong>{{ hit.userName }}</strong>
-                            <div class="small text-white-50 text-truncate">
-                              {{ hit.match }} · Predijo {{ hit.prediction }}
                             </div>
                           </div>
+                        </div>
 
-                          <span
-                            class="badge text-bg-success rounded-pill flex-shrink-0"
+                        <div
+                          class="d-none d-md-flex align-items-center justify-content-center gap-4"
+                        >
+                          <div
+                            class="d-flex align-items-center justify-content-end gap-2 team-side"
                           >
-                            +{{ hit.points }} pts
+                            <span
+                              class="fw-bold text-end team-name text-truncate"
+                            >
+                              {{ match.homeTeam }}
+                            </span>
+                            <img
+                              :src="`https://flagcdn.com/w80/${getFlagCode(match.homeTeam)}.png`"
+                              :alt="match.homeTeam"
+                              class="team-flag"
+                            />
+                          </div>
+
+                          <div class="fw-bold fs-3 text-success score-box">
+                            {{ formatScore(match.homeScore) }} -
+                            {{ formatScore(match.awayScore) }}
+                          </div>
+
+                          <div
+                            class="d-flex align-items-center justify-content-start gap-2 team-side"
+                          >
+                            <img
+                              :src="`https://flagcdn.com/w80/${getFlagCode(match.awayTeam)}.png`"
+                              :alt="match.awayTeam"
+                              class="team-flag"
+                            />
+                            <span
+                              class="fw-bold text-start team-name text-truncate"
+                            >
+                              {{ match.awayTeam }}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="text-center mt-3">
+                          <span
+                            class="badge rounded-pill"
+                            :class="getStatusClass(match.status)"
+                          >
+                            {{ getStatusLabel(match.status) }}
                           </span>
+                        </div>
+
+                        <div class="text-center mt-2">
+                          <small class="text-white-50">
+                            {{ match.phase }} · {{ match.stadium }}
+                            <span v-if="match.city"> · {{ match.city }} </span>
+                          </small>
+                        </div>
+
+                        <!-- ACERTANTES ACORDEÓN -->
+                        <div
+                          v-if="match.status === 'finished'"
+                          class="mt-3 border-top border-success border-opacity-25 pt-2"
+                        >
+                          <button
+                            class="btn btn-sm text-success w-100 d-flex justify-content-between align-items-center px-1"
+                            style="box-shadow: none"
+                            @click.stop="
+                              match.mostrarAcertantes = !match.mostrarAcertantes
+                            "
+                          >
+                            <span class="small fw-bold">
+                              🎯 {{ obtenerAcertantes(match).length }} Acertaron
+                            </span>
+                            <span class="small fw-bold">{{
+                              match.mostrarAcertantes ? "▲" : "▼"
+                            }}</span>
+                          </button>
+
+                          <!-- Lista desplegable -->
+                          <div
+                            v-show="match.mostrarAcertantes"
+                            class="mt-2 bg-dark rounded-3 p-2 text-start shadow-sm border border-secondary border-opacity-25"
+                          >
+                            <div
+                              v-if="obtenerAcertantes(match).length === 0"
+                              class="small text-white-50 text-center py-2"
+                            >
+                              Nadie acertó el marcador exacto.
+                            </div>
+                            <div v-else>
+                              <div
+                                v-for="(user, index) in obtenerAcertantes(
+                                  match,
+                                )"
+                                :key="index"
+                                class="small d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10"
+                              >
+                                <span
+                                  class="text-white text-truncate"
+                                  style="max-width: 70%"
+                                  >{{ user.name }}</span
+                                >
+                                <span class="badge text-bg-success rounded-pill"
+                                  >+3 pts</span
+                                >
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-
-                    <div class="card results-card text-white rounded-4">
-                      <div class="card-body">
-                        <h4 class="fw-bold mb-3 fs-6 fs-xl-4">
-                          Top 5 de la quiniela
-                        </h4>
-
-                        <div
-                          v-for="player in ranking"
-                          :key="player.id"
-                          class="info-row d-flex justify-content-between align-items-center rounded-4 p-2 p-xl-3 mb-2 gap-2"
+                    <div class="col-12 col-xl-4 pt-xl-5 order-2">
+                      <div class="d-xl-none mb-3">
+                        <h5
+                          class="fw-bold text-success border-start border-success border-4 ps-2"
                         >
-                          <div class="overflow-hidden">
-                            <strong>
-                              {{ player.position }}. {{ player.name }}
-                            </strong>
-                            <div class="small text-white-50 text-truncate">
-                              {{ player.status }}
+                          Resumen de la quiniela
+                        </h5>
+                      </div>
+                      <div class="d-flex flex-column gap-3">
+                        <div class="card results-card text-white rounded-4">
+                          <div class="card-body">
+                            <h4 class="fw-bold mb-3 fs-6 fs-xl-4">
+                              Acertaron el marcador
+                            </h4>
+
+                            <div
+                              v-for="hit in predictionHits"
+                              :key="hit.id"
+                              class="info-row d-flex justify-content-between align-items-center rounded-4 p-2 p-xl-3 mb-2 gap-2"
+                            >
+                              <div class="overflow-hidden">
+                                <strong>{{ hit.userName }}</strong>
+                                <div class="small text-white-50 text-truncate">
+                                  {{ hit.match }} · Predijo {{ hit.prediction }}
+                                </div>
+                              </div>
+
+                              <span
+                                class="badge text-bg-success rounded-pill flex-shrink-0"
+                              >
+                                +{{ hit.points }} pts
+                              </span>
                             </div>
                           </div>
+                        </div>
 
-                          <span class="fw-bold text-success flex-shrink-0">
-                            {{ player.points }} pts
-                          </span>
+                        <div class="card results-card text-white rounded-4">
+                          <div class="card-body">
+                            <h4 class="fw-bold mb-3 fs-6 fs-xl-4">
+                              Top 5 de la quiniela
+                            </h4>
+
+                            <div
+                              v-for="player in ranking"
+                              :key="player.id"
+                              class="info-row d-flex justify-content-between align-items-center rounded-4 p-2 p-xl-3 mb-2 gap-2"
+                            >
+                              <div class="overflow-hidden">
+                                <strong>
+                                  {{ player.position }}. {{ player.name }}
+                                </strong>
+                                <div class="small text-white-50 text-truncate">
+                                  {{ player.status }}
+                                </div>
+                              </div>
+
+                              <span class="fw-bold text-success flex-shrink-0">
+                                {{ player.points }} pts
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -486,7 +498,7 @@ import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const route = useRoute();
 const router = useRouter();
@@ -495,11 +507,10 @@ const router = useRouter();
 const isAdmin = ref(false);
 // Coloca aquí los correos de los administradores autorizados
 const adminEmails = [
-  "ingeniero.mx@gmail.com", 
+  "ingeniero.mx@gmail.com",
   "javiergonzalezr93@gmail.com",
-  "rubencruz4052@gmail.com"
+  "rubencruz4052@gmail.com",
 ];
-
 
 // --- VARIABLES SEGURAS DE SESIÓN Y LIGA ---
 const userId = ref(null);
@@ -512,7 +523,9 @@ const nombreLigaActiva = ref(
     "Mi Quiniela",
 );
 
-const eventoIdActiva = ref(route.query.eventoId || localStorage.getItem("eventoIdActiva") || null);
+const eventoIdActiva = ref(
+  route.query.eventoId || localStorage.getItem("eventoIdActiva") || null,
+);
 
 // Caché al inicio
 if (idLigaActiva.value && idLigaActiva.value !== "null") {
@@ -520,8 +533,8 @@ if (idLigaActiva.value && idLigaActiva.value !== "null") {
   localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
 }
 
-if (eventoIdActiva.value && eventoIdActiva.value !== 'null') {
-  localStorage.setItem('eventoIdActiva', eventoIdActiva.value);
+if (eventoIdActiva.value && eventoIdActiva.value !== "null") {
+  localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
 }
 
 // --- ESTADOS DE LA PANTALLA ---
@@ -633,20 +646,20 @@ const cargarResultados = async () => {
             : null,
         status: partidoBD.status || "pending", // Asume que la columna se llama "status"
         phase: partidoBD.phase || "Primera fase",
-        mostrarAcertantes: false
+        mostrarAcertantes: false,
       };
     });
 
-    await cargarPrediccionesReales();    
+    await cargarPrediccionesReales();
   } catch (error) {
     console.error("Error al cargar marcadores oficiales:", error);
   } finally {
     cargando.value = false;
-    
+
     // Esperamos a que la vista quite el spinner y dibuje los partidos
-    await nextTick(); 
+    await nextTick();
     // Hacemos el scroll automático
-    ubicarDiaActual(); 
+    ubicarDiaActual();
   }
 };
 
@@ -655,20 +668,22 @@ const cargarPrediccionesReales = async () => {
   if (!idLigaActiva.value) return;
 
   try {
-    // IMPORTANTE: Ajusta "usuarios ( nombre )" al nombre exacto de tu tabla 
+    // IMPORTANTE: Ajusta "usuarios ( nombre )" al nombre exacto de tu tabla
     // de perfiles y la columna donde guardas el nombre de la persona.
     // Puede que se llame "profiles ( name )", "users ( nombre_completo )", etc.
 
-  const { data, error } = await supabase
-    .from("predictions")
-    .select(`
+    const { data, error } = await supabase
+      .from("predictions")
+      .select(
+        `
       match_id,
       home_score,
       away_score,
       perfiles ( nombre ) 
-    `)
-    .eq("league_id", idLigaActiva.value);
-    if (error) throw error;    
+    `,
+      )
+      .eq("league_id", idLigaActiva.value);
+    if (error) throw error;
     prediccionesLiga.value = data || [];
   } catch (error) {
     console.error("Error al cargar predicciones:", error);
@@ -678,7 +693,11 @@ const cargarPrediccionesReales = async () => {
 // --- LÓGICA DE ACERTANTES ---
 const obtenerAcertantes = (match) => {
   // 1. Si el partido no ha terminado o no tiene marcador oficial, nadie acierta aún.
-  if (match.status !== 'finished' || match.homeScore === null || match.awayScore === null) {
+  if (
+    match.status !== "finished" ||
+    match.homeScore === null ||
+    match.awayScore === null
+  ) {
     return [];
   }
 
@@ -701,10 +720,10 @@ const validarAccesoALiga = async (uId, lId) => {
   if (!uId || !lId) return false;
   try {
     const { data, error } = await supabase
-      .from('league_members')
-      .select('user_id') // Campo que sí existe en tu tabla
-      .eq('user_id', String(uId))
-      .eq('league_id', String(lId))
+      .from("league_members")
+      .select("user_id") // Campo que sí existe en tu tabla
+      .eq("user_id", String(uId))
+      .eq("league_id", String(lId))
       .maybeSingle();
 
     return !!data;
@@ -720,32 +739,37 @@ const ubicarDiaActual = () => {
 
   // 1. Obtener la fecha actual en formato YYYY-MM-DD
   const hoy = new Date();
-  const hoyStr = hoy.getFullYear() + '-' + 
-                 String(hoy.getMonth() + 1).padStart(2, '0') + '-' + 
-                 String(hoy.getDate()).padStart(2, '0');
+  const hoyStr =
+    hoy.getFullYear() +
+    "-" +
+    String(hoy.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(hoy.getDate()).padStart(2, "0");
 
   // 2. Buscar el primer grupo que sea hoy o en el futuro
   const grupoDestino = partidosAgrupados.value.find(
-    (g) => g.fecha !== "Fecha por definir" && g.fecha >= hoyStr
+    (g) => g.fecha !== "Fecha por definir" && g.fecha >= hoyStr,
   );
 
   // 3. Hacer scroll hacia ese elemento si existe
   if (grupoDestino) {
-    const elemento = document.getElementById('dia-' + grupoDestino.fecha);
+    const elemento = document.getElementById("dia-" + grupoDestino.fecha);
     if (elemento) {
-      elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      elemento.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 };
 
 onMounted(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   if (!session) {
-    router.push('/acceso');
+    router.push("/acceso");
     return;
   }
-  
+
   userId.value = session.user.id;
   // Validar si es administrador
   if (adminEmails.includes(session.user.email)) {
@@ -754,25 +778,28 @@ onMounted(async () => {
 
   // Validamos antes de cargar resultados
   if (idLigaActiva.value && idLigaActiva.value !== "null") {
-    const tieneAcceso = await validarAccesoALiga(userId.value, idLigaActiva.value);
-    
+    const tieneAcceso = await validarAccesoALiga(
+      userId.value,
+      idLigaActiva.value,
+    );
+
     if (!tieneAcceso) {
       Swal.fire({
-        title: 'Acceso Denegado',
-        text: 'No tienes permisos para ver esta liga.',
-        icon: 'error',
-        background: '#1a1d20',
-        color: '#fff'
+        title: "Acceso Denegado",
+        text: "No tienes permisos para ver esta liga.",
+        icon: "error",
+        background: "#1a1d20",
+        color: "#fff",
       });
-      router.push('/juega');
-      return; 
+      router.push("/juega");
+      return;
     }
 
     await cargarResultados();
   } else {
-    router.push('/juega');
+    router.push("/juega");
   }
-  
+
   cargando.value = false;
 });
 
@@ -789,42 +816,42 @@ const abrirModalAdministrador = async (match) => {
         <input id="swal-input-home" type="number" min="0" max="15" 
                class="form-control text-center fs-4 bg-dark text-white border-success" 
                style="width: 70px; height: 60px;"
-               value="${match.homeScore !== null ? match.homeScore : ''}" placeholder="-">
+               value="${match.homeScore !== null ? match.homeScore : ""}" placeholder="-">
         
         <span class="fs-3 text-white-50">-</span>
         
         <input id="swal-input-away" type="number" min="0" max="15" 
                class="form-control text-center fs-4 bg-dark text-white border-success" 
                style="width: 70px; height: 60px;"
-               value="${match.awayScore !== null ? match.awayScore : ''}" placeholder="-">
+               value="${match.awayScore !== null ? match.awayScore : ""}" placeholder="-">
       </div>
       <div class="form-group text-start px-3">
         <label class="text-white-50 mb-2">Estado del partido:</label>
         <select id="swal-input-status" class="form-select bg-dark text-white border-success">
-          <option value="pending" ${match.status === 'pending' ? 'selected' : ''}>Pendiente</option>
-          <option value="live" ${match.status === 'live' ? 'selected' : ''}>En vivo</option>
-          <option value="finished" ${match.status === 'finished' ? 'selected' : ''}>Finalizado</option>
+          <option value="pending" ${match.status === "pending" ? "selected" : ""}>Pendiente</option>
+          <option value="live" ${match.status === "live" ? "selected" : ""}>En vivo</option>
+          <option value="finished" ${match.status === "finished" ? "selected" : ""}>Finalizado</option>
         </select>
       </div>
     `,
-    background: '#1a1d20',
-    color: '#fff',
+    background: "#1a1d20",
+    color: "#fff",
     showCancelButton: true,
-    confirmButtonText: 'Guardar Resultado',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#198754',
+    confirmButtonText: "Guardar Resultado",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#198754",
     focusConfirm: false,
     preConfirm: () => {
-      const homeVal = document.getElementById('swal-input-home').value;
-      const awayVal = document.getElementById('swal-input-away').value;
-      const statusVal = document.getElementById('swal-input-status').value;
-      
+      const homeVal = document.getElementById("swal-input-home").value;
+      const awayVal = document.getElementById("swal-input-away").value;
+      const statusVal = document.getElementById("swal-input-status").value;
+
       return {
         homeScore: homeVal === "" ? null : parseInt(homeVal),
         awayScore: awayVal === "" ? null : parseInt(awayVal),
-        status: statusVal
-      }
-    }
+        status: statusVal,
+      };
+    },
   });
 
   if (formValues) {
@@ -836,37 +863,36 @@ const guardarMarcadorReal = async (matchId, valores) => {
   try {
     // Nota: Asegúrate de que los nombres de las columnas coincidan con tu base de datos
     const { error } = await supabase
-      .from('matches')
+      .from("matches")
       .update({
         home_score: valores.homeScore,
         away_score: valores.awayScore,
-        status: valores.status
+        status: valores.status,
       })
-      .eq('id', matchId);
+      .eq("id", matchId);
 
     if (error) throw error;
 
     Swal.fire({
-      icon: 'success',
-      title: '¡Guardado!',
-      text: 'El marcador oficial ha sido actualizado.',
-      background: '#1a1d20',
-      color: '#fff',
+      icon: "success",
+      title: "¡Guardado!",
+      text: "El marcador oficial ha sido actualizado.",
+      background: "#1a1d20",
+      color: "#fff",
       timer: 1500,
-      showConfirmButton: false
+      showConfirmButton: false,
     });
 
     // Refrescamos la vista para que los cambios se reflejen
     await cargarResultados();
-
   } catch (error) {
     console.error("Error al actualizar marcador oficial:", error);
     Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Hubo un problema al guardar el marcador.',
-      background: '#1a1d20',
-      color: '#fff'
+      icon: "error",
+      title: "Error",
+      text: "Hubo un problema al guardar el marcador.",
+      background: "#1a1d20",
+      color: "#fff",
     });
   }
 };
@@ -910,10 +936,12 @@ const teams = computed(() => {
 // });
 
 const groups = computed(() => {
-  return [...new Set(matches.value.map((match) => match.group))].sort((a, b) => {
-    // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
-    return String(a).localeCompare(String(b), undefined, { numeric: true });
-  });
+  return [...new Set(matches.value.map((match) => match.group))].sort(
+    (a, b) => {
+      // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
+      return String(a).localeCompare(String(b), undefined, { numeric: true });
+    },
+  );
 });
 
 const filteredMatches = computed(() => {
@@ -1107,7 +1135,9 @@ const getFlagCode = (team) => {
 
 .admin-clickable {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .admin-clickable:hover {
@@ -1117,7 +1147,7 @@ const getFlagCode = (team) => {
 
 /* Margen superior dinámico para compensar el sticky-top al hacer scroll automático */
 .grupo-scroll {
-  scroll-margin-top: 240px; 
+  scroll-margin-top: 240px;
 }
 
 @media (min-width: 992px) {
