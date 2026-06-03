@@ -123,12 +123,18 @@
                 <p class="mt-2 text-white-50">Cargando partidos...</p>
               </div>
 
-              <div
+              <!-- <div
                 v-else
                 v-for="grupo in partidosAgrupados"
                 :key="grupo.fecha"
                 class="mb-5"
-              >
+              > -->
+              <div
+                :id="'dia-' + grupo.fecha"
+                v-for="grupo in partidosAgrupados"
+                :key="grupo.fecha"
+                class="mb-5 grupo-scroll"
+              >              
                 <h4
                   class="text-white mb-3 fw-bold border-start border-success border-4 ps-2 ms-1"
                 >
@@ -261,7 +267,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, watch, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Swal from 'sweetalert2';
@@ -321,21 +327,6 @@ const validarAccesoALiga = async (uId, lId) => {
   }
 };
 
-// const sincronizarHoraReal = async () => {
-//   try {
-//     const response = await fetch("https://worldtimeapi.org/api/timezone/America/Mexico_City");
-//     if (!response.ok) throw new Error("API falló"); // Forzamos el salto al catch
-//     const data = await response.json();
-    
-//     const horaReal = new Date(data.datetime).getTime();
-//     const horaLocal = new Date().getTime();
-//     timeOffset.value = horaReal - horaLocal;
-//   } catch (error) {
-//     console.warn("La API de tiempo no respondió, continuando con hora local segura.");
-//     timeOffset.value = 0; // Aseguramos que sea 0 y no un error
-//   }
-// };
-
 const sincronizarHoraReal = async () => {
   try {
     // Pedimos la hora al backend. 
@@ -376,11 +367,6 @@ const cargarPartidosYPredicciones = async () => {
       console.warn("No hay sesión activa.");
       return;
     }
-
-    // const { data: dbMatches, error: errMatches } = await supabase
-    //   .from("matches")
-    //   .select("*");
-    // if (errMatches) throw errMatches;
 
     const { data: dbMatches, error: errMatches } = await supabase
       .from("matches")
@@ -442,6 +428,35 @@ const cargarPartidosYPredicciones = async () => {
     console.error("Error al cargar datos:", error);
   } finally {
     cargando.value = false;
+    
+    // Esperamos a que la vista quite el spinner y dibuje los partidos
+    await nextTick(); 
+    // Hacemos el scroll automático
+    ubicarDiaActual(); 
+  }    
+};
+
+// --- AUTO SCROLL A LA JORNADA ACTUAL ---
+const ubicarDiaActual = () => {
+  if (!partidosAgrupados.value.length) return;
+
+  // 1. Obtener la fecha actual en formato YYYY-MM-DD
+  const hoy = new Date();
+  const hoyStr = hoy.getFullYear() + '-' + 
+                 String(hoy.getMonth() + 1).padStart(2, '0') + '-' + 
+                 String(hoy.getDate()).padStart(2, '0');
+
+  // 2. Buscar el primer grupo que sea hoy o en el futuro
+  const grupoDestino = partidosAgrupados.value.find(
+    (g) => g.fecha !== "Fecha por definir" && g.fecha >= hoyStr
+  );
+
+  // 3. Hacer scroll hacia ese elemento si existe
+  if (grupoDestino) {
+    const elemento = document.getElementById('dia-' + grupoDestino.fecha);
+    if (elemento) {
+      elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 };
 
@@ -743,5 +758,10 @@ input:disabled {
 
 .text-gold {
   color: #d4af37;
+}
+
+/* Margen superior dinámico para compensar el sticky-top al hacer scroll automático */
+.grupo-scroll {
+  scroll-margin-top: 240px; 
 }
 </style>
