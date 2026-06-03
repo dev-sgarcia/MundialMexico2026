@@ -231,16 +231,12 @@ const items = [
       import.meta.url
     ).href,
 
-    title: "RESULTADOS MUNDIAL",
-
+    title: "ZONA FAN",
     desc:
-      "Consulta los resultados de todos los partidos.",
-
-    btn: "VER RESULTADOS",
-
+      "Accede a la plataforma con gmail y tu código para integrarte a una liga.",
+    btn: "ZONA FAN",
     theme: "red",
-
-    route: "/resultados",
+    route: "/juega",
   },
 
   {
@@ -248,16 +244,11 @@ const items = [
       "/src/assets/rules.png",
       import.meta.url
     ).href,
-
     title: "REGLAS",
-
     desc:
       "Conoce las reglas generales de puntuación y cómo funciona la quiniela.",
-
     btn: "VER REGLAS",
-
     theme: "green",
-
     route: "/reglas",
   },
 
@@ -266,16 +257,11 @@ const items = [
       "/src/assets/play2.png",
       import.meta.url
     ).href,
-
     title: "JUEGA CON NOSOTROS",
-
     desc:
       "¿Quieres organizar una quiniela con tu empresa o amigos?",
-
     btn: "MÁS INFORMACIÓN",
-
     theme: "red",
-
     route: "/juega-nosotros",
   },
 
@@ -284,16 +270,11 @@ const items = [
       "/src/assets/donate.png",
       import.meta.url
     ).href,
-
     title: "DONACIÓN",
-
     desc:
       "Apoya a los desarrolladores para seguir mejorando la plataforma.",
-
     btn: "DONAR CON PAYPAL",
-
     theme: "green",
-
     route: "/donacion",
   },
 ];

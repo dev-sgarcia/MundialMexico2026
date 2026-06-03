@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { supabase } from "@/supabaseClient"; // Asegúrate de que esta ruta a tu archivo de Supabase sea correcta
+import { supabase } from "@/supabaseClient";
 
 const routes = [
   {
@@ -14,12 +14,6 @@ const routes = [
     component: () => import("@/views/Dashboard.vue"),
     meta: { requiresAuth: true, requiresLiga: true }
   },
-  // {
-  //   path: "/acceso",
-  //   name: "Acceso",
-  //   component: () => import("@/views/Acceso.vue"),
-  //   // Pública (Página de login/registro)
-  // },
   {
     path: "/reglas",
     name: "Reglas",
@@ -86,7 +80,7 @@ router.beforeEach(async (to, from) => {
   const { data: { session } } = await supabase.auth.getSession();
 
   if (to.meta.requiresAuth && !session) {
-    return '/acceso'; // Regresas la ruta en lugar de llamar next()
+    return '/'; // Regresas la ruta en lugar de llamar next()
   }
 
   if (to.meta.requiresLiga) {

@@ -11,21 +11,33 @@
       <h3 :class="item.theme">{{ item.title }}</h3>
       <p>{{ item.desc }}</p>
 
-      <button
+      <!-- <button
         :class="[
           'btn',
           item.theme,
-          item.route === '/acceso' ? 'google-btn' : '',
+          item.route === '/juega' ? 'google-btn' : '',
         ]"
         @click="item.route && router.push(item.route)"
       >
-        <img v-if="item.route === '/acceso'" class="google-icon" />
+        <img v-if="item.route === '/'" class="google-icon" />
         {{ item.btn }}
+      </button> -->
+
+
+      <button
+        type="button"
+        class="mobile-menu-item btn btn-link d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3 w-100 text-start bg-transparent border-0 shadow-none"
+        @click="
+          validateZonaFan();
+          isMenuOpen = false;
+        "
+      >
+        <PhHandsClapping class="menu-icon" weight="fill" />
+        <span>ZONA FAN</span>
       </button>
 
-      <!-- <button :class="['btn', item.theme]">
-        {{ item.btn }}
-    </button> -->
+
+
     </div>
   </section>
 </template>
@@ -39,16 +51,51 @@ import {
   HeartIcon,
 } from "@heroicons/vue/24/solid";
 import { useRouter } from "vue-router";
+import { supabase } from "@/supabaseClient";
+import Swal from 'sweetalert2';
 
+//DECLARA EL ROUTER AQUÍ, AL PRINCIPIO
 const router = useRouter();
+
+const validateZonaFan = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // 1. Si no hay sesión, mandamos a loguearse
+  if (!session) {
+    Swal.fire({
+      title: 'Inicia sesión',
+      text: 'Para acceder a la Zona Fan, primero debes iniciar sesión con Google.',
+      icon: 'info',
+      confirmButtonColor: '#1e7f3f'
+    });
+    router.push('/juega');
+    return;
+  }
+
+  // 2. Si hay sesión, verificamos si ya tiene ligas registradas
+  const { data, error } = await supabase
+    .from('league_members')
+    .select('league_id')
+    .eq('user_id', session.user.id)
+    .limit(1);
+
+  if (error || !data || data.length === 0) {
+    // Si no tiene ligas, lo mandamos a unirse a una
+    router.push('/juega');
+  } else {
+    // Si ya tiene ligas, lo mandamos al dashboard
+    router.push('/dashboard');
+  }
+};
+
 const items = [
   {
-    image: new URL("/src/assets/results2.png", import.meta.url).href,
-    title: "RESULTADOS MUNDIAL",
-    desc: "Consulta los resultados de todos los partidos.",
-    btn: "VER RESULTADOS",
-    theme: "red",
-    route: "/resultados",    
+     image: new URL("/src/assets/results2.png", import.meta.url).href,
+     title: "ZONA FAN",
+     desc: "Accede a la plataforma con gmail y tu código para integrarte a una liga.",
+     btn: "ZONA FAN",
+     theme: "red",
+     route: "/juega",    
   },
   {
     image: new URL("/src/assets/rules.png", import.meta.url).href,

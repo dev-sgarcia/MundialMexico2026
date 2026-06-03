@@ -321,18 +321,40 @@ const validarAccesoALiga = async (uId, lId) => {
   }
 };
 
+// const sincronizarHoraReal = async () => {
+//   try {
+//     const response = await fetch("https://worldtimeapi.org/api/timezone/America/Mexico_City");
+//     if (!response.ok) throw new Error("API falló"); // Forzamos el salto al catch
+//     const data = await response.json();
+    
+//     const horaReal = new Date(data.datetime).getTime();
+//     const horaLocal = new Date().getTime();
+//     timeOffset.value = horaReal - horaLocal;
+//   } catch (error) {
+//     console.warn("La API de tiempo no respondió, continuando con hora local segura.");
+//     timeOffset.value = 0; // Aseguramos que sea 0 y no un error
+//   }
+// };
+
 const sincronizarHoraReal = async () => {
   try {
-    const response = await fetch("https://worldtimeapi.org/api/timezone/America/Mexico_City");
-    if (!response.ok) throw new Error("API falló"); // Forzamos el salto al catch
-    const data = await response.json();
+    // Pedimos la hora al backend. 
+    // Supabase nos devolverá un número gigante (ej. 1718915425000)
+    const { data, error } = await supabase.rpc('get_server_time');
     
-    const horaReal = new Date(data.datetime).getTime();
-    const horaLocal = new Date().getTime();
+    if (error) throw error;
+
+    const horaReal = data; // Ya son los milisegundos puros del servidor
+    const horaLocal = new Date().getTime(); // Los milisegundos de la máquina (quizás alterados)
+    
+    // Calculamos el desfase exacto
     timeOffset.value = horaReal - horaLocal;
+    
   } catch (error) {
-    console.warn("La API de tiempo no respondió, continuando con hora local segura.");
-    timeOffset.value = 0; // Aseguramos que sea 0 y no un error
+    console.error("Error obteniendo hora del servidor de Supabase:", error);
+    // Si la conexión falla, asumimos offset 0, pero estamos tranquilos 
+    // porque el Trigger en BD no dejará pasar la trampa.
+    timeOffset.value = 0; 
   }
 };
 
@@ -504,20 +526,19 @@ const esPartidoBloqueado = (match) => {
 
 const guardarPronostico = async (match) => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") {
-    alert("Error: No se detectó la liga. Por favor regresa a 'Mis Ligas' y vuelve a entrar.");
+    Swal.fire('Error', 'No se detectó la liga. Regresa a Mis Ligas.', 'error');
     match.saved = false;
     return;
   }
 
   if (!userId.value) {
-    alert("Error: Usuario no autenticado.");
+    Swal.fire('Error', 'Usuario no autenticado.', 'error');
     match.saved = false;
     return;
   }
 
-  // Validamos nuevamente antes de ir a base de datos usando la hora sincronizada
   if (esPartidoBloqueado(match)) {
-    alert("¡Estás intentando hacer trampa! Este partido ya está bloqueado según la hora oficial.");
+    Swal.fire('Atención', 'Este partido ya está bloqueado.', 'warning');
     await cargarPartidosYPredicciones();
     return;
   }
@@ -543,11 +564,17 @@ const guardarPronostico = async (match) => {
       },
       {
         onConflict: "user_id, match_id, league_id",
-      },
+      }
     );
 
     if (error) {
-      console.error("Error al guardar pronóstico:", error);
+      // Aquí atrapamos el error disparado por el Trigger de PostgreSQL
+      if (error.message.includes('Trampa detectada')) {
+        Swal.fire('Bloqueado', 'El tiempo límite para este partido ya pasó.', 'error');
+        await cargarPartidosYPredicciones(); // Recargar para limpiar el input tramposo
+      } else {
+        console.error("Error al guardar pronóstico:", error);
+      }
       match.saved = false;
     } else {
       match.saved = true;
