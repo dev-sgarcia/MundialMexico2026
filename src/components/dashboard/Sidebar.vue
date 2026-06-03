@@ -7,8 +7,8 @@
       class="w-100 border-bottom border-secondary border-opacity-25 mb-3 overflow-hidden"
     >
       <RouterLink to="/" class="d-block">
-      <img src="@/assets/zonafan.png" alt="Zona Fan" class="logo-zona-fan" />        
-    </RouterLink>
+        <img src="@/assets/zonafan.png" alt="Zona Fan" class="logo-zona-fan" />
+      </RouterLink>
     </div>
 
     <!-- MENÚ -->
@@ -117,7 +117,7 @@ const obtenerRutaConLiga = (basePath) => {
 <style scoped>
 .sidebar {
   width: 220px;
-  min-height: 100vh;
+  min-height: calc(100vh - 2rem);
   overflow-y: auto;
 }
 
