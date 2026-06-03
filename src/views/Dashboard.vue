@@ -306,18 +306,6 @@ watch(
   font-weight: 900;
 }
 
-/* .rules-board {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(59, 255, 91, 0.2);
-  background:
-    linear-gradient(rgba(1, 8, 7, 0.84), rgba(1, 8, 7, 0.94)),
-    url("@/assets/rules/trionda-stadium.png") center/cover no-repeat;
-  box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.5),
-    inset 0 0 60px rgba(0, 255, 90, 0.05);
-} */
-
 .rule-card,
 .example-card,
 .cta-card {
@@ -406,7 +394,7 @@ watch(
   border-radius: 1rem;
   background:
     linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.84)),
-    url("@/assets/rules/trionda-stadium.png") center/cover no-repeat;
+    url("@/assets/trionda-stadium.png") center/cover no-repeat;
   border: 1px solid var(--card-color);
   box-shadow:
     0 0 9px var(--card-glow),
@@ -569,7 +557,7 @@ watch(
   border: 1px solid rgba(88, 211, 111, 0.38);
   background:
     linear-gradient(90deg, rgba(6, 38, 20, 0.74), rgba(4, 12, 10, 0.88)),
-    url("@/assets/rules/trionda-stadium.png") center/cover no-repeat;
+    url("@/assets/trionda-stadium.png") center/cover no-repeat;
   box-shadow:
     0 0 12px rgba(88, 211, 111, 0.16),
     inset 0 0 24px rgba(88, 211, 111, 0.05);
