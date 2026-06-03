@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="d-lg-none fixed-bottom bg-dark border-top border-secondary border-opacity-25 px-1 py-2"
+    class="bottom-nav d-lg-none position-fixed rounded-4 shadow-lg px-2 py-2 z-3"
   >
     <div class="d-flex justify-content-around align-items-center">
       <RouterLink
@@ -8,7 +8,7 @@
         :key="item.to"
         :to="obtenerRutaConLiga(item.to)"
         class="bottom-nav-item text-decoration-none d-flex flex-column align-items-center gap-1 px-1 py-1 rounded-3"
-        :class="isActive(item.to) ? 'text-success' : 'text-secondary'"
+        :class="isActive(item.to) ? 'bottom-nav-active' : 'text-secondary'"
       >
         <component :is="item.icon" size="22" weight="fill" />
         <span class="fw-semibold">{{ item.label }}</span>
@@ -23,27 +23,18 @@
 import { useRoute } from "vue-router";
 import MobileUser from "@/components/dashboard/MobileUser.vue";
 import {
-  PhHouse,
   PhTrophy,
   PhSoccerBall,
   PhChartBar,
   PhRanking,
-  PhActivity,
-  PhAddressBookTabs,
-  PhArchiveBox,
-  PhCheckerboard,
-  PhCheckSquare,
-  PhFlagCheckered,
-  PhCalendarHeart,
   PhCalendarCheck,
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
 
-// Ajusta las rutas si es necesario (ej. "/juega" o "/quinielas" según tu configuración)
 const menuItems = [
   { label: "Reglas", to: "/dashboard", icon: PhCalendarCheck },
-  { label: "Quinielas", to: "/quinielas", icon: PhTrophy }, 
+  { label: "Quinielas", to: "/quinielas", icon: PhTrophy },
   { label: "Predicciones", to: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", to: "/resultados", icon: PhChartBar },
   { label: "Posiciones", to: "/posiciones", icon: PhRanking },
@@ -68,10 +59,13 @@ const isActive = (path) => route.path === path;
 
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
-  const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
-  const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
+  const currentLigaId =
+    route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  const currentLigaNombre =
+    route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
   // 👇 Rescatamos el eventoId
-  const currentEventoId = route.query.eventoId || localStorage.getItem("eventoIdActiva");
+  const currentEventoId =
+    route.query.eventoId || localStorage.getItem("eventoIdActiva");
 
   return {
     path: basePath,
@@ -85,9 +79,39 @@ const obtenerRutaConLiga = (basePath) => {
 </script>
 
 <style scoped>
+.bottom-nav {
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 0.75rem;
+
+  border: none;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    0 0 12px rgba(212, 175, 55, 0.04);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 25, 20, 0.16) 0%,
+    rgba(55, 40, 10, 0.1) 50%,
+    rgba(0, 25, 20, 0.16) 100%
+  );
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
 .bottom-nav-item {
   font-size: 0.75rem;
-  transition: all 0.2s ease;
   min-width: 60px;
+  transition: all 0.2s ease;
+}
+
+.bottom-nav-active {
+  color: #d4af37;
+}
+
+.bottom-nav-item:hover {
+  background-color: rgba(212, 175, 55, 0.12);
+  transform: translateY(-4px) scale(1.05);
 }
 </style>

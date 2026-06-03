@@ -2,10 +2,10 @@
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
     <div class="container-fluid px-3 py-3">
       <div class="row g-0 h-100">
-        <aside
-          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
-        >
-          <Sidebar />
+        <aside class="d-none d-lg-block col-lg-3 col-xl-2">
+          <div class="position-sticky top-0 vh-100 overflow-hidden py-3">
+            <Sidebar />
+          </div>
         </aside>
 
         <main
@@ -25,91 +25,99 @@
                       v-if="
                         nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
                       "
-                      class="text-gold ms-2"
+                      class="text-gold ms-lg-2 d-block d-lg-inline"
                     >
                       {{ nombreLigaActiva }}
                     </span>
                   </h2>
+
                   <p class="text-white-50 mb-0">
                     Realiza tus predicciones para sumar puntos y escalar
                     posiciones.
                   </p>
                 </div>
+
                 <div class="mt-2 d-none d-md-block">
                   <UserProfile />
                 </div>
               </div>
-
-              <div
-                class="d-flex justify-content-between align-items-center gap-3 mb-4"
-              >
-                <div
-                  class="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-2 ms-lg-auto"
-                >
-                  <select
-                    v-model="filterType"
-                    class="form-select bg-dark text-white border-success w-auto"
-                  >
-                    <option value="group">Filtrar por grupo</option>
-                    <option value="team">Filtrar por selección</option>
-                  </select>
-
-                  <select
-                    v-if="filterType === 'group'"
-                    v-model="selectedGroup"
-                    class="form-select bg-dark text-white border-success w-auto"
-                  >
-                    <option value="Todos">Todos los grupos</option>
-                    <option v-for="group in groups" :key="group" :value="group">
-                      {{ group }}
-                    </option>
-                  </select>
-
-                  <select
-                    v-if="filterType === 'team'"
-                    v-model="selectedTeam"
-                    class="form-select bg-dark text-white border-success"
-                  >
-                    <option value="Todas">Todas las selecciones</option>
-                    <option v-for="team in teams" :key="team" :value="team">
-                      {{ team }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="card prediction-card text-white rounded-4 mb-4">
-                <div class="card-body">
+              <!-- RESUMEN -->
+              <div class="card prediction-card text-white rounded-4 mt-3 mb-2">
+                <div class="card-body p-3 p-lg-4">
                   <div
-                    class="d-flex justify-content-between align-items-center flex-wrap gap-3"
+                    class="d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3"
                   >
-                    <div>
-                      <strong
-                        >Primera fase
-                        <span class="text-success"
-                          >· {{ nombreLigaActiva }}</span
-                        ></strong
-                      >
-                      <p class="text-white-50 mb-0">
+                    <div class="w-100">
+                      <strong>
+                        Primera fase
+                        <span class="text-success">
+                          · {{ nombreLigaActiva }}
+                        </span>
+                      </strong>
+
+                      <p class="text-white-50 mb-0 small">
                         <strong>Recuerda:</strong> Solo se contabilizan las
-                        predicciones realizadas con al menos 10 minutos antes del
-                        inicio de cada partido.
+                        predicciones realizadas con al menos 10 minutos antes
+                        del inicio de cada partido.
                       </p>
                     </div>
 
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="progress" style="width: 180px; height: 8px">
+                    <div
+                      class="d-flex align-items-center gap-3 w-100 w-lg-auto"
+                    >
+                      <div class="progress flex-grow-1 progress-mobile">
                         <div
                           class="progress-bar bg-success"
                           :style="{ width: progressPercentage + '%' }"
                         ></div>
                       </div>
-                      <strong
-                        >{{ savedMatches.length }}/{{
-                          filteredMatches.length
-                        }}</strong
-                      >
+
+                      <strong>
+                        {{ savedMatches.length }}/{{ filteredMatches.length }}
+                      </strong>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <!-- FILTROS -->
+              <div class="mb-2 mt-0">
+                <div class="row g-2 justify-content-lg-end">
+                  <div class="col-6 col-lg-auto">
+                    <select
+                      v-model="filterType"
+                      class="form-select bg-dark text-white border-success"
+                    >
+                      <option value="group">Filtrar por grupo</option>
+                      <option value="team">Filtrar por selección</option>
+                    </select>
+                  </div>
+
+                  <div v-if="filterType === 'group'" class="col-6 col-lg-auto">
+                    <select
+                      v-model="selectedGroup"
+                      class="form-select bg-dark text-white border-success"
+                    >
+                      <option value="Todos">Todos los grupos</option>
+                      <option
+                        v-for="group in groups"
+                        :key="group"
+                        :value="group"
+                      >
+                        {{ group }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div v-if="filterType === 'team'" class="col-6 col-lg-auto">
+                    <select
+                      v-model="selectedTeam"
+                      class="form-select bg-dark text-white border-success"
+                    >
+                      <option value="Todas">Todas las selecciones</option>
+                      <option v-for="team in teams" :key="team" :value="team">
+                        {{ team }}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -134,9 +142,9 @@
                 v-for="grupo in partidosAgrupados"
                 :key="grupo.fecha"
                 class="mb-5 grupo-scroll"
-              >              
+              >
                 <h4
-                  class="text-white mb-3 fw-bold border-start border-success border-4 ps-2 ms-1"
+                  class="text-white mb-3 fw-bold border-start border-success border-4 ps-2 ms-1 fs-5 fs-lg-4"
                 >
                   📅 {{ formatDate(grupo.fecha) }}
                 </h4>
@@ -147,15 +155,16 @@
                     :key="match.id"
                     class="col-12 col-lg-6"
                   >
+                    <!-- CARD DESKTOP ORIGINAL -->
                     <div
-                      class="card prediction-card text-white rounded-4 h-100"
+                      class="card prediction-card text-white rounded-4 h-100 d-none d-lg-block"
                       :class="{ 'card-locked': esPartidoBloqueado(match) }"
                     >
                       <div class="card-body">
                         <div class="text-center mb-3">
-                          <small class="text-white-50 fw-semibold"
-                            >Grupo {{ match.group }}</small
-                          >
+                          <small class="text-white-50 fw-semibold">
+                            Grupo {{ match.group }}
+                          </small>
                         </div>
 
                         <div
@@ -165,9 +174,10 @@
                             <div
                               class="d-flex align-items-center justify-content-end gap-2"
                             >
-                              <span class="fw-bold text-end team-name">{{
-                                match.homeTeam
-                              }}</span>
+                              <span class="fw-bold text-end team-name">
+                                {{ match.homeTeam }}
+                              </span>
+
                               <img
                                 :src="`https://flagcdn.com/w80/${getFlagCode(match.homeTeam)}.png`"
                                 :alt="match.homeTeam"
@@ -215,14 +225,16 @@
                               :disabled="esPartidoBloqueado(match)"
                               @change="guardarPronostico(match)"
                             />
+
                             <img
                               :src="`https://flagcdn.com/w80/${getFlagCode(match.awayTeam)}.png`"
                               :alt="match.awayTeam"
                               class="team-flag"
                             />
-                            <span class="fw-bold text-start team-name">{{
-                              match.awayTeam
-                            }}</span>
+
+                            <span class="fw-bold text-start team-name">
+                              {{ match.awayTeam }}
+                            </span>
                           </div>
                         </div>
 
@@ -248,9 +260,125 @@
                         </div>
 
                         <div class="text-center mt-2">
-                          <small class="text-white-50"
-                            >{{ match.stadium }} · {{ match.city }}</small
+                          <small class="text-white-50">
+                            {{ match.stadium }} · {{ match.city }}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- CARD MOBILE -->
+                    <div
+                      class="card prediction-card text-white rounded-4 h-100 d-lg-none"
+                      :class="{ 'card-locked': esPartidoBloqueado(match) }"
+                    >
+                      <div class="card-body p-3">
+                        <!-- GRUPO -->
+                        <div class="text-center mb-3">
+                          <span
+                            class="badge text-bg-dark border border-success px-3 py-2"
                           >
+                            Grupo {{ match.group }}
+                          </span>
+                        </div>
+
+                        <div class="row align-items-center text-center g-2">
+                          <!-- LOCAL -->
+                          <div class="col-5">
+                            <div
+                              class="d-flex flex-column align-items-center gap-2"
+                            >
+                              <img
+                                :src="`https://flagcdn.com/w80/${getFlagCode(match.homeTeam)}.png`"
+                                :alt="match.homeTeam"
+                                class="img-fluid"
+                                width="52"
+                              />
+
+                              <span class="fw-bold text-white small lh-sm">
+                                {{ match.homeTeam }}
+                              </span>
+
+                              <input
+                                v-model="match.homeScore"
+                                type="number"
+                                min="0"
+                                max="15"
+                                class="form-control bg-dark border-success text-center fw-bold w-25 mx-auto px-1"
+                                :class="
+                                  match.saved ? 'text-success' : 'text-warning'
+                                "
+                                placeholder="-"
+                                :disabled="esPartidoBloqueado(match)"
+                                @change="guardarPronostico(match)"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- CENTRO -->
+                          <div class="col-2">
+                            <div class="text-white-50 fw-bold small mb-1">
+                              {{ match.time }}
+                            </div>
+
+                            <div class="fw-bold text-white fs-4 mb-2">VS</div>
+
+                            <span
+                              class="badge"
+                              :class="
+                                esPartidoBloqueado(match)
+                                  ? 'bg-danger-subtle text-danger border border-danger'
+                                  : match.saved
+                                    ? 'text-bg-success'
+                                    : 'bg-warning text-dark fw-bold'
+                              "
+                            >
+                              {{
+                                esPartidoBloqueado(match)
+                                  ? "Bloqueado"
+                                  : match.saved
+                                    ? "Guardada"
+                                    : "Pendiente"
+                              }}
+                            </span>
+                          </div>
+
+                          <!-- VISITA -->
+                          <div class="col-5">
+                            <div
+                              class="d-flex flex-column align-items-center gap-2"
+                            >
+                              <img
+                                :src="`https://flagcdn.com/w80/${getFlagCode(match.awayTeam)}.png`"
+                                :alt="match.awayTeam"
+                                class="img-fluid"
+                                width="52"
+                              />
+
+                              <span class="fw-bold text-white small lh-sm">
+                                {{ match.awayTeam }}
+                              </span>
+
+                              <input
+                                v-model="match.awayScore"
+                                type="number"
+                                min="0"
+                                max="15"
+                                class="form-control bg-dark border-success text-center fw-bold w-25 mx-auto"
+                                :class="
+                                  match.saved ? 'text-success' : 'text-warning'
+                                "
+                                placeholder="-"
+                                :disabled="esPartidoBloqueado(match)"
+                                @change="guardarPronostico(match)"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="text-center mt-3">
+                          <small class="text-white-50">
+                            {{ match.stadium }} · {{ match.city }}
+                          </small>
                         </div>
                       </div>
                     </div>
@@ -262,6 +390,7 @@
         </main>
       </div>
     </div>
+
     <BottomNav />
   </div>
 </template>
@@ -270,7 +399,7 @@
 import { computed, ref, onMounted, watch, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
@@ -284,11 +413,17 @@ const cargando = ref(true);
 
 const userId = ref(null);
 
-const idLigaActiva = ref(route.query.ligaId || localStorage.getItem("ligaIdActiva") || null);
-const nombreLigaActiva = ref(route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Mi Quiniela");
+const idLigaActiva = ref(
+  route.query.ligaId || localStorage.getItem("ligaIdActiva") || null,
+);
+const nombreLigaActiva = ref(
+  route.query.ligaNombre ||
+    localStorage.getItem("ligaNombreActiva") ||
+    "Mi Quiniela",
+);
 // 1. Atrapamos el eventoId de la URL o la caché
 const eventoIdActiva = ref(
-  route.query.eventoId || localStorage.getItem("eventoIdActiva") || null
+  route.query.eventoId || localStorage.getItem("eventoIdActiva") || null,
 );
 
 // 2. Lo guardamos en caché junto con los otros
@@ -306,18 +441,17 @@ const matches = ref([]);
 // --- NUEVA VARIABLE: Desfase de tiempo ---
 const timeOffset = ref(0);
 
-
 // --- VALIDACIÓN ESTRICTA DE PERTENENCIA ---
 const validarAccesoALiga = async (uId, lId) => {
   if (!uId || !lId) return false;
-  
+
   try {
     // Usamos 'user_id' porque confirmamos que esa columna SÍ existe en tu tabla
     const { data, error } = await supabase
-      .from('league_members')
-      .select('user_id') 
-      .eq('user_id', String(uId))
-      .eq('league_id', String(lId))
+      .from("league_members")
+      .select("user_id")
+      .eq("user_id", String(uId))
+      .eq("league_id", String(lId))
       .maybeSingle();
 
     return !!data; // Retorna true si encuentra el registro, false si es null
@@ -329,39 +463,42 @@ const validarAccesoALiga = async (uId, lId) => {
 
 const sincronizarHoraReal = async () => {
   try {
-    // Pedimos la hora al backend. 
+    // Pedimos la hora al backend.
     // Supabase nos devolverá un número gigante (ej. 1718915425000)
-    const { data, error } = await supabase.rpc('get_server_time');
-    
+    const { data, error } = await supabase.rpc("get_server_time");
+
     if (error) throw error;
 
     const horaReal = data; // Ya son los milisegundos puros del servidor
     const horaLocal = new Date().getTime(); // Los milisegundos de la máquina (quizás alterados)
-    
+
     // Calculamos el desfase exacto
     timeOffset.value = horaReal - horaLocal;
-    
   } catch (error) {
     console.error("Error obteniendo hora del servidor de Supabase:", error);
-    // Si la conexión falla, asumimos offset 0, pero estamos tranquilos 
+    // Si la conexión falla, asumimos offset 0, pero estamos tranquilos
     // porque el Trigger en BD no dejará pasar la trampa.
-    timeOffset.value = 0; 
+    timeOffset.value = 0;
   }
 };
 
 const normalizarFecha = (fechaTexto) => {
   if (!fechaTexto) return "9999-99-99";
+
   const partes = fechaTexto.includes("/")
     ? fechaTexto.split("/")
     : fechaTexto.split("-");
+
   if (partes.length === 3 && partes[0].length <= 2) {
     return `${partes[2]}-${partes[1].padStart(2, "0")}-${partes[0].padStart(2, "0")}`;
   }
+
   return fechaTexto;
 };
 
 const cargarPartidosYPredicciones = async () => {
   cargando.value = true;
+
   try {
     if (!userId.value) {
       console.warn("No hay sesión activa.");
@@ -371,9 +508,9 @@ const cargarPartidosYPredicciones = async () => {
     const { data: dbMatches, error: errMatches } = await supabase
       .from("matches")
       .select("*")
-      .eq("event_id", eventoIdActiva.value); 
+      .eq("event_id", eventoIdActiva.value);
 
-    if (errMatches) throw errMatches;    
+    if (errMatches) throw errMatches;
 
     dbMatches.sort((a, b) => {
       const fechaNormalA = normalizarFecha(a.match_date);
@@ -382,13 +519,18 @@ const cargarPartidosYPredicciones = async () => {
       if (fechaNormalA === "9999-99-99") return 1;
       if (fechaNormalB === "9999-99-99") return -1;
 
-      const dateA = new Date(`${fechaNormalA}T${a.match_time || "00:00"}`).getTime();
-      const dateB = new Date(`${fechaNormalB}T${b.match_time || "00:00"}`).getTime();
+      const dateA = new Date(
+        `${fechaNormalA}T${a.match_time || "00:00"}`,
+      ).getTime();
+      const dateB = new Date(
+        `${fechaNormalB}T${b.match_time || "00:00"}`,
+      ).getTime();
 
       return dateA - dateB;
     });
 
     let misPredicciones = [];
+
     if (idLigaActiva.value && idLigaActiva.value !== "null") {
       const { data: preds, error: errPreds } = await supabase
         .from("predictions")
@@ -397,6 +539,7 @@ const cargarPartidosYPredicciones = async () => {
         .eq("league_id", idLigaActiva.value);
 
       if (errPreds) throw errPreds;
+
       misPredicciones = preds || [];
     }
 
@@ -408,7 +551,7 @@ const cargarPartidosYPredicciones = async () => {
       let nombreGrupo = partidoBD.group_name || "";
       nombreGrupo = nombreGrupo.replace(/Grupo /i, "").trim();
 
-      let fechaLimpia = normalizarFecha(partidoBD.match_date);
+      const fechaLimpia = normalizarFecha(partidoBD.match_date);
 
       return {
         id: partidoBD.id,
@@ -428,12 +571,12 @@ const cargarPartidosYPredicciones = async () => {
     console.error("Error al cargar datos:", error);
   } finally {
     cargando.value = false;
-    
+
     // Esperamos a que la vista quite el spinner y dibuje los partidos
-    await nextTick(); 
+    await nextTick();
     // Hacemos el scroll automático
-    ubicarDiaActual(); 
-  }    
+    ubicarDiaActual();
+  }
 };
 
 // --- AUTO SCROLL A LA JORNADA ACTUAL ---
@@ -442,60 +585,68 @@ const ubicarDiaActual = () => {
 
   // 1. Obtener la fecha actual en formato YYYY-MM-DD
   const hoy = new Date();
-  const hoyStr = hoy.getFullYear() + '-' + 
-                 String(hoy.getMonth() + 1).padStart(2, '0') + '-' + 
-                 String(hoy.getDate()).padStart(2, '0');
+  const hoyStr =
+    hoy.getFullYear() +
+    "-" +
+    String(hoy.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(hoy.getDate()).padStart(2, "0");
 
   // 2. Buscar el primer grupo que sea hoy o en el futuro
   const grupoDestino = partidosAgrupados.value.find(
-    (g) => g.fecha !== "Fecha por definir" && g.fecha >= hoyStr
+    (g) => g.fecha !== "Fecha por definir" && g.fecha >= hoyStr,
   );
 
   // 3. Hacer scroll hacia ese elemento si existe
   if (grupoDestino) {
-    const elemento = document.getElementById('dia-' + grupoDestino.fecha);
+    const elemento = document.getElementById("dia-" + grupoDestino.fecha);
     if (elemento) {
-      elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      elemento.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 };
 
 onMounted(async () => {
   // 1. Primero, obtenemos la sesión
-  const { data: { session } } = await supabase.auth.getSession();
-  
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   if (!session) {
-    router.push('/acceso');
+    router.push("/acceso");
     return;
   }
-  
+
   // 2. Asignamos el ID
   userId.value = session.user.id;
-  
+
   // 3. Sincronizamos tiempo
   await sincronizarHoraReal();
 
   // 4. SOLO validamos y cargamos si ya tenemos userId y liga
   if (idLigaActiva.value && idLigaActiva.value !== "null") {
-  const tieneAcceso = await validarAccesoALiga(userId.value, idLigaActiva.value);  
+    const tieneAcceso = await validarAccesoALiga(
+      userId.value,
+      idLigaActiva.value,
+    );
     if (!tieneAcceso) {
       Swal.fire({
-        title: 'Acceso Denegado',
-        text: 'No tienes permisos para ver esta liga.',
-        icon: 'error',
-        background: '#1a1d20',
-        color: '#fff'
+        title: "Acceso Denegado",
+        text: "No tienes permisos para ver esta liga.",
+        icon: "error",
+        background: "#1a1d20",
+        color: "#fff",
       });
-      router.push('/juega');
-      return; 
+      router.push("/juega");
+      return;
     }
 
     await cargarPartidosYPredicciones();
   } else {
     // Si no hay liga activa, mandamos a elegir una
-    router.push('/juega');
+    router.push("/juega");
   }
-  
+
   cargando.value = false; // Finalizamos carga en cualquier caso
 });
 
@@ -504,18 +655,23 @@ watch(
   async (newId) => {
     if (newId && newId !== "null") {
       idLigaActiva.value = newId;
-      nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Mi Quiniela";
-      eventoIdActiva.value = route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
+      nombreLigaActiva.value =
+        route.query.ligaNombre ||
+        localStorage.getItem("ligaNombreActiva") ||
+        "Mi Quiniela";
+      eventoIdActiva.value =
+        route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
 
       localStorage.setItem("ligaIdActiva", newId);
       localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
-      if (eventoIdActiva.value) localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
+      if (eventoIdActiva.value)
+        localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
 
       if (userId.value) {
         // 👇 EL CADENERO EN EL WATCH TAMBIÉN
         const tieneAcceso = await validarAccesoALiga();
         if (!tieneAcceso) {
-          router.push('/juega');
+          router.push("/juega");
           return;
         }
         await cargarPartidosYPredicciones();
@@ -527,10 +683,11 @@ watch(
 
 // --- VALIDACIÓN BLINDADA CONTRA TRAMPAS ---
 const esPartidoBloqueado = (match) => {
-  if (!match.date || !match.time || match.date === "Fecha por definir") return false;
+  if (!match.date || !match.time || match.date === "Fecha por definir")
+    return false;
 
   const fechaPartido = new Date(`${match.date}T${match.time}`);
-  
+
   // Le sumamos a su reloj local la diferencia real que sacamos de internet
   const ahoraReal = new Date(new Date().getTime() + timeOffset.value);
 
@@ -541,19 +698,19 @@ const esPartidoBloqueado = (match) => {
 
 const guardarPronostico = async (match) => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") {
-    Swal.fire('Error', 'No se detectó la liga. Regresa a Mis Ligas.', 'error');
+    Swal.fire("Error", "No se detectó la liga. Regresa a Mis Ligas.", "error");
     match.saved = false;
     return;
   }
 
   if (!userId.value) {
-    Swal.fire('Error', 'Usuario no autenticado.', 'error');
+    Swal.fire("Error", "Usuario no autenticado.", "error");
     match.saved = false;
     return;
   }
 
   if (esPartidoBloqueado(match)) {
-    Swal.fire('Atención', 'Este partido ya está bloqueado.', 'warning');
+    Swal.fire("Atención", "Este partido ya está bloqueado.", "warning");
     await cargarPartidosYPredicciones();
     return;
   }
@@ -579,13 +736,17 @@ const guardarPronostico = async (match) => {
       },
       {
         onConflict: "user_id, match_id, league_id",
-      }
+      },
     );
 
     if (error) {
       // Aquí atrapamos el error disparado por el Trigger de PostgreSQL
-      if (error.message.includes('Trampa detectada')) {
-        Swal.fire('Bloqueado', 'El tiempo límite para este partido ya pasó.', 'error');
+      if (error.message.includes("Trampa detectada")) {
+        Swal.fire(
+          "Bloqueado",
+          "El tiempo límite para este partido ya pasó.",
+          "error",
+        );
         await cargarPartidosYPredicciones(); // Recargar para limpiar el input tramposo
       } else {
         console.error("Error al guardar pronóstico:", error);
@@ -605,6 +766,7 @@ const teams = computed(() => {
     match.homeTeam,
     match.awayTeam,
   ]);
+
   return [...new Set(allTeams)].sort();
 });
 
@@ -613,10 +775,12 @@ const teams = computed(() => {
 // });
 
 const groups = computed(() => {
-  return [...new Set(matches.value.map((match) => match.group))].sort((a, b) => {
-    // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
-    return String(a).localeCompare(String(b), undefined, { numeric: true });
-  });
+  return [...new Set(matches.value.map((match) => match.group))].sort(
+    (a, b) => {
+      // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
+      return String(a).localeCompare(String(b), undefined, { numeric: true });
+    },
+  );
 });
 
 const filteredMatches = computed(() => {
@@ -626,6 +790,7 @@ const filteredMatches = computed(() => {
         selectedGroup.value === "Todos" || match.group === selectedGroup.value
       );
     }
+
     if (filterType.value === "team") {
       return (
         selectedTeam.value === "Todas" ||
@@ -633,6 +798,7 @@ const filteredMatches = computed(() => {
         match.awayTeam === selectedTeam.value
       );
     }
+
     return true;
   });
 });
@@ -640,10 +806,13 @@ const filteredMatches = computed(() => {
 const partidosAgrupados = computed(() => {
   const gruposObj = filteredMatches.value.reduce((grupos, match) => {
     const fecha = match.date;
+
     if (!grupos[fecha]) {
       grupos[fecha] = [];
     }
+
     grupos[fecha].push(match);
+
     return grupos;
   }, {});
 
@@ -651,13 +820,14 @@ const partidosAgrupados = computed(() => {
     .sort((a, b) => {
       if (a === "Fecha por definir") return 1;
       if (b === "Fecha por definir") return -1;
+
       return (
         new Date(`${a}T00:00:00`).getTime() -
         new Date(`${b}T00:00:00`).getTime()
       );
     })
     .map((fecha) => ({
-      fecha: fecha,
+      fecha,
       partidos: gruposObj[fecha],
     }));
 });
@@ -668,6 +838,7 @@ const savedMatches = computed(() => {
 
 const progressPercentage = computed(() => {
   if (!filteredMatches.value.length) return 0;
+
   return Math.round(
     (savedMatches.value.length / filteredMatches.value.length) * 100,
   );
@@ -686,18 +857,56 @@ const formatDate = (date) => {
 
 const getFlagCode = (team) => {
   const flagCodes = {
-    México: "mx", Sudáfrica: "za", "Corea del Sur": "kr", "República Checa": "cz",
-    Canadá: "ca", "Bosnia y Herzegovina": "ba", "Estados Unidos": "us",
-    Paraguay: "py", Qatar: "qa", Suiza: "ch", Brasil: "br", Marruecos: "ma",
-    Haití: "ht", Escocia: "gb-sct", Australia: "au", Turquía: "tr", Alemania: "de",
-    Curacao: "cw", "Países Bajos": "nl", Japón: "jp", "Costa de Marfil": "ci",
-    Ecuador: "ec", Suecia: "se", Túnez: "tn", España: "es", "Cabo Verde": "cv",
-    Bélgica: "be", Egipto: "eg", "Arabia Saudita": "sa", Uruguay: "uy",
-    "Irán": "ir", "Nueva Zelanda": "nz", Francia: "fr", Senegal: "sn",
-    Irak: "iq", Noruega: "no", Argentina: "ar", Argelia: "dz", Austria: "at",
-    Jordania: "jo", Portugal: "pt", "RD del Congo": "cd", Inglaterra: "gb-eng",
-    Croacia: "hr", Ghana: "gh", Panamá: "pa", Uzbekistán: "uz", Colombia: "co",
+    México: "mx",
+    Sudáfrica: "za",
+    "Corea del Sur": "kr",
+    "República Checa": "cz",
+    Canadá: "ca",
+    "Bosnia y Herzegovina": "ba",
+    "Estados Unidos": "us",
+    Paraguay: "py",
+    Qatar: "qa",
+    Suiza: "ch",
+    Brasil: "br",
+    Marruecos: "ma",
+    Haití: "ht",
+    Escocia: "gb-sct",
+    Australia: "au",
+    Turquía: "tr",
+    Alemania: "de",
+    Curacao: "cw",
+    "Países Bajos": "nl",
+    Japón: "jp",
+    "Costa de Marfil": "ci",
+    Ecuador: "ec",
+    Suecia: "se",
+    Túnez: "tn",
+    España: "es",
+    "Cabo Verde": "cv",
+    Bélgica: "be",
+    Egipto: "eg",
+    "Arabia Saudita": "sa",
+    Uruguay: "uy",
+    Irán: "ir",
+    "Nueva Zelanda": "nz",
+    Francia: "fr",
+    Senegal: "sn",
+    Irak: "iq",
+    Noruega: "no",
+    Argentina: "ar",
+    Argelia: "dz",
+    Austria: "at",
+    Jordania: "jo",
+    Portugal: "pt",
+    "RD del Congo": "cd",
+    Inglaterra: "gb-eng",
+    Croacia: "hr",
+    Ghana: "gh",
+    Panamá: "pa",
+    Uzbekistán: "uz",
+    Colombia: "co",
   };
+
   return flagCodes[team] || "un";
 };
 </script>
@@ -709,7 +918,6 @@ const getFlagCode = (team) => {
   transition: all 0.3s ease;
 }
 
-/* Estilo visual opaco sutil para tarjetas bloqueadas */
 .card-locked {
   background: #0b0f0e !important;
   border-color: rgba(220, 53, 69, 0.2) !important;
@@ -726,17 +934,32 @@ const getFlagCode = (team) => {
   height: 40px;
 }
 
-/* Evitamos que puedan usar las flechas internas del navegador */
+.progress-mobile {
+  width: 180px;
+  height: 8px;
+}
+
+.team-flag-mobile {
+  width: 42px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.score-input-mobile {
+  width: 54px;
+  height: 42px;
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Estilo cuando el input queda deshabilitado por bloqueo */
 input:disabled {
   background-color: #1a1a1a !important;
   border-color: #333 !important;
@@ -762,6 +985,26 @@ input:disabled {
 
 /* Margen superior dinámico para compensar el sticky-top al hacer scroll automático */
 .grupo-scroll {
-  scroll-margin-top: 240px; 
+  scroll-margin-top: 240px;
+}
+
+@media (max-width: 991.98px) {
+  main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  section {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .scroll-clean {
+    overflow: visible !important;
+  }
+
+  .progress-mobile {
+    width: 100%;
+  }
 }
 </style>

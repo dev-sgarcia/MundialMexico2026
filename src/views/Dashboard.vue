@@ -1,91 +1,226 @@
 <template>
-  <div class="bg-black min-vh-100">
-    <div class="container-fluid px-3 py-3">
-      <div class="d-flex gap-3 align-items-start">
-        <aside
-          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
-        >
-          <Sidebar />
+  <div class="rules-page min-vh-100 pb-5">
+    <div class="container-fluid px-3 px-md-4">
+      <div class="row g-3 align-items-start">
+        <aside class="d-none d-lg-block col-lg-3 col-xl-2">
+          <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
+            <Sidebar />
+          </div>
         </aside>
-        <main class="flex-grow-1 overflow-hidden">          
-          <section class="rules-section">
-            <div class="card bg-dark text-white border-success border-opacity-25 rounded-4 shadow">
-              <div class="card-header bg-transparent border-bottom border-success border-opacity-25 py-3 px-4">
-                <h4 class="fw-bold mb-0 text-gold d-flex align-items-center gap-2">
-                  📜 Reglas de la Quiniela
-                </h4>
+
+        <main
+          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 position-relative"
+        >
+          <div
+            class="d-none d-lg-flex position-absolute top-0 end-0 mt-3 me-4 z-3"
+          >
+            <UserProfile />
+          </div>
+          <section class="p-0">
+            <div class="hero-banner rounded-4 mb-3 mb-xl-4 p-3 p-md-4">
+              <div class="row align-items-center h-100 g-3">
+                <div class="col-12 col-lg-5 col-xl-3">
+                  <span
+                    class="rules-kicker text-uppercase fw-bold d-block mb-2"
+                  >
+                    Mundial México 2026
+                  </span>
+
+                  <h1 class="rules-title mb-3">
+                    REGLAS DE
+                    <span class="title-highlight">LA QUINIELA</span>
+                  </h1>
+
+                  <div class="title-line"></div>
+                </div>
+
+                <div class="col-12 col-lg-4 col-xl-3 hero-copy-col">
+                  <p class="hero-copy text-justify mb-0">
+                    Conoce cómo se reparten los premios, cómo se calculan los
+                    puntos y cómo puedes convertirte en campeón.
+                  </p>
+                </div>
+
+                <div class="d-none d-xl-block col-xl-4"></div>
               </div>
-              
-              <div class="card-body p-4">
-                <h5 class="fw-bold text-success mb-3">🏆 Dinámica de Premios</h5>
-                <p class="text-white-50 mb-4">
-                  Todo el monto acumulado de nuestra quiniela se dividirá en <strong>dos bolsas iguales (50% y 50%)</strong>. Tienes dos grandes oportunidades de ganar:
-                </p>
+            </div>
+            <div class="row g-3 mb-3 mb-xl-4">
+              <div class="col-12 col-md-6 col-xl-4">
+                <article
+                  class="rule-card rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                >
+                  <div class="rule-icon flex-shrink-0">
+                    <i class="fa-solid fa-trophy"></i>
+                  </div>
 
-                <div class="row g-4 mb-4">
-                  <div class="col-12 col-md-6">
-                    <div class="p-3 bg-black rounded-4 border border-secondary border-opacity-25 h-100">
-                      <h6 class="fw-bold text-gold border-bottom border-secondary border-opacity-25 pb-2 mb-3">
-                        💰 Bolsa 1: Fase de Grupos (50%)
-                      </h6>
-                      <ul class="text-white-50 small mb-0 ps-3">
-                        <li class="mb-2">🥇 <strong>1º Lugar:</strong> 50% de esta bolsa</li>
-                        <li class="mb-2">🥈 <strong>2º Lugar:</strong> 30% de esta bolsa</li>
-                        <li>🥉 <strong>3º Lugar:</strong> 20% de esta bolsa</li>
-                      </ul>
+                  <div class="rule-content flex-grow-1">
+                    <h5 class="mb-1">Dinámica de Premios</h5>
+                    <div class="rule-divider divider-green mb-3"></div>
+                    <p class="mb-0 text-justify">
+                      Todo el monto acumulado se divide en
+                      <strong>dos bolsas iguales</strong>: 50% y 50%. Tienes dos
+                      grandes oportunidades de ganar.
+                    </p>
+                  </div>
+                </article>
+              </div>
+
+              <div class="col-12 col-md-6 col-xl-4">
+                <article
+                  class="rule-card rule-blue h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                >
+                  <div class="rule-icon flex-shrink-0">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                  </div>
+
+                  <div class="rule-content flex-grow-1">
+                    <h5 class="mb-1">Bolsa 1: Fase de Grupos (50%)</h5>
+                    <div class="rule-divider divider-blue mb-3"></div>
+
+                    <div class="points-row">
+                      <span>1º Lugar</span>
+                      <strong>50%</strong>
+                    </div>
+                    <div class="points-row">
+                      <span>2º Lugar</span>
+                      <strong>30%</strong>
+                    </div>
+                    <div class="points-row mb-0">
+                      <span>3º Lugar</span>
+                      <strong>20%</strong>
                     </div>
                   </div>
-                  
-                  <div class="col-12 col-md-6">
-                    <div class="p-3 bg-black rounded-4 border border-secondary border-opacity-25 h-100">
-                      <h6 class="fw-bold text-gold border-bottom border-secondary border-opacity-25 pb-2 mb-3">
-                        💰 Bolsa 2: Campeón Absoluto (50%)
-                      </h6>
-                      <ul class="text-white-50 small mb-0 ps-3">
-                        <li class="mb-2">🥇 <strong>1º Lugar:</strong> 50% de esta bolsa</li>
-                        <li class="mb-2">🥈 <strong>2º Lugar:</strong> 30% de esta bolsa</li>
-                        <li>🥉 <strong>3º Lugar:</strong> 20% de esta bolsa</li>
-                      </ul>
+                </article>
+              </div>
+
+              <div class="col-12 col-md-6 col-xl-4">
+                <article
+                  class="rule-card rule-gold h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                >
+                  <div class="rule-icon flex-shrink-0">
+                    <i class="fa-solid fa-crown"></i>
+                  </div>
+
+                  <div class="rule-content flex-grow-1">
+                    <h5 class="mb-1">Bolsa 2: Campeón Absoluto (50%)</h5>
+                    <div class="rule-divider divider-gold mb-3"></div>
+
+                    <div class="points-row">
+                      <span>1º Lugar</span>
+                      <strong>50%</strong>
                     </div>
+                    <div class="points-row">
+                      <span>2º Lugar</span>
+                      <strong>30%</strong>
+                    </div>
+                    <div class="points-row mb-0">
+                      <span>3º Lugar</span>
+                      <strong>20%</strong>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <div class="col-12 col-md-6 col-xl-4">
+                <article
+                  class="rule-card rule-purple h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                >
+                  <div class="rule-icon flex-shrink-0">
+                    <i class="fa-solid fa-bullseye"></i>
+                  </div>
+
+                  <div class="rule-content flex-grow-1">
+                    <h5 class="mb-1">Sistema de Puntuación</h5>
+                    <div class="rule-divider divider-purple mb-3"></div>
+
+                    <p class="mb-2 text-justify">
+                      <strong>3 puntos</strong> Si aciertas al resultado del
+                      juego (ganador o empate), incluyendo el marcador exacto.
+                    </p>
+
+                    <p class="mb-0 text-justify">
+                      <strong>1 punto</strong> Si aciertas al resultado del
+                      juego (ganador o empate), pero fallas en el marcador
+                      exacto.
+                    </p>
+                  </div>
+                </article>
+              </div>
+
+              <div class="col-12 col-md-6 col-xl-4">
+                <article
+                  class="rule-card rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                >
+                  <div class="rule-icon flex-shrink-0">
+                    <i class="fa-solid fa-star"></i>
+                  </div>
+
+                  <div class="rule-content flex-grow-1">
+                    <h5 class="mb-1">Bono de Oro</h5>
+                    <div class="rule-divider divider-cyan mb-3"></div>
+
+                    <p class="mb-0 text-justify">
+                      Elige al campeón antes del primer partido. Si aciertas,
+                      sumas <strong>10 puntos extra</strong>.
+                    </p>
+                  </div>
+                </article>
+              </div>
+
+              <div class="col-12 col-md-6 col-xl-4">
+                <article
+                  class="rule-card rule-red h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                >
+                  <div class="rule-icon flex-shrink-0">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                  </div>
+
+                  <div class="rule-content flex-grow-1">
+                    <h5 class="mb-1">Desempate</h5>
+                    <div class="rule-divider divider-red mb-3"></div>
+
+                    <p class="mb-0 text-justify">
+                      En caso de empate, gana quien haya registrado primero su
+                      último marcador.
+                    </p>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <div class="cta-card rounded-4 p-3 p-md-4">
+              <div class="row align-items-center g-3">
+                <div class="col-auto">
+                  <div class="cta-icon">
+                    <i class="fa-solid fa-trophy"></i>
                   </div>
                 </div>
 
-                <div class="alert bg-success bg-opacity-10 border border-success border-opacity-25 text-white-50 mb-5 rounded-4 p-4">
-                  <h6 class="fw-bold text-success mb-3">💡 Ejemplo para que quede clarísimo:</h6>
-                  <p class="mb-3">
-                    <strong class="text-white">Para la Bolsa 1 (Fase de Grupos):</strong> Si Pablo suma más puntos que nadie durante los primeros 48 partidos (antes de octavos de final), él se lleva el 50% de la Bolsa 1. ¡No importa qué pase después, ese premio ya es suyo!
-                  </p>
-                  <p class="mb-3">
-                    <strong class="text-white">Para la Bolsa 2 (Fase de Elminación):</strong> Borrón de puntos y cuenta nueva, Selma no ganó la fase de grupos (ya que ganó Pablo), pero acertó casi todos los partidos de eliminación directa y además adivinó desde el principio qué país sería el Campeón del Mundo (ganando sus 10 puntos de bono extra), su suma total al terminar el Mundial será la más alta y se llevará el 50% de la Bolsa 2.
-                  </p>
-                  <p class="mb-3">
-                    <strong class="text-white">En caso de empate en puntos (Para todos):</strong> Se tomará en cuenta al participante que haya registrado primero que todos, su último marcador. Ejemplo: Gana el que registro su resultado 5 horas antes del partido y no el que registro su resultado una hora antes.
+                <div class="col">
+                  <h3 class="h5 fw-black text-white mb-1">
+                    ¡QUE GANE <span>EL MEJOR!</span>
+                  </h3>
+                  <p class="text-white-50 small mb-0">
+                    Participa, diviértete y demuestra tus conocimientos.
                   </p>
                 </div>
 
-                <h5 class="fw-bold text-success mb-3">📊 Sistema de Puntuación</h5>
-                <div class="bg-black rounded-4 border border-secondary border-opacity-25 p-3 mb-5">
-                  <ul class="text-white-50 mb-0 ps-3">
-                    <li class="mb-2">
-                      <strong class="text-white">3 puntos:</strong> Si aciertas al resultado del juego (ganador o empate), incluyendo el marcador exacto.
-                    </li>
-                    <li>
-                      <strong class="text-white">1 punto:</strong> Si aciertas al resultado del juego (ganador o empate), pero fallas en el marcador exacto.
-                    </li>
-                  </ul>
+                <div class="col-12 col-md-auto">
+                  <RouterLink to="/dashboard/quinielas" class="btn-play">
+                    <i class="fa-solid fa-futbol"></i>
+                    IR A JUGAR
+                    <i class="fa-solid fa-chevron-right"></i>
+                  </RouterLink>
                 </div>
-
-                <h5 class="fw-bold text-success mb-3">🌟 El Bono de Oro</h5>
-                <p class="text-white-50 mb-0">
-                  Antes de que ruede el primer balón del Mundial, deberás registrar qué selección crees que levantará la Copa. Si tu equipo elegido resulta ser el Campeón del Mundo, sumarás <strong>10 puntos extra</strong> a tu conteo general final. ¡Este bono puede ser el empujón definitivo para llevarte la bolsa principal!
-                </p>
               </div>
             </div>
           </section>
 
+          <div class="d-lg-none pb-5"></div>
         </main>
       </div>
     </div>
+
+    <BottomNav />
   </div>
 </template>
 
@@ -94,15 +229,27 @@ import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
+import BottomNav from "@/components/dashboard/BottomNav.vue";
+import UserProfile from "@/components/common/UserProfile.vue";
 
 const route = useRoute();
 
 const userId = ref(null);
-const idLigaActiva = ref(route.query.ligaId || localStorage.getItem('ligaIdActiva') || null);
-const nombreLigaActiva = ref(route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela");
+
+const idLigaActiva = ref(
+  route.query.ligaId || localStorage.getItem("ligaIdActiva") || null,
+);
+
+const nombreLigaActiva = ref(
+  route.query.ligaNombre ||
+    localStorage.getItem("ligaNombreActiva") ||
+    "Mi Quiniela",
+);
 
 // 👇 SOLUCIÓN: Faltaba declarar la variable eventoIdActiva
-const eventoIdActiva = ref(route.query.eventoId || localStorage.getItem("eventoIdActiva") || null);
+const eventoIdActiva = ref(
+  route.query.eventoId || localStorage.getItem("eventoIdActiva") || null,
+);
 
 // Caché al inicio
 if (idLigaActiva.value && idLigaActiva.value !== "null") {
@@ -110,60 +257,566 @@ if (idLigaActiva.value && idLigaActiva.value !== "null") {
   localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
 }
 
-if (eventoIdActiva.value && eventoIdActiva.value !== 'null') {
-  localStorage.setItem('eventoIdActiva', eventoIdActiva.value);
+if (eventoIdActiva.value && eventoIdActiva.value !== "null") {
+  localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
 }
 
 onMounted(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   if (session) {
     userId.value = session.user.id;
   }
 });
 
-watch(() => route.query.ligaId, (newId) => {
-  if (newId && newId !== 'null') {
-    idLigaActiva.value = newId;
-    nombreLigaActiva.value = route.query.ligaNombre || localStorage.getItem('ligaNombreActiva') || "Mi Quiniela";
-    
-    // 👇 También la atrapamos aquí por si cambian de liga en el menú
-    eventoIdActiva.value = route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
-    
-    localStorage.setItem('ligaIdActiva', newId);
-    localStorage.setItem('ligaNombreActiva', nombreLigaActiva.value);
-    
-    if (eventoIdActiva.value) {
-      localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
+watch(
+  () => route.query.ligaId,
+  (newId) => {
+    if (newId && newId !== "null") {
+      idLigaActiva.value = newId;
+      nombreLigaActiva.value =
+        route.query.ligaNombre ||
+        localStorage.getItem("ligaNombreActiva") ||
+        "Mi Quiniela";
+
+      // 👇 También la atrapamos aquí por si cambian de liga en el menú
+      eventoIdActiva.value =
+        route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
+
+      localStorage.setItem("ligaIdActiva", newId);
+      localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
+
+      if (eventoIdActiva.value) {
+        localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
+      }
     }
-  }
-}, { immediate: false });
+  },
+  { immediate: false },
+);
 </script>
-
 <style scoped>
-.hero-card {
-  height: 290px;
+.rules-page {
+  color: #fff;
+  background: #020807;
 }
 
-.hero-image {
-  height: 100%;
+.fw-black {
+  font-weight: 900;
+}
+
+/* .rules-board {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(59, 255, 91, 0.2);
+  background:
+    linear-gradient(rgba(1, 8, 7, 0.84), rgba(1, 8, 7, 0.94)),
+    url("@/assets/rules/trionda-stadium.png") center/cover no-repeat;
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.5),
+    inset 0 0 60px rgba(0, 255, 90, 0.05);
+} */
+
+.rule-card,
+.example-card,
+.cta-card {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+/* HERO */
+.hero-banner {
+  min-height: 200px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.72) 34%,
+      rgba(0, 0, 0, 0.32) 58%,
+      rgba(0, 0, 0, 0.05) 100%
+    ),
+    url("@/assets/trionda-stadium.png");
+  background-size: cover;
+  background-position: center bottom;
+}
+
+.hero-banner .row {
+  min-height: 100%;
+}
+
+.rules-kicker {
+  color: #48c866;
+  letter-spacing: 0.11rem;
+  font-size: 0.72rem;
+}
+
+.rules-title {
+  font-size: clamp(1.9rem, 3.2vw, 3.15rem);
+  line-height: 0.95;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.24);
+}
+
+.rules-title span {
+  display: block;
+  color: #4caf6a;
+  text-shadow:
+    0 0 6px rgba(76, 175, 106, 0.22),
+    0 0 12px rgba(76, 175, 106, 0.1);
+}
+
+.title-highlight {
+  display: inline-block;
+}
+
+.title-line {
   width: 100%;
-  object-fit: cover;
-  object-position: center 88%;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
+  max-width: 420px;
+  height: 5px;
+  border-radius: 999px;
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.82) 25%,
-    rgba(0, 0, 0, 0.35) 50%,
-    rgba(0, 0, 0, 0.85) 100%
+    #00c853 0 45%,
+    #ffffff 45% 60%,
+    #ff3d3d 60%
   );
 }
 
-.text-gold {
-  color: #d4af37;
+.hero-copy-col {
+  border-left: 1px solid rgba(57, 211, 83, 0.35);
+  padding-left: 1rem;
+}
+
+.hero-copy {
+  max-width: 520px;
+  color: #fff;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  font-weight: 600;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+}
+
+/* RULE CARDS */
+.rule-card {
+  min-height: 148px;
+  border-radius: 1rem;
+  background:
+    linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.84)),
+    url("@/assets/rules/trionda-stadium.png") center/cover no-repeat;
+  border: 1px solid var(--card-color);
+  box-shadow:
+    0 0 9px var(--card-glow),
+    inset 0 0 22px var(--card-soft);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.rule-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 12px var(--card-glow),
+    0 0 22px var(--card-soft),
+    0 12px 24px rgba(0, 0, 0, 0.42);
+}
+
+.rule-content {
+  min-width: 0;
+}
+
+.rule-number {
+  font-size: 1.45rem;
+  line-height: 1;
+  font-weight: 900;
+  color: var(--card-bright);
+  text-shadow:
+    0 0 6px var(--card-glow),
+    0 0 12px var(--card-glow);
+}
+
+.rule-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  color: var(--card-bright);
+  border: 1px solid var(--card-color);
+  background: radial-gradient(
+    circle,
+    var(--card-soft),
+    rgba(0, 0, 0, 0.46) 64%
+  );
+  box-shadow:
+    0 0 10px var(--card-glow),
+    0 0 18px var(--card-soft),
+    inset 0 0 14px var(--card-soft);
+}
+
+.rule-icon i {
+  filter: drop-shadow(0 0 7px var(--card-bright));
+}
+
+.rule-card h5 {
+  color: #fff;
+  font-size: 0.96rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-wrap: balance;
+  text-shadow: 0 0 7px rgba(255, 255, 255, 0.18);
+}
+
+.rule-card p {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.rule-card strong {
+  color: #fff;
+}
+
+.rule-line {
+  width: 32px;
+  height: 3px;
+  display: block;
+  margin-bottom: 0.6rem;
+  border-radius: 999px;
+  background: var(--card-bright);
+  box-shadow: 0 0 7px var(--card-glow);
+}
+
+.points-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+  margin-bottom: 0.35rem;
+}
+
+.points-row strong {
+  color: var(--card-bright);
+  border: 1px solid var(--card-color);
+  border-radius: 0.45rem;
+  padding: 0.02rem 0.45rem;
+  box-shadow: 0 0 7px var(--card-soft);
+}
+
+.rule-green {
+  --card-bright: #58d36f;
+  --card-color: rgba(88, 211, 111, 0.48);
+  --card-glow: rgba(88, 211, 111, 0.2);
+  --card-soft: rgba(88, 211, 111, 0.075);
+}
+
+.rule-blue {
+  --card-bright: #6ea8fe;
+  --card-color: rgba(110, 168, 254, 0.48);
+  --card-glow: rgba(110, 168, 254, 0.2);
+  --card-soft: rgba(110, 168, 254, 0.075);
+}
+
+.rule-gold {
+  --card-bright: #d8b34d;
+  --card-color: rgba(216, 179, 77, 0.5);
+  --card-glow: rgba(216, 179, 77, 0.22);
+  --card-soft: rgba(216, 179, 77, 0.075);
+}
+
+.rule-purple {
+  --card-bright: #a970ff;
+  --card-color: rgba(169, 112, 255, 0.46);
+  --card-glow: rgba(169, 112, 255, 0.18);
+  --card-soft: rgba(169, 112, 255, 0.075);
+}
+
+.rule-cyan {
+  --card-bright: #4fd1c5;
+  --card-color: rgba(79, 209, 197, 0.46);
+  --card-glow: rgba(79, 209, 197, 0.18);
+  --card-soft: rgba(79, 209, 197, 0.075);
+}
+
+.rule-red {
+  --card-bright: #e57373;
+  --card-color: rgba(229, 115, 115, 0.48);
+  --card-glow: rgba(229, 115, 115, 0.2);
+  --card-soft: rgba(229, 115, 115, 0.075);
+}
+
+/* EXAMPLE / CTA */
+.example-card {
+  border: 1px solid rgba(59, 255, 91, 0.16);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.example-card h5 {
+  font-size: 0.98rem;
+}
+
+.example-card p {
+  font-size: 0.9rem;
+}
+
+.cta-card {
+  border: 1px solid rgba(88, 211, 111, 0.38);
+  background:
+    linear-gradient(90deg, rgba(6, 38, 20, 0.74), rgba(4, 12, 10, 0.88)),
+    url("@/assets/rules/trionda-stadium.png") center/cover no-repeat;
+  box-shadow:
+    0 0 12px rgba(88, 211, 111, 0.16),
+    inset 0 0 24px rgba(88, 211, 111, 0.05);
+}
+
+.cta-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  color: #d8b34d;
+  font-size: 1.9rem;
+  text-shadow:
+    0 0 8px rgba(216, 179, 77, 0.4),
+    0 0 16px rgba(216, 179, 77, 0.16);
+}
+
+.cta-card h3 span {
+  color: #4caf6a;
+  text-shadow: 0 0 7px rgba(76, 175, 106, 0.28);
+}
+
+.btn-play {
+  min-height: 46px;
+  padding: 0 1.15rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #157347, #063f1e);
+  border: 1px solid rgba(88, 211, 111, 0.58);
+  box-shadow:
+    0 0 9px rgba(88, 211, 111, 0.28),
+    inset 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+/* RESPONSIVE */
+.sidebar-fixed {
+  width: 16.66666667%;
+  max-width: 280px;
+}
+
+.rule-divider {
+  width: 42px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--card-bright);
+  box-shadow: 0 0 7px var(--card-glow);
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.divider-green,
+.divider-blue,
+.divider-gold,
+.divider-purple,
+.divider-cyan,
+.divider-red {
+  background: var(--card-bright);
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .sidebar-fixed {
+    width: 25%;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .hero-banner {
+    min-height: 200px;
+  }
+
+  .rule-card {
+    min-height: 142px;
+  }
+
+  .rule-icon {
+    width: 58px;
+    height: 58px;
+    font-size: 1.4rem;
+  }
+
+  .rule-number {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .rules-page {
+    overflow-x: hidden;
+  }
+
+  .hero-banner {
+    min-height: auto;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.74) 55%,
+        rgba(0, 0, 0, 0.58) 100%
+      ),
+      url("@/assets/trionda-stadium.png") center/cover no-repeat;
+  }
+
+  .hero-copy-col {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .rules-title {
+    font-size: clamp(2rem, 9vw, 2.75rem);
+  }
+
+  .rules-kicker {
+    font-size: 0.68rem;
+  }
+
+  .rule-card {
+    min-height: auto;
+  }
+
+  .rule-content {
+    width: 100%;
+  }
+
+  .rule-icon {
+    width: 58px;
+    height: 58px;
+    font-size: 1.4rem;
+  }
+
+  .rule-card h5 {
+    font-size: 0.98rem;
+  }
+
+  .rule-card p,
+  .points-row {
+    font-size: 0.86rem;
+  }
+
+  .points-row {
+    width: min(100%, 240px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .rule-divider {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-card .row {
+    text-align: center;
+  }
+
+  .cta-icon {
+    width: 46px;
+    height: 46px;
+    margin: 0 auto;
+    font-size: 1.65rem;
+  }
+
+  .btn-play {
+    width: 100%;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .rules-page {
+    padding-bottom: 5.5rem !important;
+  }
+
+  .hero-banner {
+    border-radius: 1rem !important;
+  }
+
+  .rules-kicker,
+  .rules-title,
+  .hero-copy {
+    text-align: center;
+  }
+
+  .title-line {
+    max-width: 260px;
+    height: 4px;
+    margin: 0 auto;
+  }
+
+  .hero-copy {
+    line-height: 1.45;
+  }
+
+  .text-justify {
+    text-align: left;
+  }
+
+  .rule-card {
+    border-radius: 1rem;
+    padding: 1rem !important;
+  }
+
+  .rule-icon {
+    width: 54px;
+    height: 54px;
+    font-size: 1.3rem;
+  }
+
+  .rule-card h5 {
+    margin-bottom: 0.35rem !important;
+  }
+
+  .rule-divider {
+    width: 38px;
+    height: 3px;
+    margin-bottom: 0.8rem !important;
+  }
+
+  .points-row {
+    width: 100%;
+    max-width: 230px;
+    gap: 0.75rem;
+  }
+
+  .points-row strong {
+    min-width: 48px;
+    text-align: center;
+  }
+
+  .cta-card {
+    border-radius: 1rem !important;
+  }
+
+  .cta-card .col-auto,
+  .cta-card .col {
+    width: 100%;
+  }
 }
 </style>
