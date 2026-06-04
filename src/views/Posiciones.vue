@@ -2,15 +2,13 @@
   <div class="bg-black min-vh-100 text-white pb-5 pb-lg-0">
     <div class="container-fluid px-3 py-3">
       <div class="row g-0">
-        <!-- SIDEBAR -->
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
-          <div class="position-sticky top-0 vh-100 overflow-hidden py-3">
+          <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
             <Sidebar />
           </div>
         </aside>
-
         <!-- CONTENIDO -->
-        <main class="col-12 col-lg-9 col-xl-10 px-0 pt-3 pb-5 pb-lg-1">
+        <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-3 pb-5 pb-lg-1">
           <section class="container-fluid">
             <!-- HEADER -->
             <div class="bg-black z-3 mb-4">
@@ -1010,5 +1008,11 @@ const getMedalClass = (rank) => {
 
 .legend-mobile i {
   font-size: 0.5rem;
+}
+
+/* Clase para mantener el ancho exacto del sidebar cuando es fixed */
+.sidebar-fixed {
+  width: 16.66666667%;
+  max-width: 280px;
 }
 </style>

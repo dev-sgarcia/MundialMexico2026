@@ -80,22 +80,6 @@ const menuItems = [
   // { label: "Mi perfil", path: "/perfil", icon: PhUser },
 ];
 
-// const obtenerRutaConLiga = (basePath) => {
-//   // Rescatamos de la URL o de la memoria caché
-//   const currentLigaId =
-//     route.query.ligaId || localStorage.getItem("ligaIdActiva");
-//   const currentLigaNombre =
-//     route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
-
-//   return {
-//     path: basePath,
-//     query: {
-//       ligaId: currentLigaId,
-//       ligaNombre: currentLigaNombre,
-//     },
-//   };
-// };
-
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
   const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");

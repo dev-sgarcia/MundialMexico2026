@@ -205,7 +205,7 @@
                 </div>
 
                 <div class="col-12 col-md-auto">
-                  <RouterLink to="/dashboard/quinielas" class="btn-play">
+                  <RouterLink to="/quinielas" class="btn-play">
                     <i class="fa-solid fa-futbol"></i>
                     IR A JUGAR
                     <i class="fa-solid fa-chevron-right"></i>

@@ -2,15 +2,23 @@
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
     <div class="container-fluid px-3 py-3">
       <div class="row g-0 h-100">
-        <aside
+        <!-- <aside
           class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
         >
           <Sidebar />
+        </aside> -->
+
+        <aside class="d-none d-lg-block col-lg-3 col-xl-2">
+          <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
+            <Sidebar />
+          </div>
         </aside>
 
-        <main
+        <!-- <main
           class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
-        >
+        > -->
+        <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 position-relative">
+
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
           >
@@ -543,6 +551,7 @@ const cargarPrediccionesReales = async () => {
 };
 
 // --- LÓGICA DE ACERTANTES ---
+// --- LÓGICA DE ACERTANTES ---
 const obtenerAcertantes = (match) => {
   // 1. Si el partido no ha terminado o no tiene marcador oficial, nadie acierta aún.
   if (
@@ -553,17 +562,21 @@ const obtenerAcertantes = (match) => {
     return [];
   }
 
-  // 2. Filtramos la lista de todas las predicciones para encontrar a los genios
+  // 2. Filtramos la lista asegurándonos de convertir todo a los mismos tipos de datos
   const ganadores = prediccionesLiga.value.filter((pred) => {
     return (
-      pred.match_id === match.id &&
-      pred.home_score === match.homeScore &&
-      pred.away_score === match.awayScore
+      String(pred.match_id) === String(match.id) &&
+      Number(pred.home_score) === Number(match.homeScore) &&
+      Number(pred.away_score) === Number(match.awayScore)
     );
   });
 
+  // 3. Mapeamos para obtener el nombre
   return ganadores.map((pred) => {
-    const nombreUsuario = pred.perfiles?.nombre || "Usuario Desconocido";
+    // Si la base de datos devolvió el perfil como un arreglo (a veces pasa en joins), tomamos el primero
+    const perfil = Array.isArray(pred.perfiles) ? pred.perfiles[0] : pred.perfiles;
+    const nombreUsuario = perfil?.nombre || "Usuario Desconocido";
+    
     return { name: nombreUsuario };
   });
 };
@@ -1000,5 +1013,10 @@ const getFlagCode = (team) => {
 /* Margen superior dinámico para compensar el sticky-top al hacer scroll automático */
 .grupo-scroll {
   scroll-margin-top: 240px;
+}
+
+.sidebar-fixed {
+  width: 16.66666667%;
+  max-width: 280px;
 }
 </style>

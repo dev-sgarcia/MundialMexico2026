@@ -3,15 +3,15 @@
     <div class="container-fluid px-3 py-3">
       <div class="row g-0 h-100">
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
-          <div class="position-sticky top-0 vh-100 overflow-hidden py-3">
+          <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
             <Sidebar />
           </div>
         </aside>
 
         <main
-          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
+          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
         >
-          <section
+        <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
           >
             <div class="sticky-top bg-black z-3">
@@ -981,6 +981,12 @@ input:disabled {
 
 .text-gold {
   color: #d4af37;
+}
+
+/* Clase para mantener el ancho exacto del sidebar cuando es fixed */
+.sidebar-fixed {
+  width: 16.66666667%;
+  max-width: 280px;
 }
 
 /* Margen superior dinámico para compensar el sticky-top al hacer scroll automático */

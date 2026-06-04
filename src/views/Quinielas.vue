@@ -2,13 +2,15 @@
   <div class="bg-black min-vh-100 text-white">
     <div class="container-fluid px-3 px-md-4 py-3 content-with-bottom-nav">
       <div class="row g-3 align-items-start">
+
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
-          <div class="position-sticky top-0 vh-100 overflow-hidden py-3">
+          <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
             <Sidebar />
           </div>
         </aside>
 
-        <main class="col-12 col-lg-9 col-xl-10 position-relative">
+        <!-- <main class="col-12 col-lg-9 col-xl-10 position-relative"> -->
+        <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 position-relative">
           <div
             class="d-none d-lg-flex position-absolute top-0 end-0 mt-3 me-4 z-3"
           >
@@ -857,6 +859,12 @@ const obtenerBandera = (pais) => {
 
 .league-detail-mobile {
   padding-bottom: 5.5rem;
+}
+
+/* Clase para mantener el ancho exacto del sidebar cuando es fixed */
+.sidebar-fixed {
+  width: 16.66666667%;
+  max-width: 280px;
 }
 
 @media (min-width: 768px) {
