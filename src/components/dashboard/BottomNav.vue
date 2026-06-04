@@ -20,7 +20,9 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { supabase } from "@/supabaseClient"; // <-- Importamos Supabase
 import MobileUser from "@/components/dashboard/MobileUser.vue";
 import {
   PhTrophy,
@@ -32,30 +34,35 @@ import {
 
 const route = useRoute();
 
-const menuItems = [
+// --- VALIDACIÓN DE ADMINISTRADOR ---
+const isAdmin = ref(false);
+const adminEmails = [
+  "tu_correo@ejemplo.com", // Coloca aquí los correos reales
+  "otro_admin@ejemplo.com"
+];
+
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session && adminEmails.includes(session.user.email)) {
+    isAdmin.value = true;
+  }
+});
+
+// --- CONFIGURACIÓN DEL MENÚ MÓVIL ---
+const allMenuItems = [
   { label: "Reglas", to: "/dashboard", icon: PhCalendarCheck },
-  { label: "Quinielas", to: "/quinielas", icon: PhTrophy },
+  { label: "Mis Quinielas", to: "/quinielas", icon: PhTrophy, adminOnly: true }, // <-- Opción protegida
   { label: "Predicciones", to: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", to: "/resultados", icon: PhChartBar },
   { label: "Posiciones", to: "/posiciones", icon: PhRanking },
 ];
 
+const menuItems = computed(() => {
+  return allMenuItems.filter(item => !item.adminOnly || isAdmin.value);
+});
+
+
 const isActive = (path) => route.path === path;
-
-// --- FUNCIÓN PARA MANTENER LAS VARIABLES DE LA LIGA ---
-// const obtenerRutaConLiga = (basePath) => {
-//   // Rescatamos de la URL o de la memoria caché
-//   const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
-//   const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
-
-//   return {
-//     path: basePath,
-//     query: {
-//       ligaId: currentLigaId,
-//       ligaNombre: currentLigaNombre,
-//     },
-//   };
-// };
 
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché

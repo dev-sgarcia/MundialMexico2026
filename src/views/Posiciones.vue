@@ -21,7 +21,7 @@
                   </h2>
 
                   <p class="text-white-50 mb-0">
-                    Ranking general de participantes de la Quiniela RA.
+                    Ranking general de participantes de la quiniela: {{ nombreQuinielaActiva }}
                   </p>
                 </div>
 
@@ -30,135 +30,101 @@
                 </div>
               </div>
             </div>
-
             <!-- CARDS SUPERIORES -->
-            <div class="row g-4 mb-4">
-              <div class="col-6 col-md-6 col-xl-3">
-                <div
-                  class="card bg-warning bg-opacity-10 text-white border border-warning border-opacity-50 rounded-4 shadow-sm h-100"
-                >
-                  <div class="card-body p-3">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                      <PhCrown size="20" weight="fill" class="text-warning" />
-                      <small class="text-white-50 fw-bold text-uppercase">
-                        Líder actual
-                      </small>
+            <div class="row g-3 mb-4">
+              <!-- 1. LÍDER ACTUAL -->
+              <div class="col-6 col-xl-3">
+                <div class="card bg-warning bg-opacity-10 text-white border border-warning border-opacity-50 rounded-4 shadow-sm h-100">
+                  <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
+                    <!-- Título centrado -->
+                    <div class="d-flex justify-content-center align-items-center gap-1 mb-3">
+                      <PhCrown size="18" weight="fill" class="text-warning flex-shrink-0" />
+                      <small class="text-white-50 fw-bold text-uppercase" style="font-size: 0.75rem;">Líder actual</small>
                     </div>
 
-                    <div class="d-flex align-items-center gap-3">
-                      <div>
-                        <h6 class="fw-bold mb-1">
-                          {{ leader?.participantName ?? "Sin líder" }}
-                        </h6>
-
-                        <span class="text-warning fw-bold fs-5">
-                          {{ leader?.points ?? 0 }} pts
-                        </span>
+                    <!-- Foto y Puntos centrados horizontalmente -->
+                    <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                      <img
+                        v-if="avatarLider"
+                        :src="avatarLider"
+                        :alt="nombreLider"
+                        class="rounded-circle border border-warning"
+                        width="42"
+                        height="42"
+                        style="object-fit: cover;"
+                      />
+                      <div v-else class="rounded-circle border border-warning d-flex align-items-center justify-content-center bg-dark" style="width: 42px; height: 42px;">
+                        <PhUser size="20" class="text-warning" />
                       </div>
+                      <span class="text-warning fw-bold fs-4">{{ puntosLider }} <small class="fs-6">pts</small></span>
                     </div>
+                    
+                    <!-- Nombre truncado para que no salte de línea en móviles -->
+                    <h6 class="fw-bold mb-0 text-truncate w-100">{{ nombreLider }}</h6>
                   </div>
                 </div>
               </div>
 
-              <div class="col-6 col-md-6 col-xl-3">
-                <div
-                  class="card bg-primary bg-opacity-10 text-white border border-primary border-opacity-50 rounded-4 shadow-sm h-100"
-                >
-                  <div class="card-body p-3">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                      <PhMedal size="20" weight="fill" class="text-primary" />
-                      <small class="text-white-50 fw-bold text-uppercase">
-                        Tu posición
-                      </small>
+              <!-- 2. TU POSICIÓN -->
+              <div class="col-6 col-xl-3">
+                <div class="card bg-primary bg-opacity-10 text-white border border-primary border-opacity-50 rounded-4 shadow-sm h-100">
+                  <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
+                    <div class="d-flex justify-content-center align-items-center gap-1 mb-3">
+                      <PhMedal size="18" weight="fill" class="text-primary flex-shrink-0" />
+                      <small class="text-white-50 fw-bold text-uppercase" style="font-size: 0.75rem;">Tu posición</small>
                     </div>
 
-                    <h4 class="fw-bold mb-0 text-primary">
-                      {{ currentUserPosition }}°
-                    </h4>
+                    <h3 class="fw-bold mb-1 text-primary">{{ miPosicion }}°</h3>
 
-                    <span class="text-white-50 small">
-                      de {{ standings.length }} participantes
+                    <span class="text-white-50 small lh-sm d-block mt-1">
+                      de {{ totalParticipantes }} participantes
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div class="col-6 col-md-6 col-xl-3">
-                <div
-                  class="card bg-success bg-opacity-10 text-white border border-success border-opacity-50 rounded-4 shadow-sm h-100"
-                >
-                  <div class="card-body p-3">
-                    <div
-                      class="d-flex justify-content-between align-items-center mb-3"
-                    >
-                      <div class="d-flex align-items-center gap-2">
-                        <PhTarget
-                          size="20"
-                          weight="fill"
-                          class="text-success"
-                        />
-                        <small class="text-white-50 fw-bold text-uppercase">
-                          Racha actual
-                        </small>
-                      </div>
-
-                      <small class="text-success">Ver todos</small>
+              <!-- 3. DISTANCIA DEL LÍDER -->
+              <div class="col-6 col-xl-3">
+                <div class="card bg-success bg-opacity-10 text-white border border-success border-opacity-50 rounded-4 shadow-sm h-100">
+                  <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
+                    <div class="d-flex justify-content-center align-items-center gap-1 mb-3">
+                      <PhTarget size="18" weight="fill" class="text-success flex-shrink-0" />
+                      <small class="text-white-50 fw-bold text-uppercase" style="font-size: 0.75rem;">Distancia al líder</small>
                     </div>
 
-                    <div class="d-flex align-items-center gap-3">
-                      <h4 class="fw-bold mb-0 text-success">
-                        {{ currentStreak }}
-                      </h4>
+                    <h3 class="fw-bold mb-1 text-success">{{ distanciaLider }} <small class="fs-6">pts</small></h3>
 
-                      <div class="d-flex gap-2 ms-auto">
-                        <span
-                          v-for="item in streakDots"
-                          :key="item.id"
-                          class="badge rounded-circle"
-                          :class="
-                            item.success ? 'text-bg-success' : 'text-bg-danger'
-                          "
-                        >
-                          {{ item.success ? "✓" : "×" }}
-                        </span>
-                      </div>
-                    </div>
-
-                    <small class="text-white-50">
-                      Tu mejor racha: {{ bestStreak }} aciertos
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-6 col-md-6 col-xl-3">
-                <div
-                  class="card bg-info bg-opacity-10 text-white border border-info border-opacity-50 rounded-4 shadow-sm h-100"
-                >
-                  <div class="card-body p-3">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                      <PhLightning size="20" weight="fill" class="text-info" />
-                      <small class="text-white-50 fw-bold text-uppercase">
-                        Exactos totales
-                      </small>
-                    </div>
-
-                    <h4 class="fw-bold mb-0 text-info">
-                      {{ totalExactScores }}
-                    </h4>
-
-                    <span class="text-white-50 small">
-                      marcadores exactos
+                    <span class="text-white-50 small lh-sm d-block mt-1">
+                      No aflojes el paso.<br>¡Sigue así!
                     </span>
                   </div>
                 </div>
               </div>
-            </div>
 
+              <!-- 4. EFECTIVIDAD -->
+              <div class="col-6 col-xl-3">
+                <div class="card bg-info bg-opacity-10 text-white border border-info border-opacity-50 rounded-4 shadow-sm h-100">
+                  <div class="card-body p-3 text-center d-flex flex-column justify-content-center">
+                    <div class="d-flex justify-content-center align-items-center gap-1 mb-3">
+                      <PhLightning size="18" weight="fill" class="text-info flex-shrink-0" />
+                      <small class="text-white-50 fw-bold text-uppercase" style="font-size: 0.75rem;">Efectividad</small>
+                    </div>
+
+                    <h3 class="fw-bold mb-1 text-info">{{ miEfectividad }}</h3>
+
+                    <span class="text-white-50 small lh-sm d-block mt-1">
+                      Cada punto te acerca.<br>¡Apuesta fuerte!
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>      
+            
+            
             <!-- CONTENIDO -->
             <div class="row g-4 align-items-start">
               <!-- TABLA -->
-              <div class="col-12 col-xl-9">
+              <div class="col-12 col-xl-12">
                 <!-- FILTROS -->
                 <div
                   class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm mb-3"
@@ -196,280 +162,75 @@
                   </div>
                 </div>
 
-                <!-- TABLA -->
-                <div
-                  class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm overflow-hidden"
-                >
-                  <div class="table-responsive d-none d-md-block">
-                    <table
-                      class="table table-dark table-hover align-middle mb-0"
-                    >
-                      <thead>
-                        <tr>
-                          <th>No.</th>
-                          <th>Participante</th>
-                          <th>Puntos</th>
-                          <th>Exactos</th>
-                          <th>Aciertos</th>
-                          <th>Errores</th>
-                          <th>Movimiento</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <tr
-                          v-for="player in paginatedStandings"
-                          :key="player.id"
-                          :class="`mobile-rank-${player.rank}`"
-                        >
-                          <td>
-                            <div
-                              class="position-relative d-inline-flex align-items-center justify-content-center"
-                            >
-                              <PhMedal
-                                v-if="player.rank <= 3"
-                                size="34"
-                                weight="fill"
-                                :class="getMedalClass(player.rank)"
-                              />
-
-                              <span
-                                v-if="player.rank <= 3"
-                                class="position-absolute top-50 start-50 translate-middle fw-bold medal-number"
-                              >
-                                {{ player.rank }}
-                              </span>
-
-                              <span
-                                v-else
-                                class="badge rounded-pill text-bg-dark border border-secondary px-3 py-2"
-                              >
-                                {{ player.rank }}
-                              </span>
-                            </div>
-                          </td>
-
-                          <td>
-                            <div class="d-flex align-items-center gap-2">
-                              <div>
-                                <div class="fw-semibold">
-                                  {{ player.participantName }}
-
-                                  <span
-                                    v-if="player.isCurrentUser"
-                                    class="badge text-bg-success ms-1"
-                                  >
-                                    Tú
-                                  </span>
-                                </div>
-                                <small class="player-summary text-white-50">
-                                  {{ player.correctResults }} aciertos ·
-                                  {{ player.exactScores }} exactos
-                                </small>
-                              </div>
-                            </div>
-                          </td>
-                          <td class="fw-bold text-success fs-5">
-                            {{ player.points }}
-                          </td>
-                          <td>{{ player.exactScores }}</td>
-                          <td>{{ player.correctResults }}</td>
-
-                          <td class="d-none d-md-table-cell">
-                            {{ player.failedPredictions }}
-                          </td>
-
-                          <td class="d-none d-md-table-cell">
-                            <span :class="getMovementClass(player.movement)">
-                              {{ getMovementIcon(player.movement) }}
-                              {{ Math.abs(player.movement) || "" }}
-                            </span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div class="table-responsive d-md-none">
-                    <table
-                      class="table table-dark table-hover table-sm align-middle text-nowrap mb-0 mobile-standings-table"
-                    >
-                      <thead>
-                        <tr>
-                          <th class="text-center">#</th>
-                          <th>Jugador</th>
-                          <th class="text-center">Pts</th>
-                          <th class="text-center">Ex</th>
-                          <th class="text-center">Ac</th>
-                          <th class="text-center">Er</th>
-                          <th class="text-center">Mov</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <tr
-                          v-for="player in paginatedStandings"
-                          :key="player.id"
-                          :class="`mobile-rank-${player.rank}`"
-                        >
-                          <td class="text-center">
-                            <div
-                              class="position-relative d-inline-flex align-items-center justify-content-center"
-                            >
-                              <PhMedal
-                                v-if="player.rank <= 3"
-                                size="28"
-                                weight="fill"
-                                :class="getMedalClass(player.rank)"
-                              />
-
-                              <span
-                                v-if="player.rank <= 3"
-                                class="position-absolute top-50 start-50 translate-middle fw-bold medal-number"
-                              >
-                                {{ player.rank }}
-                              </span>
-
-                              <span v-else class="fw-bold text-white-50">
-                                {{ player.rank }}
-                              </span>
-                            </div>
-                          </td>
-
-                          <td class="px-1">
-                            <div
-                              class="fw-semibold text-truncate d-flex align-items-center gap-1"
-                            >
-                              <span class="text-truncate">
-                                {{ player.participantName }}
-                              </span>
-
-                              <small
-                                v-if="player.isCurrentUser"
-                                class="badge bg-success px-1 py-0 current-user-badge"
-                              >
-                                Tú
-                              </small>
-                            </div>
-
-                            <small
-                              class="player-summary text-white-50 d-block lh-1"
-                            >
-                              {{ player.correctResults }} aciertos ·
-                              {{ player.exactScores }} exactos
-                            </small>
-                          </td>
-
-                          <td class="text-center fw-bold text-white">
-                            {{ player.points }}
-                          </td>
-
-                          <td class="text-center text-primary fw-semibold">
-                            {{ player.exactScores }}
-                          </td>
-
-                          <td class="text-center text-success fw-semibold">
-                            {{ player.correctResults }}
-                          </td>
-                          <td class="text-center text-danger fw-semibold">
-                            {{ player.failedPredictions }}
-                          </td>
-                          <td class="text-center">
-                            <span :class="getMovementClass(player.movement)">
-                              {{ getMovementIcon(player.movement) }}
-                              {{ Math.abs(player.movement) || "" }}
-                            </span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div
-                    class="legend-mobile d-flex justify-content-center gap-3 text-white-50 pt-1 pb-0 d-md-none"
-                  >
-                    <span>
-                      <i class="fa-solid fa-circle text-primary me-1"></i>
-                      Ex
-                    </span>
-
-                    <span>
-                      <i class="fa-solid fa-circle text-success me-1"></i>
-                      Ac
-                    </span>
-
-                    <span>
-                      <i class="fa-solid fa-circle text-danger me-1"></i>
-                      Er
-                    </span>
-
-                    <span>
-                      <i class="fa-solid fa-circle text-warning me-1"></i>
-                      Mov
-                    </span>
-                  </div>
-                  <div
-                    class="d-flex justify-content-center justify-content-md-between align-items-center flex-wrap gap-3 px-3 pt-1 pb-3"
-                  >
-                    <small class="text-white-50 d-none d-md-block">
-                      Mostrando {{ paginationStart }} - {{ paginationEnd }} de
-                      {{ filteredStandings.length }} participantes
-                    </small>
-
-                    <nav>
-                      <ul class="pagination mb-0">
-                        <li
-                          class="page-item"
-                          :class="{ disabled: currentPage === 1 }"
-                        >
-                          <button
-                            class="page-link bg-dark text-white border-success"
-                            type="button"
-                            @click="previousPage"
-                          >
-                            Anterior
-                          </button>
-                        </li>
-
-                        <li
-                          v-for="page in totalPages"
-                          :key="page"
-                          class="page-item"
-                        >
-                          <button
-                            class="page-link border-success"
-                            :class="
-                              page === currentPage
-                                ? 'bg-success text-white'
-                                : 'bg-dark text-white'
-                            "
-                            type="button"
-                            @click="goToPage(page)"
-                          >
-                            {{ page }}
-                          </button>
-                        </li>
-
-                        <li
-                          class="page-item"
-                          :class="{ disabled: currentPage === totalPages }"
-                        >
-                          <button
-                            class="page-link bg-dark text-white border-success"
-                            type="button"
-                            @click="nextPage"
-                          >
-                            Siguiente
-                          </button>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
+              <div class="card bg-black border border-success border-opacity-25 rounded-4 overflow-hidden mb-4 shadow-sm"> 
+                <div class="card-header bg-dark border-bottom border-success border-opacity-25 py-3 px-4 d-flex align-items-center gap-2">
+                  <PhRanking size="22" weight="fill" class="text-success" />
+                  <h5 class="mb-0 fw-bold text-white text-uppercase" style="letter-spacing: 0.5px;">Tabla General</h5>
                 </div>
-              </div>
 
+                <div class="table-responsive">
+                  <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead class="bg-dark">
+                      <tr>
+                        <th class="py-3 px-3 px-md-4 text-center text-white-50 font-monospace" style="width: 60px;">#</th>
+                        <th class="py-3 text-white-50 text-uppercase" style="font-size: 0.85rem;">Participante</th>
+                        <th class="py-3 text-center text-white-50 text-uppercase d-none d-md-table-cell" style="font-size: 0.85rem;">Exactos (3pts)</th>
+                        <th class="py-3 text-center text-white-50 text-uppercase d-none d-md-table-cell" style="font-size: 0.85rem;">Aciertos (1pt)</th>
+                        <th class="py-3 text-center text-white-50 text-uppercase d-none d-md-table-cell" style="font-size: 0.85rem;">Efectividad</th>
+                        <th class="py-3 px-3 px-md-4 text-center text-white text-uppercase" style="font-size: 0.85rem;">Puntos</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="jugador in tablaPosiciones" :key="jugador.user_id" :class="{ 'bg-success bg-opacity-10': jugador.user_id === userId }">
+                        
+                        <td class="text-center px-3 px-md-4">
+                          <PhMedal v-if="jugador.posicion === 1" size="28" weight="fill" style="color: #ffd700;" />
+                          <PhMedal v-else-if="jugador.posicion === 2" size="28" weight="fill" style="color: #c0c0c0;" />
+                          <PhMedal v-else-if="jugador.posicion === 3" size="28" weight="fill" style="color: #cd7f32;" />
+                          <span v-else class="fw-bold text-white-50 fs-5">{{ jugador.posicion }}</span>
+                        </td>
+
+                        <td>
+                          <div class="d-flex align-items-center gap-2 py-1">
+                            <img v-if="jugador.avatar_url" :src="jugador.avatar_url" :alt="jugador.nombre" class="rounded-circle border border-secondary border-opacity-25" width="38" height="38" style="object-fit: cover;" />
+                            <div v-else class="rounded-circle border border-secondary border-opacity-25 d-flex align-items-center justify-content-center bg-dark" style="width: 38px; height: 38px;">
+                              <PhUser size="20" class="text-white-50" />
+                            </div>
+                            <div class="d-flex flex-column">
+                              <span class="fw-bold text-white text-truncate" style="max-width: 160px;">{{ jugador.nombre }}</span>
+                              <span v-if="jugador.user_id === userId" class="badge text-bg-success text-uppercase" style="font-size: 0.6rem; width: fit-content;">Tú</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td class="text-center d-none d-md-table-cell">
+                          <span class="badge bg-dark border border-success text-success fs-6 rounded-pill px-3">{{ jugador.exactos }}</span>
+                        </td>
+
+                        <td class="text-center d-none d-md-table-cell">
+                          <span class="badge bg-dark border border-secondary text-white-50 fs-6 rounded-pill px-3">{{ jugador.aciertos }}</span>
+                        </td>
+
+                        <td class="text-center text-info fw-semibold d-none d-md-table-cell">{{ jugador.efectividad }}</td>
+
+                        <td class="text-center px-3 px-md-4">
+                          <span class="fs-4 fw-bold text-gold">{{ jugador.puntos }}</span>
+                        </td>
+                      </tr>
+                      
+                      <tr v-if="tablaPosiciones.length === 0">
+                        <td colspan="6" class="text-center py-5 text-white-50">Aún no hay puntos registrados en esta liga.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>                
+              </div>              
+              
               <!-- DERECHA -->
-              <div class="col-12 col-xl-3">
+              <!-- <div class="col-12 col-xl-3">
                 <div class="d-flex flex-column gap-4">
-                  <!-- PARTIDOS -->
+
                   <div
                     class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm"
                   >
@@ -545,7 +306,7 @@
                     </div>
                   </div>
 
-                  <!-- RESUMEN -->
+
                   <div
                     class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm"
                   >
@@ -621,8 +382,9 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
+            
           </section>
         </main>
       </div>
@@ -665,13 +427,111 @@ import Swal from "sweetalert2";
 const router = useRouter();
 const route = useRoute();
 
+
+// Variables para filtrado y ordenamiento
+const searchQuery = ref("");
+const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
+
+const posicionesFiltradas = computed(() => {
+  let filtrados = [...tablaPosiciones.value];
+
+  // 1. Filtrar por nombre
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtrados = filtrados.filter(p => p.nombre.toLowerCase().includes(query));
+  }
+
+  // 2. Ordenar
+  filtrados.sort((a, b) => {
+    if (sortBy.value === "puntos") return b.puntos - a.puntos || b.exactos - a.exactos;
+    if (sortBy.value === "exactos") return b.exactos - a.exactos || b.puntos - a.puntos;
+    if (sortBy.value === "aciertos") return b.aciertos - a.aciertos || b.puntos - a.puntos;
+    return 0;
+  });
+
+  return filtrados;
+});
+
+
 // Variables de estado
 const userId = ref(null);
 const idLigaActiva = ref(
   route.query.ligaId || localStorage.getItem("ligaIdActiva") || null,
 );
 
-// 3. Función cadenero
+const nombreQuinielaActiva = ref(route.query.ligaNombre || localStorage.getItem("ligaNombreActiva") || "Liga");
+
+// Variables para las 4 Cards
+const nombreLider = ref("-");
+const avatarLider = ref("");
+const puntosLider = ref(0);
+const miPosicion = ref(0);
+const totalParticipantes = ref(0);
+const distanciaLider = ref(0);
+const miEfectividad = ref("0%");
+
+// Arreglo para la tabla completa (lo usaremos después)
+const tablaPosiciones = ref([]);
+
+const cargarPosiciones = async () => {
+  if (!idLigaActiva.value || idLigaActiva.value === "null") return;
+
+  try {
+    const { data, error } = await supabase
+      .from("vw_posiciones")
+      .select("*")
+      .eq("league_id", idLigaActiva.value) 
+      .order("puntos", { ascending: false })
+      .order("exactos", { ascending: false });
+
+    if (error) throw error;
+
+    // 1. Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
+    tablaPosiciones.value = (data || []).map((jugador, index) => {
+      let efectividad = "0%";
+      if (jugador.jugados > 0) {
+        const exitos = jugador.exactos + jugador.aciertos;
+        efectividad = ((exitos / jugador.jugados) * 100).toFixed(1) + "%";
+      }
+
+      return {
+        ...jugador,
+        posicion: index + 1,
+        efectividad: efectividad
+      };
+    });
+
+    totalParticipantes.value = tablaPosiciones.value.length;
+
+    // 2. Llenamos las 4 Cards superiores reutilizando los datos mapeados
+    if (tablaPosiciones.value.length > 0) {
+      // Card 1: LÍDER ACTUAL
+      nombreLider.value = tablaPosiciones.value[0].nombre;
+      avatarLider.value = tablaPosiciones.value[0].avatar_url;
+      puntosLider.value = tablaPosiciones.value[0].puntos;
+
+      // Buscar mis métricas
+      const miIndice = tablaPosiciones.value.findIndex(p => p.user_id === userId.value);
+      
+      if (miIndice !== -1) {
+        const misDatos = tablaPosiciones.value[miIndice];
+
+        // Card 2: TU POSICIÓN
+        miPosicion.value = misDatos.posicion;
+
+        // Card 3: DISTANCIA DEL LÍDER
+        distanciaLider.value = puntosLider.value - misDatos.puntos;
+
+        // Card 4: EFECTIVIDAD (%)
+        miEfectividad.value = misDatos.efectividad; 
+      }
+    }
+  } catch (error) {
+    console.error("Error al cargar posiciones:", error);
+  }
+};
+
+// Función cadenero
 const validarAcceso = async (userId) => {
   try {
     // Buscamos un registro cualquiera; si no hay, el arreglo será vacío
@@ -691,7 +551,7 @@ const validarAcceso = async (userId) => {
   }
 };
 
-// 3. El onMounted blindado
+// El onMounted blindado
 onMounted(async () => {
   const {
     data: { session },
@@ -703,6 +563,8 @@ onMounted(async () => {
   }
 
   userId.value = session.user.id;
+  
+  await cargarPosiciones();  
 
   // 1. Validar si tiene al menos una liga
   const tieneLiga = await validarAcceso(userId.value);
@@ -729,39 +591,12 @@ onMounted(async () => {
 });
 
 const search = ref("");
-const sortBy = ref("points");
+//const sortBy = ref("points");
 const currentPage = ref(1);
 const pageSize = 5;
 
 const standings = ref(standingsMock);
 
-const nextMatches = ref([
-  {
-    id: 1,
-    homeTeam: "México",
-    homeFlag: "mx",
-    awayTeam: "Argentina",
-    awayFlag: "ar",
-    date: "Mañana",
-    time: "11:00 a.m.",
-  },
-  {
-    id: 2,
-    homeTeam: "Brasil",
-    homeFlag: "br",
-    awayTeam: "Francia",
-    awayFlag: "fr",
-    date: "Mañana",
-    time: "2:00 p.m.",
-  },
-]);
-
-const streakDots = ref([
-  { id: 1, success: true },
-  { id: 2, success: true },
-  { id: 3, success: true },
-  { id: 4, success: false },
-]);
 
 const rankedStandings = computed(() => {
   return [...standings.value]

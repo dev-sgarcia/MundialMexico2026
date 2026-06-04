@@ -57,7 +57,9 @@
 </template>
 
 <script setup>
+import { computed, ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { supabase } from "@/supabaseClient";
 import {
   PhHouse,
   PhTrophy,
@@ -71,14 +73,35 @@ import {
 
 const route = useRoute();
 
-const menuItems = [
+// --- VALIDACIÓN DE ADMINISTRADOR ---
+const isAdmin = ref(false);
+const adminEmails = [
+  "tu_correo@ejemplo.com", // Reemplaza con tus correos reales
+  "otro_admin@ejemplo.com"
+];
+
+onMounted(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session && adminEmails.includes(session.user.email)) {
+    isAdmin.value = true;
+  }
+});
+
+// --- CONFIGURACIÓN DEL MENÚ ---
+// Lista maestra con todas las opciones posibles
+const allMenuItems = [
   { label: "Reglas", path: "/dashboard", icon: PhCalendarCheck },
-  { label: "Mis Quinielas", path: "/quinielas", icon: PhTrophy },
+  { label: "Mis Quinielas", path: "/quinielas", icon: PhTrophy, adminOnly: true }, // <-- Bloqueo activado
   { label: "Predicciones", path: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
-  // { label: "Mi perfil", path: "/perfil", icon: PhUser },
 ];
+
+// Vue filtrará esta lista automáticamente dependiendo de quién esté logueado
+const menuItems = computed(() => {
+  return allMenuItems.filter(item => !item.adminOnly || isAdmin.value);
+});
+
 
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
