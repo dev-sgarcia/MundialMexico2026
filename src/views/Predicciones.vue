@@ -923,6 +923,15 @@ const getFlagCode = (team) => {
   border-color: rgba(220, 53, 69, 0.2) !important;
 }
 
+.card:hover{
+  cursor:pointer;
+  transform: translateY(-6px);
+  border-color:
+    rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 0 30px rgba(0,0,0,0.28);
+}
+
 .team-flag {
   width: 34px;
   height: 24px;

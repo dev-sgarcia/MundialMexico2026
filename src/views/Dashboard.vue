@@ -47,13 +47,13 @@
             <div class="row g-3 mb-3 mb-xl-4">
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rules-card rule-card rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-trophy"></i>
                   </div>
 
-                  <div class="rule-content flex-grow-1">
+                  <div class="flex-grow-1">
                     <h5 class="mb-1">Dinámica de Premios</h5>
                     <div class="rule-divider divider-green mb-3"></div>
                     <p class="mb-0 text-justify">
@@ -65,7 +65,7 @@
                 </article>
               </div>
 
-              <div class="col-12 col-md-6 col-xl-4">
+              <div class="rules-card col-12 col-md-6 col-xl-4">
                 <article
                   class="rule-card rule-blue h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
@@ -93,7 +93,7 @@
                 </article>
               </div>
 
-              <div class="col-12 col-md-6 col-xl-4">
+              <div class="rules-card col-12 col-md-6 col-xl-4">
                 <article
                   class="rule-card rule-gold h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
@@ -121,7 +121,7 @@
                 </article>
               </div>
 
-              <div class="col-12 col-md-6 col-xl-4">
+              <div class="rules-card col-12 col-md-6 col-xl-4">
                 <article
                   class="rule-card rule-purple h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
@@ -149,7 +149,7 @@
 
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rules-card rule-card rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-star"></i>
@@ -167,7 +167,7 @@
                 </article>
               </div>
 
-              <div class="col-12 col-md-6 col-xl-4">
+              <div class="rules-card col-12 col-md-6 col-xl-4">
                 <article
                   class="rule-card rule-red h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
@@ -464,6 +464,10 @@ watch(
   font-size: 0.84rem;
   line-height: 1.45;
   margin: 0;
+}
+
+.rules-card {
+  cursor:pointer;
 }
 
 .rule-card strong {

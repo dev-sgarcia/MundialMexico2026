@@ -211,7 +211,7 @@
                       >
                         <div
                           class="card results-card text-white rounded-4 h-100"
-                          :class="{ 'admin-clickable': isAdmin }"
+                          :class="{ 'admin-clickable': isAdmin }, match.status === 'finished' ? 'rule-green': 'rule-gold'"
                           @click="abrirModalAdministrador(match)"
                         >
                           <div class="card-body">
@@ -221,9 +221,7 @@
                               </small>
                             </div>
 
-                            <div
-                              class="d-flex align-items-center justify-content-center gap-4"
-                            >
+                            <div class="custom-card d-flex align-items-center justify-content-center gap-4">
                               <div
                                 class="d-flex align-items-center justify-content-end gap-2 team-side"
                               >
@@ -263,8 +261,7 @@
                             <div class="text-center mt-3">
                               <span
                                 class="badge rounded-pill"
-                                :class="getStatusClass(match.status)"
-                              >
+                                :class="getStatusClass(match.status)">
                                 {{ getStatusLabel(match.status) }}
                               </span>
                             </div>
@@ -481,6 +478,7 @@ const cargarResultados = async () => {
     if (errMatches) throw errMatches;
 
     // Normalizar y Mapear los datos de Supabase a la estructura del frontend
+    console.log(matches)
     matches.value = dbMatches.map((partidoBD) => {
       let nombreGrupo = partidoBD.group_name || partidoBD.group || "";
       nombreGrupo = nombreGrupo.replace(/Grupo /i, "").trim();
@@ -958,7 +956,10 @@ const getFlagCode = (team) => {
 
 <style scoped>
 .results-card {
-  background: #061a16;
+  /* NOTE:CHANGE THIS IMAGE TO POSICIONES CARD BACKGROUND */
+  background:
+    linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.84)),
+    url("@/assets/trionda-stadium.png") center/cover no-repeat;
   border: 1px solid rgba(25, 135, 84, 0.35);
 }
 
@@ -1013,6 +1014,29 @@ const getFlagCode = (team) => {
 /* Margen superior dinámico para compensar el sticky-top al hacer scroll automático */
 .grupo-scroll {
   scroll-margin-top: 240px;
+}
+
+.rule-gold,
+.rule-green {
+  color: var(--card-bright);
+  border: 1px solid var(--card-color);
+  border-radius: 0.45rempx;
+  padding: 0.02rem 0.45rem;
+  box-shadow: 0 0 7px var(--card-soft), 0 0 15px var(--card-glow);
+}
+
+.rule-gold {
+  --card-bright: #d8b34d;
+  --card-color: rgba(216, 179, 77, 0.5);
+  --card-glow: rgba(216, 179, 77, 0.22);
+  --card-soft: rgba(216, 179, 77, 0.075);
+}
+
+.rule-green {
+  --card-bright: #58d36f;
+  --card-color: rgba(88, 211, 111, 0.48);
+  --card-glow: rgba(88, 211, 111, 0.2);
+  --card-soft: rgba(88, 211, 111, 0.075);
 }
 
 .sidebar-fixed {
