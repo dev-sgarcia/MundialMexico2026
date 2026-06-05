@@ -68,8 +68,9 @@ const validateZonaFan = async () => {
       icon: 'info',
       confirmButtonColor: '#1e7f3f'
     });
-    router.push('/juega');
     return;
+  } else {
+        router.push('/juega');
   }
 
   // 2. Si hay sesión, verificamos si ya tiene ligas registradas

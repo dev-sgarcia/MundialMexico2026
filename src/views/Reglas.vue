@@ -141,24 +141,16 @@ import Footer from "@/components/common/Footer.vue";
 <style scoped>
 .reglas-page-bg {
   min-height: 100vh;
-
-  background:
-    linear-gradient(
-      rgba(0, 50, 30, 0.72),
-      rgba(0, 0, 0, 0.84)
-    ),
-    url("/src/assets/bg-rules.jpg")    
-    center/cover no-repeat;
+  background: linear-gradient(rgba(0, 50, 30, 0.72),rgba(0, 0, 0, 0.84)),
+  url("/src/assets/bg-rules.jpg") center/cover no-repeat;
 }
 
 .hero-reglas {
-  padding:
-    4rem 0 3rem;
+  padding:4rem 0 3rem;
 }
 
 .hero-description {
-  color:
-    rgba(255,255,255,0.82);
+  color:rgba(255,255,255,0.82);
   max-width: 700px;
   line-height: 1.8;
   font-size: 1rem;
@@ -312,23 +304,13 @@ ul li {
   border-radius: 14px;
   font-weight: 700;
   color: white;
-  background:
-    linear-gradient(
-      135deg,
-      #1f7a42,
-      #28a745
-    );
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-
+  background: linear-gradient(135deg,#1f7a42,#28a745);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   white-space: nowrap;
 }
 
 .btn-jugar:hover {
   transform: translateY(-3px);
-
   box-shadow:
     0 8px 24px rgba(40,167,69,0.35);
 }

@@ -773,8 +773,6 @@ const crearQuiniela = () => {
 
 const unirseLiga = () => {
   if (!codigoInvitacion.value.trim()) return;
-
-  console.log("Unirse con código:", codigoInvitacion.value);
 };
 
 const irPredicciones = (quiniela) => {
