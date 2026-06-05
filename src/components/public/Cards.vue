@@ -60,6 +60,9 @@ const router = useRouter();
 const validateZonaFan = async () => {
   const { data: { session } } = await supabase.auth.getSession();
 
+  console.log("Sesión actual:", session); // Agrega este log para verificar la sesión
+  console.log(data); // Agrega este log para verificar los datos obtenidos de la consulta
+
   // 1. Si no hay sesión, mandamos a loguearse
   if (!session) {
     Swal.fire({

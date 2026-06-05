@@ -81,12 +81,7 @@
         </div>
 
 
-        <div
-          v-for="liga in misLigas"
-          :key="liga.league_id"
-          class="col-12 col-md-6 col-xxl-5 d-flex"
-        >
-
+        <div v-for="liga in misLigas" :key="liga.league_id" class="col-12 col-md-6 col-xxl-5 d-flex">
           <div class="card betting-card w-100 shadow-lg overflow-hidden">
 
             <div class="row g-0 h-100">
@@ -106,9 +101,7 @@
               <div class="col-12 col-lg-8">
 
                 <div
-                  class="card-body d-flex flex-column h-100 p-3 p-lg-4"
-                >
-
+                  class="card-body d-flex flex-column h-100 p-3 p-lg-4">
                   <h5 class="card-title text-gold fw-bold">
                     {{ liga.leagues?.name || 'Liga Activa' }}
                   </h5>
@@ -365,6 +358,8 @@ const unirseALiga = async () => {
       .select('id, max_members')
       .eq('invite_code', codigoInvitacion.value.trim())
       .single();
+      
+      console.log("Liga encontrada:", liga, "Error:", errLiga);
 
     if (errLiga || !liga) {
       errorInvitacion.value = "Código inválido o liga no encontrada.";
@@ -505,6 +500,13 @@ const qualifiedCodes = [
 //     }));
 //   }
 // };
+const cargarLigas2 = async () =>{
+  const {data:liga, error: errLiga } = await supabase
+      .from('leagues')
+      .select('id, max_members', 'logo_url', 'event_id', 'invite_code')
+      
+      console.log("Liga encontrada:", liga, "Error:", errLiga);
+}
 
 const cargarLigas = async (userId) => {
   const { data, error } = await supabase
@@ -512,6 +514,9 @@ const cargarLigas = async (userId) => {
     // 👇 Agregamos event_id a la consulta
     .select('league_id, champion_team, leagues(id, name, invite_code, event_id)') 
     .eq('user_id', userId);
+
+    console.log("Ligas cargadas:", data, "Error:", error);
+
 
   if (!error && data) {
     misLigas.value = data.map(liga => ({
@@ -583,6 +588,7 @@ onMounted(async () => {
   try {    const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       await cargarLigas(session.user.id);
+      await cargarLigas2();
     }
 
     const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,translations');
