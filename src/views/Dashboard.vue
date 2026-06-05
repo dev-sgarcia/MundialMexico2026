@@ -619,7 +619,7 @@ watch(
 .cta-card {
   border: 1px solid rgba(88, 211, 111, 0.38);
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.74), rgba(4, 12, 10, 0.88)),
+    linear-gradient(90deg, rgba(27, 27, 27, 0.74), rgba(4, 12, 10, 0.88)),
     url("@/assets/footer.png") center/cover no-repeat;
   box-shadow:
     0 0 12px rgba(88, 211, 111, 0.16),
