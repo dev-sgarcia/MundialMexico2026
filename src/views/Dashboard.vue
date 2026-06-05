@@ -434,27 +434,27 @@ watch(
 }
 
 .stadium-mercedesbenz {
-  --stadium-img: url("@/assets/stadiums/Stadium-MercedesBenz.webp");
+  --stadium-img: url("@/assets/stadiums/MercedesBenz-Stadium.png");
 }
 
 .stadium-monterrey {
-  --stadium-img: url("@/assets/stadiums/Stadium-Monterrey.webp");
+  --stadium-img: url("@/assets/stadiums/Monterrey-Stadium.png");
 }
 
 .stadium-sofi {
-  --stadium-img: url("@/assets/stadiums/Stadium-Sofi.webp");
+  --stadium-img: url("@/assets/stadiums/Sofi-Stadium.png");
 }
 
 .stadium-toronto {
-  --stadium-img: url("@/assets/stadiums/Stadium-BmoField.webp");
+  --stadium-img: url("@/assets/stadiums/BmoField-Stadium.png");
 }
 
 .stadium-metlife {
-  --stadium-img: url("@/assets/stadiums/Stadium-Metlife.webp");
+  --stadium-img: url("@/assets/stadiums/Metlife-Stadium.png");
 }
 
 .stadium-guadalajara {
-  --stadium-img: url("@/assets/stadiums/Stadium-Guadalajara.webp");
+  --stadium-img: url("@/assets/stadiums/Guadalajara-Stadium.png");
 }
 
 .rule-card:hover {
