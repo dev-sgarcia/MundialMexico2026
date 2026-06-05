@@ -133,7 +133,7 @@
                 </div>
               </div>
 
-              <div class="card results-card text-white rounded-4 mb-4">
+              <div class="card results-card-bar text-white rounded-4 mb-4">
                 <div class="card-body">
                   <div
                     class="d-flex justify-content-between align-items-center flex-wrap gap-3"
@@ -211,7 +211,7 @@
                       >
                         <div
                           class="card results-card text-white rounded-4 h-100"
-                          :class="{ 'admin-clickable': isAdmin }, match.status === 'finished' ? 'rule-green': 'rule-gold'"
+                          :class="{ 'admin-clickable': isAdmin }, match.status === 'finished' ? 'rule-green bg-success bg-opacity-10 text-white border border-success border-opacity-50': 'rule-gold bg-warning bg-opacity-10 text-white border border-warning border-opacity-50'"
                           @click="abrirModalAdministrador(match)"
                         >
                           <div class="card-body">
@@ -260,7 +260,7 @@
 
                             <div class="text-center mt-3">
                               <span
-                                class="badge rounded-pill"
+                                class="badge rounded-pill text-white"
                                 :class="getStatusClass(match.status)">
                                 {{ getStatusLabel(match.status) }}
                               </span>
@@ -478,7 +478,6 @@ const cargarResultados = async () => {
     if (errMatches) throw errMatches;
 
     // Normalizar y Mapear los datos de Supabase a la estructura del frontend
-    console.log(matches)
     matches.value = dbMatches.map((partidoBD) => {
       let nombreGrupo = partidoBD.group_name || partidoBD.group || "";
       nombreGrupo = nombreGrupo.replace(/Grupo /i, "").trim();
@@ -955,12 +954,10 @@ const getFlagCode = (team) => {
 </script>
 
 <style scoped>
-.results-card {
-  /* NOTE:CHANGE THIS IMAGE TO POSICIONES CARD BACKGROUND */
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.84)),
+.results-card-bar{
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.84)),
     url("@/assets/trionda-stadium.png") center/cover no-repeat;
-  border: 1px solid rgba(25, 135, 84, 0.35);
+    border: 1px solid rgba(25, 135, 84, 0.35);
 }
 
 .info-row {

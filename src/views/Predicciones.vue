@@ -158,7 +158,7 @@
                     <!-- CARD DESKTOP ORIGINAL -->
                     <div
                       class="card prediction-card text-white rounded-4 h-100 d-none d-lg-block"
-                      :class="{ 'card-locked': esPartidoBloqueado(match) }"
+                      :class="{'card-locked': esPartidoBloqueado(match), 'card-pending': !esPartidoBloqueado(match)}"
                     >
                       <div class="card-body">
                         <div class="text-center mb-3">
@@ -243,7 +243,7 @@
                             class="badge"
                             :class="
                               esPartidoBloqueado(match)
-                                ? 'bg-danger-subtle text-danger border border-danger'
+                                ? 'text-danger border border-danger text-white'
                                 : match.saved
                                   ? 'text-bg-success'
                                   : 'text-bg-warning'
@@ -919,8 +919,13 @@ const getFlagCode = (team) => {
 }
 
 .card-locked {
-  background: #0b0f0e !important;
-  border-color: rgba(220, 53, 69, 0.2) !important;
+  background: rgba(228, 78, 93, 0.1) !important;
+  border: 1px solid rgba(220, 53, 69, 0.50) !important;
+}
+
+.card-pending {
+  background: rgba(25, 135, 84, 0.10) !important;
+  border: 1px solid rgba(25, 135, 84, 0.50) !important;
 }
 
 .card:hover{
