@@ -133,7 +133,7 @@
                 </div>
               </div>
 
-              <div class="card results-card text-white rounded-4 mb-4">
+              <div class="card results-card-bar text-white rounded-4 mb-4">
                 <div class="card-body">
                   <div
                     class="d-flex justify-content-between align-items-center flex-wrap gap-3"
@@ -211,7 +211,7 @@
                       >
                         <div
                           class="card results-card text-white rounded-4 h-100"
-                          :class="{ 'admin-clickable': isAdmin }"
+                          :class="{ 'admin-clickable': isAdmin }, match.status === 'finished' ? 'rule-green bg-success bg-opacity-10 text-white border border-success border-opacity-50': 'rule-gold bg-warning bg-opacity-10 text-white border border-warning border-opacity-50'"
                           @click="abrirModalAdministrador(match)"
                         >
                           <div class="card-body">
@@ -221,9 +221,7 @@
                               </small>
                             </div>
 
-                            <div
-                              class="d-flex align-items-center justify-content-center gap-4"
-                            >
+                            <div class="custom-card d-flex align-items-center justify-content-center gap-4">
                               <div
                                 class="d-flex align-items-center justify-content-end gap-2 team-side"
                               >
@@ -262,9 +260,8 @@
 
                             <div class="text-center mt-3">
                               <span
-                                class="badge rounded-pill"
-                                :class="getStatusClass(match.status)"
-                              >
+                                class="badge rounded-pill text-white"
+                                :class="getStatusClass(match.status)">
                                 {{ getStatusLabel(match.status) }}
                               </span>
                             </div>
@@ -957,9 +954,10 @@ const getFlagCode = (team) => {
 </script>
 
 <style scoped>
-.results-card {
-  background: #061a16;
-  border: 1px solid rgba(25, 135, 84, 0.35);
+.results-card-bar{
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.84)),
+    url("@/assets/trionda-stadium.png") center/cover no-repeat;
+    border: 1px solid rgba(25, 135, 84, 0.35);
 }
 
 .info-row {
@@ -1013,6 +1011,29 @@ const getFlagCode = (team) => {
 /* Margen superior dinámico para compensar el sticky-top al hacer scroll automático */
 .grupo-scroll {
   scroll-margin-top: 240px;
+}
+
+.rule-gold,
+.rule-green {
+  color: var(--card-bright);
+  border: 1px solid var(--card-color);
+  border-radius: 0.45rempx;
+  padding: 0.02rem 0.45rem;
+  box-shadow: 0 0 7px var(--card-soft), 0 0 15px var(--card-glow);
+}
+
+.rule-gold {
+  --card-bright: #d8b34d;
+  --card-color: rgba(216, 179, 77, 0.5);
+  --card-glow: rgba(216, 179, 77, 0.22);
+  --card-soft: rgba(216, 179, 77, 0.075);
+}
+
+.rule-green {
+  --card-bright: #58d36f;
+  --card-color: rgba(88, 211, 111, 0.48);
+  --card-glow: rgba(88, 211, 111, 0.2);
+  --card-soft: rgba(88, 211, 111, 0.075);
 }
 
 .sidebar-fixed {
