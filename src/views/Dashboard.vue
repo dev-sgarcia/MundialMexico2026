@@ -47,7 +47,7 @@
             <div class="row g-3 mb-3 mb-xl-4">
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rule-card stadium-mercedesbenz rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-trophy"></i>
@@ -62,12 +62,23 @@
                       grandes oportunidades de ganar.
                     </p>
                   </div>
+                  <div class="stadium-overlay"></div>
+
+                  <div class="stadium-info">
+                    <div class="fw-bold text-white small">
+                      Mercedes-Benz Stadium
+                    </div>
+
+                    <div class="text-white-50 small">
+                      Atlanta, USA · Mundial 2026
+                    </div>
+                  </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-blue h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rule-card stadium-monterrey rule-blue h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-sack-dollar"></i>
@@ -90,12 +101,21 @@
                       <strong>20%</strong>
                     </div>
                   </div>
+                  <div class="stadium-overlay"></div>
+
+                  <div class="stadium-info">
+                    <div class="fw-bold text-white small">Estadio BBVA</div>
+
+                    <div class="text-white-50 small">
+                      Monterrey, México · Mundial 2026
+                    </div>
+                  </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-gold h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rule-card stadium-sofi rule-gold h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-crown"></i>
@@ -118,12 +138,21 @@
                       <strong>20%</strong>
                     </div>
                   </div>
+                  <div class="stadium-overlay"></div>
+
+                  <div class="stadium-info">
+                    <div class="fw-bold text-white small">SoFi Stadium</div>
+
+                    <div class="text-white-50 small">
+                      Los Ángeles, USA · Sede Mundial 2026
+                    </div>
+                  </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-purple h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rule-card stadium-toronto rule-purple h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-bullseye"></i>
@@ -144,12 +173,21 @@
                       exacto.
                     </p>
                   </div>
+                  <div class="stadium-overlay"></div>
+
+                  <div class="stadium-info">
+                    <div class="fw-bold text-white small">BMO Field</div>
+
+                    <div class="text-white-50 small">
+                      Toronto, Canadá · Mundial 2026
+                    </div>
+                  </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rule-card stadium-metlife rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-star"></i>
@@ -164,12 +202,21 @@
                       sumas <strong>10 puntos extra</strong>.
                     </p>
                   </div>
+                  <div class="stadium-overlay"></div>
+
+                  <div class="stadium-info">
+                    <div class="fw-bold text-white small">MetLife Stadium</div>
+
+                    <div class="text-white-50 small">
+                      New Jersey, USA · Final Mundial 2026
+                    </div>
+                  </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
                 <article
-                  class="rule-card rule-red h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
+                  class="rule-card stadium-guadalajara rule-red h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
                 >
                   <div class="rule-icon flex-shrink-0">
                     <i class="fa-solid fa-scale-balanced"></i>
@@ -183,6 +230,15 @@
                       En caso de empate, gana quien haya registrado primero su
                       último marcador.
                     </p>
+                  </div>
+                  <div class="stadium-overlay"></div>
+
+                  <div class="stadium-info">
+                    <div class="fw-bold text-white small">Estadio Akron</div>
+
+                    <div class="text-white-50 small">
+                      Guadalajara, México · Mundial 2026
+                    </div>
                   </div>
                 </article>
               </div>
@@ -392,9 +448,11 @@ watch(
 .rule-card {
   min-height: 148px;
   border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
   background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.84)),
-    url("@/assets/trionda-stadium.png") center/cover no-repeat;
+    linear-gradient(145deg, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.86)),
+    var(--stadium-img) center/cover no-repeat;
   border: 1px solid var(--card-color);
   box-shadow:
     0 0 9px var(--card-glow),
@@ -402,6 +460,31 @@ watch(
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease;
+  padding-bottom: 3.3rem !important;
+}
+
+.stadium-mercedesbenz {
+  --stadium-img: url("@/assets/stadiums/Stadium-MercedesBenz.webp");
+}
+
+.stadium-monterrey {
+  --stadium-img: url("@/assets/stadiums/Stadium-Monterrey.webp");
+}
+
+.stadium-sofi {
+  --stadium-img: url("@/assets/stadiums/Stadium-Sofi.webp");
+}
+
+.stadium-toronto {
+  --stadium-img: url("@/assets/stadiums/Stadium-BmoField.webp");
+}
+
+.stadium-metlife {
+  --stadium-img: url("@/assets/stadiums/Stadium-Metlife.webp");
+}
+
+.stadium-guadalajara {
+  --stadium-img: url("@/assets/stadiums/Stadium-Guadalajara.webp");
 }
 
 .rule-card:hover {
@@ -424,6 +507,12 @@ watch(
   text-shadow:
     0 0 6px var(--card-glow),
     0 0 12px var(--card-glow);
+}
+
+.rule-icon,
+.rule-content {
+  position: relative;
+  z-index: 5;
 }
 
 .rule-icon {
@@ -556,8 +645,8 @@ watch(
 .cta-card {
   border: 1px solid rgba(88, 211, 111, 0.38);
   background:
-    linear-gradient(90deg, rgba(6, 38, 20, 0.74), rgba(4, 12, 10, 0.88)),
-    url("@/assets/trionda-stadium.png") center/cover no-repeat;
+    linear-gradient(90deg, rgba(0, 0, 0, 0.74), rgba(4, 12, 10, 0.88)),
+    url("@/assets/footer.png") center/cover no-repeat;
   box-shadow:
     0 0 12px rgba(88, 211, 111, 0.16),
     inset 0 0 24px rgba(88, 211, 111, 0.05);
@@ -738,73 +827,130 @@ watch(
 }
 
 @media (max-width: 575.98px) {
-  .rules-page {
-    padding-bottom: 5.5rem !important;
-  }
-
-  .hero-banner {
-    border-radius: 1rem !important;
-  }
-
-  .rules-kicker,
-  .rules-title,
-  .hero-copy {
-    text-align: center;
-  }
-
-  .title-line {
-    max-width: 260px;
-    height: 4px;
-    margin: 0 auto;
-  }
-
-  .hero-copy {
-    line-height: 1.45;
-  }
-
-  .text-justify {
-    text-align: left;
-  }
-
   .rule-card {
-    border-radius: 1rem;
-    padding: 1rem !important;
+    background:
+      linear-gradient(145deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.9)),
+      var(--stadium-img) center/cover no-repeat;
   }
+}
 
-  .rule-icon {
-    width: 54px;
-    height: 54px;
-    font-size: 1.3rem;
-  }
+.hero-banner {
+  border-radius: 1rem !important;
+}
 
-  .rule-card h5 {
-    margin-bottom: 0.35rem !important;
-  }
+.rules-kicker,
+.rules-title,
+.hero-copy {
+  text-align: center;
+}
 
-  .rule-divider {
-    width: 38px;
-    height: 3px;
-    margin-bottom: 0.8rem !important;
-  }
+.title-line {
+  max-width: 260px;
+  height: 4px;
+  margin: 0 auto;
+}
 
-  .points-row {
-    width: 100%;
-    max-width: 230px;
-    gap: 0.75rem;
-  }
+.hero-copy {
+  line-height: 1.45;
+}
 
-  .points-row strong {
-    min-width: 48px;
-    text-align: center;
-  }
+.text-justify {
+  text-align: left;
+}
 
-  .cta-card {
-    border-radius: 1rem !important;
-  }
+.rule-card {
+  border-radius: 1rem;
+  padding: 1rem !important;
+}
 
-  .cta-card .col-auto,
-  .cta-card .col {
-    width: 100%;
-  }
+.rule-icon {
+  width: 54px;
+  height: 54px;
+  font-size: 1.3rem;
+}
+
+.rule-card h5 {
+  margin-bottom: 0.35rem !important;
+}
+
+.rule-divider {
+  width: 38px;
+  height: 3px;
+  margin-bottom: 0.8rem !important;
+}
+
+.points-row {
+  width: 100%;
+  max-width: 230px;
+  gap: 0.75rem;
+}
+
+.points-row strong {
+  min-width: 48px;
+  text-align: center;
+}
+
+.cta-card {
+  border-radius: 1rem !important;
+}
+
+.cta-card .col-auto,
+.cta-card .col {
+  width: 100%;
+}
+
+.stadium-overlay {
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.55) 35%,
+    transparent 70%
+  );
+
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  z-index: 1;
+}
+
+.stadium-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.35rem 0.85rem;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+  z-index: 6;
+  display: flex;
+  align-items: baseline;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.stadium-info .fw-bold,
+.stadium-info .text-white-50 {
+  margin-bottom: 0;
+}
+
+.stadium-info .small {
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.rule-card:hover .stadium-overlay {
+  opacity: 1;
+}
+
+.rule-card:hover .stadium-info {
+  transform: translateY(0);
 }
 </style>
