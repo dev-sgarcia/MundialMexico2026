@@ -1,6 +1,6 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
-    <div class="container-fluid px-3 py-3">
+    <div class="container-fluid px-3 pt-0 pb-3">
       <div class="row g-0 h-100">
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
           <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
@@ -9,37 +9,31 @@
         </aside>
 
         <main
-          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
+          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 vh-100 overflow-hidden px-0 pt-0 pb-5 pb-lg-1"
         >
-        <section
+          <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
           >
             <div class="sticky-top bg-black z-3">
-              <div
-                class="d-flex justify-content-between align-items-start flex-wrap gap-3"
-              >
-                <div>
-                  <h2 class="fw-bold mb-1">
-                    Mis predicciones :
-                    <span
-                      v-if="
-                        nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
-                      "
-                      class="text-gold ms-lg-2 d-block d-lg-inline"
-                    >
-                      {{ nombreLigaActiva }}
-                    </span>
-                  </h2>
+              <PageHeader />
 
-                  <p class="text-white-50 mb-0">
-                    Realiza tus predicciones para sumar puntos y escalar
-                    posiciones.
-                  </p>
-                </div>
+              <div>
+                <h2 class="fw-bold mb-1">
+                  Mis predicciones :
+                  <span
+                    v-if="
+                      nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
+                    "
+                    class="text-gold ms-lg-2 d-block d-lg-inline"
+                  >
+                    {{ nombreLigaActiva }}
+                  </span>
+                </h2>
 
-                <div class="mt-2 d-none d-md-block">
-                  <UserProfile />
-                </div>
+                <p class="text-white-50 mb-0">
+                  Realiza tus predicciones para sumar puntos y escalar
+                  posiciones.
+                </p>
               </div>
               <!-- RESUMEN -->
               <div class="card prediction-card text-white rounded-4 mt-3 mb-2">
@@ -158,7 +152,10 @@
                     <!-- CARD DESKTOP ORIGINAL -->
                     <div
                       class="card prediction-card text-white rounded-4 h-100 d-none d-lg-block"
-                      :class="{'card-locked': esPartidoBloqueado(match), 'card-pending': !esPartidoBloqueado(match)}"
+                      :class="{
+                        'card-locked': esPartidoBloqueado(match),
+                        'card-pending': !esPartidoBloqueado(match),
+                      }"
                     >
                       <div class="card-body">
                         <div class="text-center mb-3">
@@ -401,7 +398,7 @@ import { useRoute, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Swal from "sweetalert2";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
-import UserProfile from "@/components/common/UserProfile.vue";
+import PageHeader from "@/components/common/PageHeader.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 
 const route = useRoute();
@@ -920,21 +917,19 @@ const getFlagCode = (team) => {
 
 .card-locked {
   background: rgba(228, 78, 93, 0.1) !important;
-  border: 1px solid rgba(220, 53, 69, 0.50) !important;
+  border: 1px solid rgba(220, 53, 69, 0.5) !important;
 }
 
 .card-pending {
-  background: rgba(25, 135, 84, 0.10) !important;
-  border: 1px solid rgba(25, 135, 84, 0.50) !important;
+  background: rgba(25, 135, 84, 0.1) !important;
+  border: 1px solid rgba(25, 135, 84, 0.5) !important;
 }
 
-.card:hover{
-  cursor:pointer;
+.card:hover {
+  cursor: pointer;
   transform: translateY(-6px);
-  border-color:
-    rgba(212, 175, 55, 0.35);
-  box-shadow:
-    0 0 30px rgba(0,0,0,0.28);
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.28);
 }
 
 .team-flag {

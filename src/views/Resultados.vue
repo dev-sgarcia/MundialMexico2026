@@ -1,6 +1,6 @@
 <template>
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
-    <div class="container-fluid px-3 py-3">
+    <div class="container-fluid px-3 pt-0 pb-3">
       <div class="row g-0 h-100">
         <!-- <aside
           class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
@@ -17,37 +17,32 @@
         <!-- <main
           class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
         > -->
-        <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 position-relative">
-
+        <main
+          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
+        >
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden"
           >
-            <div class="sticky-top bg-black z-3">
-              <div
-                class="d-flex justify-content-between align-items-start flex-wrap gap-3"
-              >
-                <div>
-                  <h2 class="fw-bold mb-1">
-                    Resultados :
-                    <span
-                      v-if="
-                        nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
-                      "
-                      class="text-gold ms-2"
-                    >
-                      {{ nombreLigaActiva }}
-                    </span>
-                  </h2>
-                  <p class="text-white-50 mb-0">
-                    Consulta los marcadores oficiales y sigue el torneo en
-                    tiempo real.
-                  </p>
-                </div>
-                <div class="mt-2 d-none d-md-block">
-                  <UserProfile />
-                </div>
-              </div>
+            <PageHeader />
 
+            <div class="sticky-top bg-black z-3">
+              <div>
+                <h2 class="fw-bold mb-1">
+                  Resultados :
+                  <span
+                    v-if="
+                      nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
+                    "
+                    class="text-gold ms-2"
+                  >
+                    {{ nombreLigaActiva }}
+                  </span>
+                </h2>
+                <p class="text-white-50 mb-0">
+                  Consulta los marcadores oficiales y sigue el torneo en tiempo
+                  real.
+                </p>
+              </div>
               <div
                 class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-1 mb-4"
               >
@@ -293,9 +288,7 @@
                               >
                                 <span class="small fw-bold">
                                   🎯
-                                  {{
-                                    obtenerAcertantes(match).length
-                                  }}
+                                  {{ obtenerAcertantes(match).length }}
                                   Acertaron
                                 </span>
                                 <span class="small fw-bold">{{
@@ -356,7 +349,7 @@ import { computed, ref, onMounted, watch, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
-import UserProfile from "@/components/common/UserProfile.vue";
+import PageHeader from "@/components/common/PageHeader.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 import Swal from "sweetalert2";
 
@@ -574,9 +567,11 @@ const obtenerAcertantes = (match) => {
   // 3. Mapeamos para obtener el nombre
   return ganadores.map((pred) => {
     // Si la base de datos devolvió el perfil como un arreglo (a veces pasa en joins), tomamos el primero
-    const perfil = Array.isArray(pred.perfiles) ? pred.perfiles[0] : pred.perfiles;
+    const perfil = Array.isArray(pred.perfiles)
+      ? pred.perfiles[0]
+      : pred.perfiles;
     const nombreUsuario = perfil?.nombre || "Usuario Desconocido";
-    
+
     return { name: nombreUsuario };
   });
 };
