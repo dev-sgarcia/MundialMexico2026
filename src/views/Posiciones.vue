@@ -214,7 +214,10 @@
             </div>
 
             <!-- TOP 3 PODIO -->
-            <section v-if="topTres.length && !search.trim()" class="mb-4">
+            <section
+              v-if="topTres.length && !search.trim() && sortBy === 'puntos'"
+              class="mb-4"
+            >
               <div
                 class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm overflow-hidden"
               >
@@ -259,15 +262,25 @@
                             class="text-warning"
                           />
 
-                          <PhMedal
+                          <div
                             v-else
-                            size="24"
-                            weight="fill"
-                            :class="{
-                              'text-light': jugador.posicion === 2,
-                              'text-warning': jugador.posicion === 3,
-                            }"
-                          />
+                            class="position-relative d-inline-flex align-items-center justify-content-center"
+                          >
+                            <PhMedal
+                              size="28"
+                              weight="fill"
+                              :class="{
+                                'text-light': jugador.posicion === 2,
+                                'text-warning': jugador.posicion === 3,
+                              }"
+                            />
+
+                            <span
+                              class="podium-medal-number position-absolute fw-bold"
+                            >
+                              {{ jugador.posicion }}
+                            </span>
+                          </div>
                         </div>
 
                         <img
@@ -414,7 +427,7 @@
                       </thead>
                       <tbody>
                         <tr
-                          v-for="jugador in posicionesTabla"
+                          v-for="(jugador, index) in posicionesTabla"
                           :key="jugador.user_id"
                           :class="{
                             'bg-success bg-opacity-10':
@@ -423,7 +436,11 @@
                         >
                           <td class="text-center px-3 px-md-4">
                             <div
-                              v-if="jugador.posicion <= 3"
+                              v-if="
+                                sortBy === 'puntos'
+                                  ? jugador.posicion <= 3
+                                  : index < 3
+                              "
                               class="position-relative d-inline-flex align-items-center justify-content-center"
                             >
                               <PhMedal
@@ -431,9 +448,13 @@
                                 weight="fill"
                                 :style="{
                                   color:
-                                    jugador.posicion === 1
+                                    (sortBy === 'puntos'
+                                      ? jugador.posicion
+                                      : index + 1) === 1
                                       ? '#ffd700'
-                                      : jugador.posicion === 2
+                                      : (sortBy === 'puntos'
+                                            ? jugador.posicion
+                                            : index + 1) === 2
                                         ? '#c0c0c0'
                                         : '#cd7f32',
                                 }"
@@ -442,12 +463,20 @@
                               <span
                                 class="medal-position-number position-absolute fw-bold"
                               >
-                                {{ jugador.posicion }}
+                                {{
+                                  sortBy === "puntos"
+                                    ? jugador.posicion
+                                    : index + 1
+                                }}
                               </span>
                             </div>
-                            <span v-else class="fw-bold text-white-50 fs-5">{{
-                              jugador.posicion
-                            }}</span>
+                            <span v-else class="fw-bold text-white-50 fs-5">
+                              {{
+                                sortBy === "puntos"
+                                  ? jugador.posicion
+                                  : index + 1
+                              }}
+                            </span>
                           </td>
 
                           <td>
@@ -600,7 +629,7 @@ const topTres = computed(() =>
 );
 
 const posicionesTabla = computed(() => {
-  if (search.value.trim()) {
+  if (search.value.trim() || sortBy.value !== "puntos") {
     return posicionesFiltradas.value;
   }
 
@@ -610,6 +639,7 @@ const posicionesTabla = computed(() => {
     (jugador) => !idsTopTres.includes(jugador.user_id),
   );
 });
+
 // Variables de estado
 const userId = ref(null);
 const idLigaActiva = ref(
@@ -763,7 +793,7 @@ onMounted(async () => {
 }
 
 .medal-position-number {
-  top: 34%;
+  top: 39%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 0.95rem;
@@ -784,8 +814,8 @@ onMounted(async () => {
 
 @media (max-width: 575.98px) {
   .top-player-first {
-    transform: translateY(-2px);
-    min-height: auto;
+    transform: translateY(-6px);
+    min-height: 170px;
   }
 
   .top-player-avatar {
@@ -800,18 +830,20 @@ onMounted(async () => {
   background: rgba(255, 193, 7, 0.08);
 }
 
-@media (max-width: 575.98px) {
-  .top-player-first {
-    transform: translateY(-6px);
-    min-height: 170px;
-  }
-}
-
 .top-player-second {
   background: rgba(255, 255, 255, 0.05);
 }
 
 .top-player-third {
   background: rgba(205, 127, 50, 0.08);
+}
+
+.podium-medal-number {
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: #111;
 }
 </style>
