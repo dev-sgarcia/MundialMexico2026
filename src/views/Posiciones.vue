@@ -229,7 +229,7 @@
                   </div>
 
                   <div
-                    class="row g-3 align-items-end justify-content-center mx-auto top-three-row"
+                    class="row g-2 align-items-end justify-content-center mx-auto top-three-row"
                   >
                     <div
                       v-for="jugador in topTres"
@@ -242,7 +242,7 @@
                       }"
                     >
                       <div
-                        class="text-center rounded-4 p-2 h-100"
+                        class="text-center rounded-4 p-1 h-100"
                         :class="{
                           'top-player-first border border-warning shadow':
                             jugador.posicion === 1,
@@ -339,6 +339,7 @@
                         <div class="input-group input-group-sm">
                           <input
                             v-model="search"
+                            @input="resetPage"
                             type="text"
                             class="form-control bg-black text-white border-success search-input"
                             placeholder="Buscar participante"
@@ -355,6 +356,7 @@
                       <div class="col-6">
                         <select
                           v-model="sortBy"
+                          @change="resetPage"
                           class="form-select form-select-sm bg-black text-white border-success"
                         >
                           <option value="puntos">Ordenar por: Puntos</option>
@@ -427,7 +429,7 @@
                       </thead>
                       <tbody>
                         <tr
-                          v-for="(jugador, index) in posicionesTabla"
+                          v-for="(jugador, index) in posicionesTablaPaginadas"
                           :key="jugador.user_id"
                           :class="{
                             'bg-success bg-opacity-10':
@@ -439,7 +441,7 @@
                               v-if="
                                 sortBy === 'puntos'
                                   ? jugador.posicion <= 3
-                                  : index < 3
+                                  : (currentPage - 1) * itemsPerPage + index < 3
                               "
                               class="position-relative d-inline-flex align-items-center justify-content-center"
                             >
@@ -450,11 +452,15 @@
                                   color:
                                     (sortBy === 'puntos'
                                       ? jugador.posicion
-                                      : index + 1) === 1
+                                      : (currentPage - 1) * itemsPerPage +
+                                        index +
+                                        1) === 1
                                       ? '#ffd700'
                                       : (sortBy === 'puntos'
                                             ? jugador.posicion
-                                            : index + 1) === 2
+                                            : (currentPage - 1) * itemsPerPage +
+                                              index +
+                                              1) === 2
                                         ? '#c0c0c0'
                                         : '#cd7f32',
                                 }"
@@ -466,7 +472,9 @@
                                 {{
                                   sortBy === "puntos"
                                     ? jugador.posicion
-                                    : index + 1
+                                    : (currentPage - 1) * itemsPerPage +
+                                      index +
+                                      1
                                 }}
                               </span>
                             </div>
@@ -474,7 +482,7 @@
                               {{
                                 sortBy === "puntos"
                                   ? jugador.posicion
-                                  : index + 1
+                                  : (currentPage - 1) * itemsPerPage + index + 1
                               }}
                             </span>
                           </td>
@@ -550,6 +558,55 @@
                         </tr>
                       </tbody>
                     </table>
+                    <nav
+                      v-if="totalPages > 1"
+                      class="d-flex justify-content-center py-3 border-top border-success border-opacity-25"
+                    >
+                      <ul class="pagination pagination-sm mb-0">
+                        <li
+                          class="page-item"
+                          :class="{ disabled: currentPage === 1 }"
+                        >
+                          <button
+                            class="page-link bg-dark text-white border-success"
+                            @click="currentPage--"
+                          >
+                            Anterior
+                          </button>
+                        </li>
+
+                        <li
+                          v-for="page in pages"
+                          :key="page"
+                          class="page-item"
+                          :class="{ active: currentPage === page }"
+                        >
+                          <button
+                            class="page-link"
+                            :class="
+                              currentPage === page
+                                ? 'bg-success border-success text-dark'
+                                : 'bg-dark text-white border-success'
+                            "
+                            @click="currentPage = page"
+                          >
+                            {{ page }}
+                          </button>
+                        </li>
+
+                        <li
+                          class="page-item"
+                          :class="{ disabled: currentPage === totalPages }"
+                        >
+                          <button
+                            class="page-link bg-dark text-white border-success"
+                            @click="currentPage++"
+                          >
+                            Siguiente
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
                   </div>
                 </div>
               </div>
@@ -589,6 +646,28 @@ const route = useRoute();
 // Variables para filtrado y ordenamiento
 const search = ref("");
 const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
+
+const currentPage = ref(1);
+const itemsPerPage = 5;
+
+const totalPages = computed(() =>
+  Math.ceil(posicionesTabla.value.length / itemsPerPage),
+);
+
+const pages = computed(() =>
+  Array.from({ length: totalPages.value }, (_, i) => i + 1),
+);
+
+const posicionesTablaPaginadas = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+
+  return posicionesTabla.value.slice(start, end);
+});
+
+const resetPage = () => {
+  currentPage.value = 1;
+};
 
 const posicionesFiltradas = computed(() => {
   let filtrados = [...tablaPosiciones.value];
@@ -786,12 +865,13 @@ onMounted(async () => {
   opacity: 1;
 }
 
-/* Clase para mantener el ancho exacto del sidebar cuando es fixed */
+/* Sidebar */
 .sidebar-fixed {
   width: 16.66666667%;
   max-width: 280px;
 }
 
+/* Medallas tabla */
 .medal-position-number {
   top: 39%;
   left: 50%;
@@ -802,31 +882,30 @@ onMounted(async () => {
   color: #111;
 }
 
+/* Medallas podio */
+.podium-medal-number {
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: #111;
+}
+
+/* Podio */
 .top-three-row {
   max-width: 950px;
 }
 
 .top-player-avatar {
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
 }
 
-@media (max-width: 575.98px) {
-  .top-player-first {
-    transform: translateY(-6px);
-    min-height: 170px;
-  }
-
-  .top-player-avatar {
-    width: 48px;
-    height: 48px;
-  }
-}
-
 .top-player-first {
-  transform: translateY(-6px);
-  min-height: 220px;
+  transform: translateY(-12px);
+  min-height: 210px;
   background: rgba(255, 193, 7, 0.08);
 }
 
@@ -838,12 +917,43 @@ onMounted(async () => {
   background: rgba(205, 127, 50, 0.08);
 }
 
-.podium-medal-number {
-  top: 38%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.75rem;
-  line-height: 1;
-  color: #111;
+/* Mobile */
+@media (max-width: 575.98px) {
+  .top-player-second,
+  .top-player-third {
+    min-height: 95px;
+  }
+
+  .top-player-first {
+    min-height: 125px;
+    transform: translateY(-10px);
+  }
+
+  .top-player-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .top-player-first .top-player-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .top-player-first h6,
+  .top-player-second h6,
+  .top-player-third h6 {
+    font-size: 0.75rem;
+    line-height: 1.1;
+    margin-bottom: 0;
+  }
+
+  .top-player-first .fs-4 {
+    font-size: 1.3rem !important;
+  }
+
+  .top-player-second .fs-5,
+  .top-player-third .fs-5 {
+    font-size: 1rem !important;
+  }
 }
 </style>
