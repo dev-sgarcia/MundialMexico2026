@@ -58,7 +58,7 @@
                       class="d-flex justify-content-center align-items-center gap-2 mb-2"
                     >
                       <img
-                        v-if="avatarLider"
+                        v-if="hayPuntos && avatarLider"
                         :src="avatarLider"
                         :alt="nombreLider"
                         class="rounded-circle border border-warning"
@@ -67,21 +67,33 @@
                         style="object-fit: cover"
                       />
                       <div
-                        v-else
+                        v-else-if="hayPuntos"
                         class="rounded-circle border border-warning d-flex align-items-center justify-content-center bg-dark"
                         style="width: 42px; height: 42px"
                       >
                         <PhUser size="20" class="text-warning" />
                       </div>
-                      <span class="text-warning fw-bold fs-4"
-                        >{{ puntosLider }} <small class="fs-6">pts</small></span
-                      >
+                      <span v-if="hayPuntos" class="text-warning fw-bold fs-4">
+                        {{ puntosLider }} <small class="fs-6">pts</small>
+                      </span>
+
+                      <span v-else class="text-white-50 fw-bold fs-5"> — </span>
                     </div>
 
                     <!-- Nombre truncado para que no salte de línea en móviles -->
-                    <h6 class="fw-bold mb-0 text-truncate w-100">
+                    <h6
+                      v-if="hayPuntos"
+                      class="fw-bold mb-0 text-truncate w-100"
+                    >
                       {{ nombreLider }}
                     </h6>
+
+                    <h6 v-else class="fw-bold mb-0 text-white-50">
+                      Sin líder aún
+                    </h6>
+                    <small v-if="!hayPuntos" class="text-white-50 d-block mt-1">
+                      Aún nadie ha sumado puntos
+                    </small>
                   </div>
                 </div>
               </div>
@@ -109,10 +121,15 @@
                       >
                     </div>
 
-                    <h3 class="fw-bold mb-1 text-primary">{{ miPosicion }}°</h3>
-
+                    <h3 class="fw-bold mb-1 text-primary">
+                      {{ hayPuntos ? `${miPosicion}°` : "—" }}
+                    </h3>
                     <span class="text-white-50 small lh-sm d-block mt-1">
-                      de {{ totalParticipantes }} participantes
+                      {{
+                        hayPuntos
+                          ? `de ${totalParticipantes} participantes`
+                          : "Posición pendiente"
+                      }}
                     </span>
                   </div>
                 </div>
@@ -142,11 +159,17 @@
                     </div>
 
                     <h3 class="fw-bold mb-1 text-success">
-                      {{ distanciaLider }} <small class="fs-6">pts</small>
+                      <template v-if="hayPuntos">
+                        {{ distanciaLider }} <small class="fs-6">pts</small>
+                      </template>
+                      <template v-else>—</template>
                     </h3>
 
                     <span class="text-white-50 small lh-sm d-block mt-1">
-                      No aflojes el paso.<br />¡Sigue así!
+                      <template v-if="hayPuntos">
+                        No aflojes el paso.<br />¡Sigue así!
+                      </template>
+                      <template v-else> Sin líder definido </template>
                     </span>
                   </div>
                 </div>
@@ -175,15 +198,119 @@
                       >
                     </div>
 
-                    <h3 class="fw-bold mb-1 text-info">{{ miEfectividad }}</h3>
+                    <h3 class="fw-bold mb-1 text-info">
+                      {{ hayPuntos ? miEfectividad : "—" }}
+                    </h3>
 
                     <span class="text-white-50 small lh-sm d-block mt-1">
-                      Cada punto te acerca.<br />¡Apuesta fuerte!
+                      <template v-if="hayPuntos">
+                        Cada punto te acerca.<br />¡Apuesta fuerte!
+                      </template>
+                      <template v-else> Esperando resultados </template>
                     </span>
                   </div>
                 </div>
               </div>
             </div>
+
+            <!-- TOP 3 PODIO -->
+            <section v-if="topTres.length && !search.trim()" class="mb-4">
+              <div
+                class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm overflow-hidden"
+              >
+                <div class="card-body p-3 p-md-4">
+                  <div class="d-flex align-items-center gap-2 mb-3">
+                    <h5 class="mb-0 fw-bold text-white text-uppercase">
+                      Top 3 de la quiniela
+                    </h5>
+                  </div>
+
+                  <div
+                    class="row g-3 align-items-end justify-content-center mx-auto top-three-row"
+                  >
+                    <div
+                      v-for="jugador in topTres"
+                      :key="jugador.user_id"
+                      class="col-4 col-md-3"
+                      :class="{
+                        'order-2': jugador.posicion === 1,
+                        'order-1': jugador.posicion === 2,
+                        'order-3': jugador.posicion === 3,
+                      }"
+                    >
+                      <div
+                        class="text-center rounded-4 p-2 h-100"
+                        :class="{
+                          'top-player-first border border-warning shadow':
+                            jugador.posicion === 1,
+
+                          'top-player-second border border-light border-opacity-50':
+                            jugador.posicion === 2,
+
+                          'top-player-third border border-warning border-opacity-50':
+                            jugador.posicion === 3,
+                        }"
+                      >
+                        <div class="mb-2">
+                          <PhCrown
+                            v-if="jugador.posicion === 1"
+                            size="24"
+                            weight="fill"
+                            class="text-warning"
+                          />
+
+                          <PhMedal
+                            v-else
+                            size="24"
+                            weight="fill"
+                            :class="{
+                              'text-light': jugador.posicion === 2,
+                              'text-warning': jugador.posicion === 3,
+                            }"
+                          />
+                        </div>
+
+                        <img
+                          v-if="jugador.avatar_url"
+                          :src="jugador.avatar_url"
+                          :alt="jugador.nombre"
+                          class="top-player-avatar rounded-circle border mb-2"
+                          :class="{
+                            'border-warning': jugador.posicion === 1,
+                            'border-light': jugador.posicion === 2,
+                            'border-warning border-opacity-50':
+                              jugador.posicion === 3,
+                          }"
+                        />
+
+                        <div
+                          v-else
+                          class="top-player-avatar rounded-circle border border-secondary mx-auto mb-2 d-flex align-items-center justify-content-center bg-dark"
+                        >
+                          <PhUser size="26" class="text-white-50" />
+                        </div>
+
+                        <h6 class="fw-bold mb-1 text-truncate">
+                          {{ jugador.nombre }}
+                        </h6>
+
+                        <div class="fw-bold">
+                          <span
+                            :class="{
+                              'text-warning fs-4': jugador.posicion === 1,
+                              'text-white fs-5': jugador.posicion !== 1,
+                            }"
+                          >
+                            {{ jugador.puntos }}
+                          </span>
+                          <small class="text-white-50"> pts</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
 
             <!-- CONTENIDO -->
             <div class="row g-4 align-items-start">
@@ -287,7 +414,7 @@
                       </thead>
                       <tbody>
                         <tr
-                          v-for="jugador in posicionesFiltradas"
+                          v-for="jugador in posicionesTabla"
                           :key="jugador.user_id"
                           :class="{
                             'bg-success bg-opacity-10':
@@ -384,7 +511,7 @@
                           </td>
                         </tr>
 
-                        <tr v-if="posicionesFiltradas.length === 0">
+                        <tr v-if="posicionesTabla.length === 0">
                           <td
                             colspan="6"
                             class="text-center py-5 text-white-50"
@@ -397,163 +524,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- DERECHA -->
-              <!-- <div class="col-12 col-xl-3">
-                <div class="d-flex flex-column gap-4">
-
-                  <div
-                    class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm"
-                  >
-                    <div class="card-body p-3">
-                      <div
-                        class="d-flex justify-content-between align-items-center mb-3"
-                      >
-                        <h6
-                          class="fw-bold mb-0 d-flex align-items-center gap-2"
-                        >
-                          <PhCalendarBlank
-                            size="18"
-                            weight="fill"
-                            class="text-success"
-                          />
-                          Próximos partidos
-                        </h6>
-
-                        <small class="text-success">Ver todos</small>
-                      </div>
-                      <div
-                        v-for="match in nextMatches"
-                        :key="match.id"
-                        class="border-bottom border-secondary border-opacity-25 pb-3 mb-3"
-                      >
-                        <div
-                          class="d-flex justify-content-between align-items-center text-center gap-2"
-                        >
-                          <div class="d-flex align-items-center gap-2">
-                            <span class="fw-semibold">
-                              {{ match.homeTeam }}
-                            </span>
-
-                            <img
-                              :src="`https://flagcdn.com/w40/${match.homeFlag}.png`"
-                              :alt="match.homeTeam"
-                              width="28"
-                              height="20"
-                              class="rounded-1"
-                            />
-                          </div>
-
-                          <span class="text-white-50 small fw-semibold">
-                            VS
-                          </span>
-
-                          <div class="d-flex align-items-center gap-2">
-                            <img
-                              :src="`https://flagcdn.com/w40/${match.awayFlag}.png`"
-                              :alt="match.awayTeam"
-                              width="28"
-                              height="20"
-                              class="rounded-1"
-                            />
-
-                            <span class="fw-semibold">
-                              {{ match.awayTeam }}
-                            </span>
-                          </div>
-                        </div>
-
-                        <small class="d-block text-center text-white-50 mt-2">
-                          {{ match.date }} · {{ match.time }}
-                        </small>
-                      </div>
-
-                      <RouterLink
-                        to="/predicciones"
-                        class="btn btn-outline-success w-100 rounded-3 mt-2"
-                      >
-                        Ir a mis predicciones
-                      </RouterLink>
-                    </div>
-                  </div>
-
-
-                  <div
-                    class="card bg-dark text-white border border-success border-opacity-25 rounded-4 shadow-sm"
-                  >
-                    <div class="card-body p-3">
-                      <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                        <PhChartLineUp
-                          size="18"
-                          weight="fill"
-                          class="text-success"
-                        />
-                        Resumen general
-                      </h6>
-
-                      <div class="row g-3">
-                        <div class="col-6">
-                          <div
-                            class="bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-4 p-3 h-100"
-                          >
-                            <PhUsers size="26" class="text-primary mb-2" />
-                            <small class="d-block text-white-50"
-                              >Participantes</small
-                            >
-                            <h4 class="fw-bold mb-0">
-                              {{ standings.length }}
-                            </h4>
-                          </div>
-                        </div>
-
-                        <div class="col-6">
-                          <div
-                            class="bg-success bg-opacity-10 border border-success border-opacity-25 rounded-4 p-3 h-100"
-                          >
-                            <PhTarget size="26" class="text-success mb-2" />
-                            <small class="d-block text-white-50">Exactos</small>
-                            <h4 class="fw-bold mb-0">
-                              {{ totalExactScores }}
-                            </h4>
-                          </div>
-                        </div>
-
-                        <div class="col-6">
-                          <div
-                            class="bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-4 p-3 h-100"
-                          >
-                            <PhCheckCircle
-                              size="26"
-                              class="text-warning mb-2"
-                            />
-                            <small class="d-block text-white-50"
-                              >Aciertos</small
-                            >
-                            <h4 class="fw-bold mb-0">
-                              {{ totalCorrectResults }}
-                            </h4>
-                          </div>
-                        </div>
-
-                        <div class="col-6">
-                          <div class="summary-purple rounded-4 p-3 h-100">
-                            <PhChartBar
-                              size="26"
-                              class="summary-purple-icon mb-2"
-                            />
-                            <small class="d-block text-white-50"
-                              >Predicciones</small
-                            >
-                            <h4 class="fw-bold mb-0">
-                              {{ totalPredictions }}
-                            </h4>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
             </div>
           </section>
         </main>
@@ -621,6 +591,25 @@ const posicionesFiltradas = computed(() => {
   return filtrados;
 });
 
+const hayPuntos = computed(() =>
+  tablaPosiciones.value.some((jugador) => jugador.puntos > 0),
+);
+
+const topTres = computed(() =>
+  tablaPosiciones.value.filter((jugador) => jugador.puntos > 0).slice(0, 3),
+);
+
+const posicionesTabla = computed(() => {
+  if (search.value.trim()) {
+    return posicionesFiltradas.value;
+  }
+
+  const idsTopTres = topTres.value.map((jugador) => jugador.user_id);
+
+  return posicionesFiltradas.value.filter(
+    (jugador) => !idsTopTres.includes(jugador.user_id),
+  );
+});
 // Variables de estado
 const userId = ref(null);
 const idLigaActiva = ref(
@@ -640,7 +629,6 @@ const totalParticipantes = ref(0);
 const distanciaLider = ref(0);
 const miEfectividad = ref("0%");
 
-// Arreglo para la tabla completa (lo usaremos después)
 const tablaPosiciones = ref([]);
 
 const cargarPosiciones = async () => {
@@ -753,14 +741,6 @@ onMounted(async () => {
     return;
   }
 
-  // // 2. Si tiene liga, validamos la liga específica activa
-  // if (idLigaActiva.value && idLigaActiva.value !== "null") {
-  //   // ... aquí tu lógica de cargarPosiciones()
-  //   await cargarPosiciones();
-  // } else {
-  //   router.push("/juega");
-  // }
-
   if (!idLigaActiva.value || idLigaActiva.value === "null") {
     router.push("/juega");
     return;
@@ -790,5 +770,48 @@ onMounted(async () => {
   font-weight: 800;
   line-height: 1;
   color: #111;
+}
+
+.top-three-row {
+  max-width: 950px;
+}
+
+.top-player-avatar {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+}
+
+@media (max-width: 575.98px) {
+  .top-player-first {
+    transform: translateY(-2px);
+    min-height: auto;
+  }
+
+  .top-player-avatar {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.top-player-first {
+  transform: translateY(-6px);
+  min-height: 220px;
+  background: rgba(255, 193, 7, 0.08);
+}
+
+@media (max-width: 575.98px) {
+  .top-player-first {
+    transform: translateY(-6px);
+    min-height: 170px;
+  }
+}
+
+.top-player-second {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.top-player-third {
+  background: rgba(205, 127, 50, 0.08);
 }
 </style>
