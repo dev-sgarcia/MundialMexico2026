@@ -217,9 +217,9 @@
                           v-model="sortBy"
                           class="form-select form-select-sm bg-black text-white border-success"
                         >
-                          <option value="points">Ordenar por: Puntos</option>
-                          <option value="exactScores">Marc. exactos</option>
-                          <option value="correctResults">Aciertos</option>
+                          <option value="puntos">Ordenar por: Puntos</option>
+                          <option value="exactos">Marc. exactos</option>
+                          <option value="aciertos">Aciertos</option>
                         </select>
                       </div>
                     </div>
@@ -287,7 +287,7 @@
                       </thead>
                       <tbody>
                         <tr
-                          v-for="jugador in tablaPosiciones"
+                          v-for="jugador in posicionesFiltradas"
                           :key="jugador.user_id"
                           :class="{
                             'bg-success bg-opacity-10':
@@ -295,24 +295,29 @@
                           }"
                         >
                           <td class="text-center px-3 px-md-4">
-                            <PhMedal
-                              v-if="jugador.posicion === 1"
-                              size="28"
-                              weight="fill"
-                              style="color: #ffd700"
-                            />
-                            <PhMedal
-                              v-else-if="jugador.posicion === 2"
-                              size="28"
-                              weight="fill"
-                              style="color: #c0c0c0"
-                            />
-                            <PhMedal
-                              v-else-if="jugador.posicion === 3"
-                              size="28"
-                              weight="fill"
-                              style="color: #cd7f32"
-                            />
+                            <div
+                              v-if="jugador.posicion <= 3"
+                              class="position-relative d-inline-flex align-items-center justify-content-center"
+                            >
+                              <PhMedal
+                                size="32"
+                                weight="fill"
+                                :style="{
+                                  color:
+                                    jugador.posicion === 1
+                                      ? '#ffd700'
+                                      : jugador.posicion === 2
+                                        ? '#c0c0c0'
+                                        : '#cd7f32',
+                                }"
+                              />
+
+                              <span
+                                class="medal-position-number position-absolute fw-bold"
+                              >
+                                {{ jugador.posicion }}
+                              </span>
+                            </div>
                             <span v-else class="fw-bold text-white-50 fs-5">{{
                               jugador.posicion
                             }}</span>
@@ -379,7 +384,7 @@
                           </td>
                         </tr>
 
-                        <tr v-if="tablaPosiciones.length === 0">
+                        <tr v-if="posicionesFiltradas.length === 0">
                           <td
                             colspan="6"
                             class="text-center py-5 text-white-50"
@@ -560,31 +565,21 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 
 import {
-  PhCalendarBlank,
-  PhChartBar,
-  PhChartLineUp,
-  PhCheckCircle,
   PhCrown,
   PhLightning,
   PhMagnifyingGlass,
   PhMedal,
   PhRanking,
-  PhSoccerBall,
   PhTarget,
-  PhTrendUp,
-  PhTrophy,
   PhUser,
-  PhUsers,
-  PhXCircle,
 } from "@phosphor-icons/vue";
 
-import { standingsMock } from "@/data/standings.mock";
 import { useRouter, useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Swal from "sweetalert2";
@@ -593,26 +588,33 @@ const router = useRouter();
 const route = useRoute();
 
 // Variables para filtrado y ordenamiento
-const searchQuery = ref("");
+const search = ref("");
 const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
 
 const posicionesFiltradas = computed(() => {
   let filtrados = [...tablaPosiciones.value];
 
-  // 1. Filtrar por nombre
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    filtrados = filtrados.filter((p) => p.nombre.toLowerCase().includes(query));
+  if (search.value.trim()) {
+    const query = search.value.trim().toLowerCase();
+
+    filtrados = filtrados.filter((jugador) =>
+      jugador.nombre?.toLowerCase().includes(query),
+    );
   }
 
-  // 2. Ordenar
   filtrados.sort((a, b) => {
-    if (sortBy.value === "puntos")
+    if (sortBy.value === "puntos") {
       return b.puntos - a.puntos || b.exactos - a.exactos;
-    if (sortBy.value === "exactos")
+    }
+
+    if (sortBy.value === "exactos") {
       return b.exactos - a.exactos || b.puntos - a.puntos;
-    if (sortBy.value === "aciertos")
+    }
+
+    if (sortBy.value === "aciertos") {
       return b.aciertos - a.aciertos || b.puntos - a.puntos;
+    }
+
     return 0;
   });
 
@@ -665,7 +667,7 @@ const cargarPosiciones = async () => {
       return {
         ...jugador,
         posicion: index + 1,
-        efectividad: efectividad,
+        efectividad,
       };
     });
 
@@ -734,7 +736,7 @@ onMounted(async () => {
 
   userId.value = session.user.id;
 
-  await cargarPosiciones();
+  // await cargarPosiciones();
 
   // 1. Validar si tiene al menos una liga
   const tieneLiga = await validarAcceso(userId.value);
@@ -751,272 +753,42 @@ onMounted(async () => {
     return;
   }
 
-  // 2. Si tiene liga, validamos la liga específica activa
-  if (idLigaActiva.value && idLigaActiva.value !== "null") {
-    // ... aquí tu lógica de cargarPosiciones()
-    await cargarPosiciones();
-  } else {
+  // // 2. Si tiene liga, validamos la liga específica activa
+  // if (idLigaActiva.value && idLigaActiva.value !== "null") {
+  //   // ... aquí tu lógica de cargarPosiciones()
+  //   await cargarPosiciones();
+  // } else {
+  //   router.push("/juega");
+  // }
+
+  if (!idLigaActiva.value || idLigaActiva.value === "null") {
     router.push("/juega");
-  }
-});
-
-const search = ref("");
-//const sortBy = ref("points");
-const currentPage = ref(1);
-const pageSize = 5;
-
-const standings = ref(standingsMock);
-
-const rankedStandings = computed(() => {
-  return [...standings.value]
-    .sort((a, b) => b.points - a.points)
-    .map((player, index) => ({
-      ...player,
-      rank: index + 1,
-    }));
-});
-
-const filteredStandings = computed(() => {
-  let result = [...rankedStandings.value];
-
-  if (search.value.trim()) {
-    const term = search.value.toLowerCase();
-
-    result = result.filter((player) =>
-      player.participantName.toLowerCase().includes(term),
-    );
+    return;
   }
 
-  if (sortBy.value !== "points") {
-    result.sort((a, b) => b[sortBy.value] - a[sortBy.value]);
-  }
-
-  return result;
+  await cargarPosiciones();
 });
-
-const totalPages = computed(() => {
-  return Math.ceil(filteredStandings.value.length / pageSize) || 1;
-});
-
-const paginatedStandings = computed(() => {
-  const start = (currentPage.value - 1) * pageSize;
-  const end = start + pageSize;
-
-  return filteredStandings.value.slice(start, end);
-});
-
-const paginationStart = computed(() => {
-  if (!filteredStandings.value.length) return 0;
-
-  return (currentPage.value - 1) * pageSize + 1;
-});
-
-const paginationEnd = computed(() => {
-  return Math.min(currentPage.value * pageSize, filteredStandings.value.length);
-});
-
-const leader = computed(() => rankedStandings.value[0]);
-
-const currentUser = computed(() =>
-  rankedStandings.value.find((player) => player.isCurrentUser),
-);
-
-const currentUserPosition = computed(() => currentUser.value?.rank ?? 0);
-
-const totalExactScores = computed(() => {
-  return standings.value.reduce(
-    (total, player) => total + player.exactScores,
-    0,
-  );
-});
-
-const totalCorrectResults = computed(() => {
-  return standings.value.reduce(
-    (total, player) => total + player.correctResults,
-    0,
-  );
-});
-
-const totalPredictions = computed(() => {
-  return standings.value.reduce((total, player) => {
-    return (
-      total +
-      player.exactScores +
-      player.correctResults +
-      player.failedPredictions
-    );
-  }, 0);
-});
-
-const bestStreak = computed(() => {
-  if (!standings.value.length) return 0;
-
-  return Math.max(...standings.value.map((player) => player.bestStreak ?? 0));
-});
-
-const currentStreak = computed(() => currentUser.value?.currentStreak ?? 0);
-
-const goToPage = (page) => {
-  currentPage.value = page;
-};
-
-const previousPage = () => {
-  if (currentPage.value > 1) currentPage.value--;
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++;
-};
-
-watch([search, sortBy], () => {
-  currentPage.value = 1;
-});
-
-const getInitials = (name) => {
-  if (!name) return "--";
-
-  return name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-};
-
-const getPerformance = (points) => {
-  // 👇 AGREGAMOS ESTA VALIDACIÓN
-  if (!leader.value || !leader.value.points || leader.value.points === 0) {
-    return 0;
-  }
-
-  return Math.round((points / leader.value.points) * 100);
-};
-
-const getMovementIcon = (movement) => {
-  if (movement > 0) return "↑";
-  if (movement < 0) return "↓";
-
-  return "—";
-};
-
-const getMovementClass = (movement) => {
-  if (movement > 0) return "text-success fw-bold";
-  if (movement < 0) return "text-danger fw-bold";
-
-  return "text-white-50 fw-bold";
-};
-
-const getMedalClass = (rank) => {
-  if (rank === 1) return "text-warning";
-  if (rank === 2) return "text-secondary";
-  if (rank === 3) return "medal-bronze";
-
-  return "";
-};
 </script>
 
 <style scoped>
-.avatar-md {
-  width: 38px;
-  height: 38px;
-}
-
-.medal-number {
-  font-size: 0.75rem;
-  color: #111;
-  line-height: 1;
-  margin-top: -5px;
-}
-
-.medal-bronze {
-  color: #cd7f32;
-}
-
-.summary-purple {
-  background: rgba(111, 66, 193, 0.15);
-  border: 1px solid rgba(111, 66, 193, 0.35);
-}
-
-.summary-purple-icon {
-  color: #8b5cf6;
-}
-
 .search-input::placeholder {
   color: rgba(226, 226, 226, 0.8);
   opacity: 1;
-}
-
-@media (max-width: 991.98px) {
-  .mobile-standings-table {
-    min-width: 100%;
-  }
-
-  .mobile-player-avatar {
-    width: 34px;
-    height: 34px;
-    font-size: 0.75rem;
-  }
-
-  .mobile-player-name {
-    max-width: 140px;
-  }
-}
-.legend-mobile {
-  font-size: 0.7rem;
-}
-
-.legend-mobile i {
-  font-size: 0.5rem;
-}
-
-.current-user-badge {
-  font-size: 0.55rem;
-}
-
-.player-summary {
-  font-size: 0.65rem;
-}
-
-.mobile-standings-table thead th {
-  background: rgba(25, 135, 84, 0.16);
-  border-bottom: 2px solid rgba(25, 135, 84, 0.45);
-}
-
-.mobile-rank-1 td {
-  background: rgba(255, 193, 7, 0.08);
-}
-
-.mobile-rank-2 td {
-  background: rgba(173, 181, 189, 0.06);
-}
-
-.mobile-rank-3 td {
-  background: rgba(205, 127, 50, 0.07);
-}
-
-.mobile-rank-1 td:first-child {
-  border-left: 3px solid #ffc107;
-}
-
-.mobile-rank-2 td:first-child {
-  border-left: 3px solid #adb5bd;
-}
-
-.mobile-rank-3 td:first-child {
-  border-left: 3px solid #cd7f32;
-}
-
-.legend-mobile {
-  font-size: 0.65rem;
-}
-
-.legend-mobile i {
-  font-size: 0.5rem;
 }
 
 /* Clase para mantener el ancho exacto del sidebar cuando es fixed */
 .sidebar-fixed {
   width: 16.66666667%;
   max-width: 280px;
+}
+
+.medal-position-number {
+  top: 34%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #111;
 }
 </style>
