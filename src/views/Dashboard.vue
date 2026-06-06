@@ -1,22 +1,22 @@
 <template>
   <div class="rules-page bg-black min-vh-100 text-white pb-5 pb-lg-0">
-    <div class="container-fluid px-3 py-3">
+    <div class="container-fluid px-3 pt-0 pb-3">
       <div class="row g-0">
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
           <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
             <Sidebar />
           </div>
         </aside>
-
         <main
-          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-3 pb-5 pb-lg-1"
+          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
         >
           <section class="container-fluid">
-            <div class="d-flex justify-content-end mb-4 d-none d-lg-flex z-3">
-              <UserProfile />
-            </div>
-
-            <div class="hero-banner rounded-4 mb-3 mb-xl-4 p-3 p-md-4">
+            <div
+              class="hero-banner position-relative rounded-4 mb-3 mb-xl-4 p-3 p-md-4"
+            >
+              <div class="hero-profile-inside d-none d-lg-flex">
+                <PageHeader />
+              </div>
               <div class="row align-items-center h-100 g-3">
                 <div class="col-12 col-lg-5 col-xl-3">
                   <span
@@ -24,10 +24,12 @@
                   >
                     Mundial México 2026
                   </span>
+
                   <h1 class="rules-title mb-3">
                     REGLAS DE
                     <span class="title-highlight">LA QUINIELA</span>
                   </h1>
+
                   <div class="title-line"></div>
                 </div>
 
@@ -37,6 +39,7 @@
                     puntos y cómo puedes convertirte en campeón.
                   </p>
                 </div>
+
                 <div class="d-none d-xl-block col-xl-4"></div>
               </div>
             </div>
@@ -257,6 +260,7 @@ import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 import UserProfile from "@/components/common/UserProfile.vue";
+import PageHeader from "@/components/common/PageHeader.vue";
 
 const route = useRoute();
 
@@ -354,6 +358,13 @@ watch(
     url("@/assets/trionda-stadium.png");
   background-size: cover;
   background-position: center bottom;
+}
+
+.hero-profile-inside {
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  z-index: 10;
 }
 
 .hero-banner .row {
