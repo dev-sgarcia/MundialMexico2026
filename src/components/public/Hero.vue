@@ -183,7 +183,7 @@
                 'custom-btn',
                 item.theme
               ]"
-              @click="item.route && router.push(item.route)"
+              @click="typeof item.action === 'function' ? item.action() : item.route ? router.push(item.route) : null"
             >
 
               {{ item.btn }}
@@ -207,9 +207,8 @@ import {
   onMounted,
   onUnmounted
 } from "vue";
-
+import Swal from 'sweetalert2';
 import { useRouter } from "vue-router";
-
 import {
   UserIcon,
   TrophyIcon,
@@ -217,13 +216,31 @@ import {
   UsersIcon,
   HeartIcon,
 } from "@heroicons/vue/24/solid";
+import { supabase } from "@/supabaseClient";
 
 const router = useRouter();
 
 /* ======================================== */
 /* CARDS */
 /* ======================================== */
-
+const validateZonaFan = async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  // 1. Si no hay sesión, mandamos a loguearse
+  if (!session) {
+    Swal.fire({
+      title: 'Inicia sesión',
+      text: 'Para acceder a la Zona Fan, primero debes iniciar sesión con Google.',
+      icon: 'info',
+      confirmButtonText: "Entendido",
+      confirmButtonColor: "#198754",
+      background: "#0b1f1a",
+      color: "#fff",
+    });
+    return;
+  } else {
+        router.push('/juega');
+  }
+};
 const items = [
   {
     image: new URL(
@@ -236,7 +253,7 @@ const items = [
       "Accede a la plataforma con gmail y tu código para integrarte a una liga.",
     btn: "ZONA FAN",
     theme: "red",
-    route: "/juega",
+    action: validateZonaFan,
   },
 
   {
@@ -278,18 +295,15 @@ const items = [
     route: "/donacion",
   },
 ];
-
 /* ======================================== */
 /* COUNTDOWN */
 /* ======================================== */
-
 const timeLeft = ref({
   days: "00",
   hours: "00",
   minutes: "00",
   seconds: "00",
 });
-
 let intervalId = null;
 
 const updateCountdown = () => {
