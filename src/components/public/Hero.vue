@@ -225,16 +225,16 @@ const router = useRouter();
 /* ======================================== */
 const validateZonaFan = async () => {
   const { data: { session } } = await supabase.auth.getSession();
-
-  console.log("Sesión actual:", session); // Agrega este log para verificar la sesión
-
   // 1. Si no hay sesión, mandamos a loguearse
   if (!session) {
     Swal.fire({
       title: 'Inicia sesión',
       text: 'Para acceder a la Zona Fan, primero debes iniciar sesión con Google.',
       icon: 'info',
-      confirmButtonColor: '#1e7f3f'
+      confirmButtonText: "Entendido",
+      confirmButtonColor: "#198754",
+      background: "#0b1f1a",
+      color: "#fff",
     });
     return;
   } else {
