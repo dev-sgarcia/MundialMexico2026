@@ -44,182 +44,162 @@
               </div>
             </div>
 
-            <div class="row g-3 mb-4">
+
+<div v-if="cargandoReglas" class="text-center py-5 text-white-50">
+              <div class="spinner-border text-success mb-3" role="status"></div>
+              <p>Buscando reglas de la liga...</p>
+            </div>
+
+            <div v-else-if="reglasLiga" class="row g-3 mb-4">
+              
               <div class="col-12 col-md-6 col-xl-4">
-                <article
-                  class="rule-card stadium-mercedesbenz rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
-                >
-                  <div class="rule-icon flex-shrink-0">
-                    <i class="fa-solid fa-trophy"></i>
-                  </div>
+                <article class="rule-card stadium-mercedesbenz rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
+                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-trophy"></i></div>
                   <div class="rule-content flex-grow-1">
                     <h5 class="mb-1">Dinámica de Premios</h5>
                     <div class="rule-divider divider-green mb-3"></div>
-                    <p class="mb-0 text-justify">
-                      Todo el monto acumulado se divide en
-                      <strong>dos bolsas iguales</strong>: 50% y 50%. Tienes dos
-                      grandes oportunidades de ganar.
-                    </p>
+                    <p class="mb-0 text-justify">{{ reglasLiga.dinamica_premios }}</p>
                   </div>
                   <div class="stadium-overlay"></div>
-
                   <div class="stadium-info">
-                    <div class="fw-bold text-white small">
-                      Mercedes-Benz Stadium
-                    </div>
-
-                    <div class="text-white-50 small">
-                      Atlanta, USA · Mundial 2026
-                    </div>
+                    <div class="fw-bold text-white small">Mercedes-Benz Stadium</div>
+                    <div class="text-white-50 small">Atlanta, USA · Mundial 2026</div>
                   </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
-                <article
-                  class="rule-card stadium-monterrey rule-blue h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
-                >
-                  <div class="rule-icon flex-shrink-0">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                  </div>
+                <article class="rule-card stadium-monterrey rule-blue h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
+                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-sack-dollar"></i></div>
                   <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">Bolsa 1: Fase de Grupos (50%)</h5>
+                    <h5 class="mb-1">{{ reglasLiga.bolsa1_titulo }}</h5>
                     <div class="rule-divider divider-blue mb-3"></div>
-                    <div class="points-row">
-                      <span>1º Lugar</span><strong>50%</strong>
-                    </div>
-                    <div class="points-row">
-                      <span>2º Lugar</span><strong>30%</strong>
-                    </div>
-                    <div class="points-row mb-0">
-                      <span>3º Lugar</span><strong>20%</strong>
-                    </div>
-                  </div>
-                  <div class="stadium-overlay"></div>
-
+                    
+                    <div v-if="reglasLiga.bolsa1_1er" class="points-row"><span>1º Lugar</span><strong>{{ reglasLiga.bolsa1_1er }}</strong></div>
+                    <div v-if="reglasLiga.bolsa1_2do" class="points-row"><span>2º Lugar</span><strong>{{ reglasLiga.bolsa1_2do }}</strong></div>
+                    <div v-if="reglasLiga.bolsa1_3er" class="points-row mb-0"><span>3º Lugar</span><strong>{{ reglasLiga.bolsa1_3er }}</strong></div>
+                    
+                    <p v-if="!reglasLiga.bolsa1_1er && !reglasLiga.bolsa1_2do && !reglasLiga.bolsa1_3er" class="mb-0 text-white-50 text-center small">
+                      Dinámica por definir.
+                    </p>
+                  </div>                  <div class="stadium-overlay"></div>
                   <div class="stadium-info">
                     <div class="fw-bold text-white small">Estadio BBVA</div>
-
-                    <div class="text-white-50 small">
-                      Monterrey, México · Mundial 2026
-                    </div>
+                    <div class="text-white-50 small">Monterrey, México · Mundial 2026</div>
                   </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
-                <article
-                  class="rule-card stadium-sofi rule-gold h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
-                >
-                  <div class="rule-icon flex-shrink-0">
-                    <i class="fa-solid fa-crown"></i>
-                  </div>
+                <article class="rule-card stadium-sofi rule-gold h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
+                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-crown"></i></div>
                   <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">Bolsa 2: Campeón Absoluto (50%)</h5>
+                    <h5 class="mb-1">{{ reglasLiga.bolsa2_titulo }}</h5>
                     <div class="rule-divider divider-gold mb-3"></div>
-                    <div class="points-row">
-                      <span>1º Lugar</span><strong>50%</strong>
-                    </div>
-                    <div class="points-row">
-                      <span>2º Lugar</span><strong>30%</strong>
-                    </div>
-                    <div class="points-row mb-0">
-                      <span>3º Lugar</span><strong>20%</strong>
-                    </div>
+                    <div class="points-row"><span>1º Lugar</span><strong>{{ reglasLiga.bolsa2_1er }}</strong></div>
+                    <div class="points-row"><span>2º Lugar</span><strong>{{ reglasLiga.bolsa2_2do }}</strong></div>
+                    <div class="points-row mb-0"><span>3º Lugar</span><strong>{{ reglasLiga.bolsa2_3er }}</strong></div>
                   </div>
                   <div class="stadium-overlay"></div>
                   <div class="stadium-info">
                     <div class="fw-bold text-white small">SoFi Stadium</div>
-
-                    <div class="text-white-50 small">
-                      Los Ángeles, USA · Sede Mundial 2026
-                    </div>
+                    <div class="text-white-50 small">Los Ángeles, USA · Sede Mundial 2026</div>
                   </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
-                <article
-                  class="rule-card stadium-toronto rule-purple h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
-                >
-                  <div class="rule-icon flex-shrink-0">
-                    <i class="fa-solid fa-bullseye"></i>
-                  </div>
+                <article class="rule-card stadium-toronto rule-purple h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
+                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-bullseye"></i></div>
                   <div class="rule-content flex-grow-1">
                     <h5 class="mb-1">Sistema de Puntuación</h5>
                     <div class="rule-divider divider-purple mb-3"></div>
-                    <p class="mb-2 text-justify">
-                      <strong>3 puntos</strong> Si aciertas al resultado del
-                      juego (ganador o empate), incluyendo el marcador exacto.
-                    </p>
-                    <p class="mb-0 text-justify">
-                      <strong>1 punto</strong> Si aciertas al resultado del
-                      juego (ganador o empate), pero fallas en el marcador
-                      exacto.
-                    </p>
+                    <p class="mb-2 text-justify"><strong>{{ reglasLiga.puntos_exacto }} puntos</strong> Si aciertas al resultado del juego (ganador o empate), incluyendo el marcador exacto.</p>
+                    <p class="mb-0 text-justify"><strong>{{ reglasLiga.puntos_acierto }} punto(s)</strong> Si aciertas al resultado del juego (ganador o empate), pero fallas en el marcador exacto.</p>
                   </div>
                   <div class="stadium-overlay"></div>
                   <div class="stadium-info">
                     <div class="fw-bold text-white small">BMO Field</div>
-
-                    <div class="text-white-50 small">
-                      Toronto, Canadá · Mundial 2026
-                    </div>
+                    <div class="text-white-50 small">Toronto, Canadá · Mundial 2026</div>
                   </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
-                <article
-                  class="rule-card stadium-metlife rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
-                >
-                  <div class="rule-icon flex-shrink-0">
-                    <i class="fa-solid fa-star"></i>
-                  </div>
+                <article class="rule-card stadium-metlife rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
+                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-star"></i></div>
                   <div class="rule-content flex-grow-1">
                     <h5 class="mb-1">Bono de Oro</h5>
                     <div class="rule-divider divider-cyan mb-3"></div>
-                    <p class="mb-0 text-justify">
-                      Elige al campeón antes del primer partido. Si aciertas,
-                      sumas <strong>10 puntos extra</strong>.
-                    </p>
+                    <p class="mb-0 text-justify">{{ reglasLiga.bono_oro_desc }}</p>
                   </div>
                   <div class="stadium-overlay"></div>
                   <div class="stadium-info">
                     <div class="fw-bold text-white small">MetLife Stadium</div>
-                    <div class="text-white-50 small">
-                      New Jersey, USA · Final Mundial 2026
-                    </div>
+                    <div class="text-white-50 small">New Jersey, USA · Final Mundial 2026</div>
                   </div>
                 </article>
               </div>
 
               <div class="col-12 col-md-6 col-xl-4">
-                <article
-                  class="rule-card stadium-guadalajara rule-red h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3"
-                >
-                  <div class="rule-icon flex-shrink-0">
-                    <i class="fa-solid fa-scale-balanced"></i>
-                  </div>
+                <article class="rule-card stadium-guadalajara rule-red h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
+                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-scale-balanced"></i></div>
                   <div class="rule-content flex-grow-1">
                     <h5 class="mb-1">Desempate</h5>
                     <div class="rule-divider divider-red mb-3"></div>
-                    <p class="mb-0 text-justify">
-                      En caso de empate, gana quien haya registrado primero su
-                      último marcador.
-                    </p>
+                    <p class="mb-0 text-justify">{{ reglasLiga.desempate_desc }}</p>
                   </div>
                   <div class="stadium-overlay"></div>
                   <div class="stadium-info">
                     <div class="fw-bold text-white small">Estadio Akron</div>
-
-                    <div class="text-white-50 small">
-                      Guadalajara, México · Mundial 2026
-                    </div>
+                    <div class="text-white-50 small">Guadalajara, México · Mundial 2026</div>
                   </div>
                 </article>
               </div>
+
+              <div class="col-12 col-md-6 col-xl-4">
+                <article class="rule-card stadium-azteca rule-orange h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
+                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-ticket"></i></div>
+                  <div class="rule-content flex-grow-1">
+                    <h5 class="mb-1">Cuota y Fechas</h5>
+                    <div class="rule-divider divider-orange mb-3"></div>
+                    <p class="mb-0 text-justify">{{ reglasLiga.cuota_inscripcion }}</p>
+                  </div>
+                  <div class="stadium-overlay"></div>
+                  <div class="stadium-info">
+                    <div class="fw-bold text-white small">Estadio Azteca</div>
+                    <div class="text-white-50 small">CDMX, México · Mundial 2026</div>
+                  </div>
+                </article>
+              </div>
+
             </div>
+
+            <!-- <div v-else class="text-center py-5">
+              <div class="bg-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <i class="fa-solid fa-clipboard-list fs-1 text-secondary"></i>
+              </div>
+              <h5 class="text-white fw-bold">Reglas no definidas</h5>
+              <p class="text-white-50">El administrador aún no ha configurado las reglas y premios para esta liga.</p>
+            </div> -->
+
+
+            <div v-else class="text-center py-5">
+              <div class="bg-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <i class="fa-solid fa-clipboard-list fs-1 text-secondary"></i>
+              </div>
+              <h5 class="text-white fw-bold">Reglas no definidas</h5>
+              <p class="text-white-50 mb-3">El administrador aún no ha configurado las reglas y premios para esta liga.</p>
+              
+              <div class="d-inline-flex flex-column align-items-center">
+                <small class="text-white-50 text-uppercase mb-1" style="font-size: 0.7rem;">ID de la Liga seleccionada</small>
+                <code class="bg-dark text-warning border border-secondary border-opacity-25 px-3 py-2 rounded-3 user-select-all fs-6">
+                  {{ idLigaActiva }}
+                </code>
+              </div>
+            </div>
+
+
 
             <div class="cta-card rounded-4 p-3 p-md-4 mb-3">
               <div class="row align-items-center g-3">
@@ -249,6 +229,7 @@
       </div>
     </div>
 
+
     <BottomNav />
   </div>
 </template>
@@ -276,10 +257,43 @@ const nombreLigaActiva = ref(
     "Mi Quiniela",
 );
 
+
 // 👇 SOLUCIÓN: Faltaba declarar la variable eventoIdActiva
 const eventoIdActiva = ref(
   route.query.eventoId || localStorage.getItem("eventoIdActiva") || null,
 );
+
+
+// --- VARIABLES PARA LAS REGLAS ---
+const reglasLiga = ref(null);
+const cargandoReglas = ref(true); // <--- Nueva variable de control
+
+// --- FUNCIÓN PARA DESCARGAR REGLAS ---
+const cargarReglas = async () => {
+  if (!idLigaActiva.value || idLigaActiva.value === "null") {
+    cargandoReglas.value = false;
+    return;
+  }
+  
+  cargandoReglas.value = true; // Encendemos el spinner antes de buscar
+  
+  try {
+    const { data, error } = await supabase
+      .from("league_rules")
+      .select("*")
+      .eq("league_id", idLigaActiva.value)
+      .single(); 
+
+    if (error && error.code !== 'PGRST116') throw error;
+    
+    reglasLiga.value = data || null;
+  } catch (err) {
+    console.error("Error al cargar reglas:", err);
+  } finally {
+    // IMPORTANTE: Apagamos el spinner pase lo que pase
+    cargandoReglas.value = false; 
+  }
+};
 
 // Caché al inicio
 if (idLigaActiva.value && idLigaActiva.value !== "null") {
@@ -292,18 +306,18 @@ if (eventoIdActiva.value && eventoIdActiva.value !== "null") {
 }
 
 onMounted(async () => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+  const { data: { session } } = await supabase.auth.getSession();
   if (session) {
     userId.value = session.user.id;
   }
+  
+  // 👇 Llamamos a las reglas al entrar a la página
+  await cargarReglas();
 });
 
 watch(
   () => route.query.ligaId,
-  (newId) => {
+  async (newId) => { // 👇 Agregamos async aquí
     if (newId && newId !== "null") {
       idLigaActiva.value = newId;
       nombreLigaActiva.value =
@@ -311,7 +325,6 @@ watch(
         localStorage.getItem("ligaNombreActiva") ||
         "Mi Quiniela";
 
-      // 👇 También la atrapamos aquí por si cambian de liga en el menú
       eventoIdActiva.value =
         route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
 
@@ -321,11 +334,16 @@ watch(
       if (eventoIdActiva.value) {
         localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
       }
+      
+      // 👇 Si cambian de liga en la URL, descargamos las nuevas reglas
+      await cargarReglas();
     }
   },
   { immediate: false },
 );
+
 </script>
+
 <style scoped>
 .rules-page {
   color: #fff;
@@ -466,6 +484,21 @@ watch(
 
 .stadium-guadalajara {
   --stadium-img: url("@/assets/stadiums/Guadalajara-Stadium.png");
+}
+
+.rule-orange {
+  --card-bright: #ff9800;
+  --card-color: rgba(255, 152, 0, 0.48);
+  --card-glow: rgba(255, 152, 0, 0.2);
+  --card-soft: rgba(255, 152, 0, 0.075);
+}
+
+.divider-orange {
+  background: var(--card-bright);
+}
+
+.stadium-azteca {
+  --stadium-img: url("@/assets/stadiums/Guadalajara-Stadium.png"); 
 }
 
 .rule-card:hover {
@@ -612,6 +645,24 @@ watch(
   --card-glow: rgba(229, 115, 115, 0.2);
   --card-soft: rgba(229, 115, 115, 0.075);
 }
+
+/* Agrega estos bloques junto a los demás colores y estadios */
+.rule-orange {
+  --card-bright: #ff9800;
+  --card-color: rgba(255, 152, 0, 0.48);
+  --card-glow: rgba(255, 152, 0, 0.2);
+  --card-soft: rgba(255, 152, 0, 0.075);
+}
+
+.divider-orange {
+  background: var(--card-bright);
+}
+
+.stadium-azteca {
+  /* Asegúrate de tener esta imagen en tu carpeta assets/stadiums, o usa otra que ya tengas */
+  --stadium-img: url("@/assets/stadiums/Guadalajara-Stadium.png"); 
+}
+
 
 /* EXAMPLE / CTA */
 .example-card {
