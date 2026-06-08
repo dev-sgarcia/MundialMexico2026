@@ -294,6 +294,10 @@ const unirseALiga = async () => {
       return;
     }
 
+    supabase.storage
+    .from("storage_logos")
+
+
     // 4. Si hay lugar, inscribimos al usuario
     const { error: errJoin } = await supabase
       .from("league_members")
@@ -562,51 +566,98 @@ const closeDropdown = () => {
   selectedLeagueDropdown.value = null;
 };
 
+
 const abrirEditarLogo = async (liga) => {
-  const { value: url } = await Swal.fire({
-    title: 'Cambiar imagen de la liga',
-    input: 'url',
-    inputLabel: 'URL de la imagen',
-    inputPlaceholder: 'https://ejemplo.com/imagen.png',
-    inputValue: liga.leagues?.logo_url || '',
-    showCancelButton: true,
-    confirmButtonText: 'Guardar',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#198754',
-    background: '#1a1d20',
-    color: '#fff',
-    inputValidator: (value) => {
-      if (!value) return 'Por favor ingresa una URL.';
-      try { new URL(value); }
-      catch { return 'Ingresa una URL válida.'; }
+
+  const input = document.createElement("input");
+
+  input.type = "file";
+  input.accept = "image/*";
+
+  input.onchange = async (event) => {
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    try {
+
+      Swal.fire({
+        title: "Subiendo imagen...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      await subirLogoLiga(file, liga);
+
+    } catch (err) {
+
+      console.error(err);
+
+      Swal.fire({
+        title: "Error",
+        text: "No fue posible subir la imagen.",
+        icon: "error",
+        background: "#1a1d20",
+        color: "#fff"
+      });
+
     }
-  });
-  
+  };
 
- if (!url) return;
-
-  const { error } = await supabase
-    .from('leagues')
-    .update({ logo_url: url.trim() })
-    .eq('id', liga.leagues.id);
-
-  if (error) {
-    Swal.fire({
-      title: 'Error',
-      text: 'No se pudo guardar la imagen.',
-      icon: 'error',
-      background: '#1a1d20',
-      color: '#fff'
-    });
-    return;
-  }
-
-  liga.leagues.logo_url = url.trim();
-  const inputEl = Swal.getInput();
-  if (inputEl) inputEl.value = '';
-  Swal.close();
-  toast.success('¡Imagen actualizada correctamente!');
+  input.click();
 };
+
+
+const subirLogoLiga = async (file, liga) => {
+
+  const extension = file.name.split(".").pop();
+
+  const fileName =
+    `league_${liga.leagues.id}_${Date.now()}.${extension}`;
+
+  const { error: uploadError } =
+    await supabase.storage
+      .from("storage_logos")
+      .upload(fileName, file, {
+        upsert: true
+      });
+
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage
+    .from("storage_logos")
+    .getPublicUrl(fileName);
+
+  const publicUrl = data.publicUrl;
+
+  const { error: updateError } =
+    await supabase
+      .from("leagues")
+      .update({
+        logo_url: publicUrl
+      })
+      .eq("id", liga.leagues.id);
+
+  if (updateError) throw updateError;
+
+  liga.leagues.logo_url = publicUrl;
+
+  Swal.fire({
+    title: "Correcto",
+    text: "Logo actualizado.",
+    icon: "success",
+    confirmButtonColor: "#198754",
+    background: "#1a1d20",
+    color: "#fff"
+  });
+
+  toast.success("Logo actualizado correctamente");
+};
+
+
 </script>
 
 <style scoped>
@@ -673,6 +724,7 @@ const abrirEditarLogo = async (liga) => {
   min-height: 220px;
   display: block;
 }
+
 .text-gold {
   color: #d4af37;
 }
@@ -818,4 +870,7 @@ const abrirEditarLogo = async (liga) => {
 .btn-edit-logo:hover {
   background: #d4af37;
 }
+
+
+
 </style>
