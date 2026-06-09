@@ -17,9 +17,9 @@
 
             <div class="bg-black z-3 mb-4">
               <div>
-                <h2 class="fw-bold mb-1 d-flex align-items-center gap-2">
-                  Tabla de posiciones general
-                </h2>
+                <h2 class="fw-bold mb-1 d-flex align-items-center gap-2 text-warning">
+                <PhStar weight="fill" /> Posiciones VIP
+                </h2>                
 
                 <p class="text-white-50 mb-0">
                   Ranking general de participantes de la quiniela:
@@ -223,9 +223,10 @@
               >
                 <div class="card-body p-3 p-md-4">
                   <div class="d-flex align-items-center gap-2 mb-3">
-                    <h5 class="mb-0 fw-bold text-white text-uppercase">
-                      Top 3 de la quiniela
-                    </h5>
+
+                    <h5 class="mb-0 fw-bold text-warning text-uppercase" style="letter-spacing: 0.5px">
+                    Tabla VIP Exclusiva
+                    </h5>                    
                   </div>
 
                   <div
@@ -488,46 +489,7 @@
                           </td>
 
                           <td>
-
                             <div class="d-flex align-items-center gap-2 py-1">
-                              <img
-                                v-if="jugador.avatar_url"
-                                :src="jugador.avatar_url"
-                                :alt="jugador.nombre"
-                                class="rounded-circle border border-secondary border-opacity-25"
-                                width="38"
-                                height="38"
-                                style="object-fit: cover"
-                              />
-                                <!-- AGREGAR ESTA NUEVA IMAGEN -->
-                                <img
-                                  v-else
-                                  src="@/assets/avatar-gmail.png"
-                                  :alt="jugador.nombre"
-                                  class="rounded-circle border border-success border-opacity-50 bg-dark p-1"
-                                  width="38"
-                                  height="38"
-                                  style="object-fit: contain"
-                                />
-                                
-                              <div class="d-flex flex-column">
-                                <span
-                                  class="fw-bold text-white text-truncate"
-                                  style="max-width: 160px"
-                                  >{{ jugador.nombre }}</span
-                                >
-                                <span
-                                  v-if="jugador.user_id === userId"
-                                  class="badge text-bg-success text-uppercase"
-                                  style="font-size: 0.6rem; width: fit-content"
-                                  >Tú</span
-                                >
-                              </div>
-                            </div>
-
-
-
-                            <!-- <div class="d-flex align-items-center gap-2 py-1">
                               <img
                                 v-if="jugador.avatar_url"
                                 :src="jugador.avatar_url"
@@ -557,7 +519,7 @@
                                   >Tú</span
                                 >
                               </div>
-                            </div> -->
+                            </div>
                           </td>
 
                           <td class="text-center d-none d-md-table-cell">
@@ -783,6 +745,19 @@ const cargarPosiciones = async () => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") return;
 
   try {
+    // 1. NUEVO: Obtenemos solo a los usuarios que son VIP en esta liga
+    const { data: vipUsers, error: vipError } = await supabase
+      .from("league_members")
+      .select("user_id")
+      .eq("league_id", idLigaActiva.value)
+      .eq("is_vip", true);
+
+    if (vipError) throw vipError;
+
+    // Creamos un arreglo solo con los IDs de los VIP
+    const vipUserIds = vipUsers.map(v => v.user_id);
+
+    // 2. Obtenemos las posiciones generales (como siempre)
     const { data, error } = await supabase
       .from("vw_posiciones")
       .select("*")
@@ -792,8 +767,13 @@ const cargarPosiciones = async () => {
 
     if (error) throw error;
 
-    // 1. Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
-    tablaPosiciones.value = (data || []).map((jugador, index) => {
+    // 3. NUEVO: Filtramos la data para que solo queden los VIP
+    const datosVipFiltrados = (data || []).filter(jugador => 
+      vipUserIds.includes(jugador.user_id)
+    );
+
+    // 4. Mapeamos LOS DATOS FILTRADOS (no la data original) para inyectar posición y efectividad
+    tablaPosiciones.value = datosVipFiltrados.map((jugador, index) => {
       let efectividad = "0%";
       if (jugador.jugados > 0) {
         const exitos = jugador.exactos + jugador.aciertos;
@@ -809,33 +789,37 @@ const cargarPosiciones = async () => {
 
     totalParticipantes.value = tablaPosiciones.value.length;
 
-    // 2. Llenamos las 4 Cards superiores reutilizando los datos mapeados
+    // Llenamos las 4 Cards superiores...
     if (tablaPosiciones.value.length > 0) {
-      // Card 1: LÍDER ACTUAL
       nombreLider.value = tablaPosiciones.value[0].nombre;
       avatarLider.value = tablaPosiciones.value[0].avatar_url;
       puntosLider.value = tablaPosiciones.value[0].puntos;
 
-      // Buscar mis métricas
       const miIndice = tablaPosiciones.value.findIndex(
         (p) => p.user_id === userId.value,
       );
 
       if (miIndice !== -1) {
         const misDatos = tablaPosiciones.value[miIndice];
-
-        // Card 2: TU POSICIÓN
         miPosicion.value = misDatos.posicion;
-
-        // Card 3: DISTANCIA DEL LÍDER
         distanciaLider.value = puntosLider.value - misDatos.puntos;
-
-        // Card 4: EFECTIVIDAD (%)
         miEfectividad.value = misDatos.efectividad;
+      } else {
+        // Si el usuario actual no es VIP, reseteamos sus métricas
+        miPosicion.value = "—";
+        distanciaLider.value = "—";
+        miEfectividad.value = "—";
       }
+    } else {
+       // Reset por si no hay VIPs todavía
+      nombreLider.value = "-";
+      puntosLider.value = 0;
+      miPosicion.value = "-";
+      distanciaLider.value = "-";
+      miEfectividad.value = "0%";
     }
   } catch (error) {
-    console.error("Error al cargar posiciones:", error);
+    console.error("Error al cargar posiciones VIP:", error);
   }
 };
 

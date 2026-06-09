@@ -129,7 +129,22 @@
                             }}
                           </span>
                         </div>
+                        
                         <router-link
+                          :to="{
+                            path: '/dashboard',
+                            query: {
+                              ligaId: liga.league_id,
+                              ligaNombre: liga.leagues?.name,
+                              eventoId: liga.leagues?.event_id,
+                            },
+                          }"
+                          @click="establecerAccesoVip(liga.is_vip)"
+                          class="btn btn-success btn-sm w-100 fw-bold mt-1"
+                        >
+                          Jugar
+                        </router-link>                        
+                        <!-- <router-link
                           :to="{
                             path: '/dashboard',
                             query: {
@@ -141,7 +156,7 @@
                           class="btn btn-success btn-sm w-100 fw-bold mt-1"
                         >
                           Jugar
-                        </router-link>
+                        </router-link> -->
                       </div>
 
                       <div v-else>
@@ -449,7 +464,7 @@ const cargarLigas = async (userId) => {
     .from("league_members")
     // 👇 Agregamos event_id a la consulta
     .select(
-      "league_id, champion_team, leagues(id, name, invite_code, event_id, logo_url)",
+      "league_id, champion_team, is_vip, leagues(id, name, invite_code, event_id, logo_url)",
     )
     .eq("user_id", userId);
 
@@ -459,6 +474,10 @@ const cargarLigas = async (userId) => {
       selectedTeam: null,
     }));
   }
+};
+
+const establecerAccesoVip = (esVip) => {
+  localStorage.setItem('isVipActiva', esVip ? 'true' : 'false');
 };
 
 const obtenerCampeonAsignado = (championTeamCode) => {

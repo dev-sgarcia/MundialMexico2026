@@ -30,6 +30,7 @@ import {
   PhChartBar,
   PhRanking,
   PhCalendarCheck,
+  PhStar
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
@@ -37,9 +38,12 @@ const route = useRoute();
 // --- VALIDACIÓN DE ADMINISTRADOR ---
 const isAdmin = ref(false);
 const adminEmails = [
-  "tu_correo@ejemplo.com", // Coloca aquí los correos reales
-  "otro_admin@ejemplo.com"
+  "ingeniero.mx@gmail.com",
+  "javiergonzalezr93@gmail.com",  
+  "rubencruz4052@gmail.com"
 ];
+
+const esUsuarioVip = ref(localStorage.getItem("isVipActiva") === "true");
 
 onMounted(async () => {
   const { data: { session } } = await supabase.auth.getSession();
@@ -55,12 +59,20 @@ const allMenuItems = [
   { label: "Predicciones", to: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", to: "/resultados", icon: PhChartBar },
   { label: "Posiciones", to: "/posiciones", icon: PhRanking },
+  { label: "VIP", to: "/vip", icon: PhStar, vipOnly: true },  
 ];
 
 const menuItems = computed(() => {
-  return allMenuItems.filter(item => !item.adminOnly || isAdmin.value);
+  return allMenuItems.filter(item => {
+    // Filtro para el admin que ya tenías
+    if (item.adminOnly && !isAdmin.value) return false;
+    
+    // 👇 4. NUEVO: Filtro para ocultar/mostrar VIP
+    if (item.vipOnly && !esUsuarioVip.value) return false;
+    
+    return true; 
+  });
 });
-
 
 const isActive = (path) => route.path === path;
 

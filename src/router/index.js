@@ -68,6 +68,12 @@ const routes = [
     component: () => import("@/views/Quinielas.vue"),
     meta: { requiresAuth: true, requiresLiga: true }
   },
+  {
+    path: "/vip",
+    name: "VIP",
+    component: () => import("@/views/Vip.vue"),
+    meta: { requiresAuth: true, requiresLiga: true }
+  }  
 ];
 
 const router = createRouter({

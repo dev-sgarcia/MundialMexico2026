@@ -69,6 +69,7 @@ import {
   PhGearSix,
   PhRanking,
   PhCalendarCheck,
+  PhStar
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
@@ -95,13 +96,27 @@ const allMenuItems = [
   { label: "Predicciones", path: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
+  { label: "VIP", path: "/vip", icon: PhStar, vipOnly: true },  
 ];
 
-// Vue filtrará esta lista automáticamente dependiendo de quién esté logueado
-const menuItems = computed(() => {
-  return allMenuItems.filter(item => !item.adminOnly || isAdmin.value);
-});
+// Leemos la memoria caché. Si dice 'true', la variable será verdadera
+const esUsuarioVip = ref(localStorage.getItem("isVipActiva") === "true");
 
+// Vue filtrará esta lista automáticamente dependiendo de quién esté logueado
+// const menuItems = computed(() => {
+//   return allMenuItems.filter(item => !item.adminOnly || isAdmin.value);
+// });
+const menuItems = computed(() => {
+  return allMenuItems.filter(item => {
+    // Filtro para el admin que ya tenías
+    if (item.adminOnly && !isAdmin.value) return false;
+
+    // 👇 NUEVO: Filtro para VIP
+    if (item.vipOnly && !esUsuarioVip.value) return false; 
+
+    return true; // Si pasa los filtros, se muestra
+  });
+});
 
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
