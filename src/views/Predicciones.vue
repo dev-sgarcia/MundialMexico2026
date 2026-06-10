@@ -35,6 +35,17 @@
                   posiciones.
                 </p>
               </div>
+              <div class="d-flex justify-content-end mb-2">
+              <button
+              class="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
+              :disabled="exportando || cargando"
+              @click="handleExportPDF"
+              >
+              <span v-if="exportando" class="spinner-border spinner-border-sm"></span>
+              <span v-else">📄</span>
+              {{ exportando ? 'Generando...' : 'Descargar partidos' }}
+              </button>
+              </div>
               <!-- RESUMEN -->
               <div class="card prediction-card text-white rounded-4 mt-3 mb-2">
                 <div class="card-body p-3 p-lg-4">
@@ -400,6 +411,7 @@ import Swal from "sweetalert2";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
+import {useExportPDF} from "@/composables/exportPDF.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -407,7 +419,8 @@ const filterType = ref("group");
 const selectedGroup = ref("Todos");
 const selectedTeam = ref("Todas");
 const cargando = ref(true);
-
+const { exportarPDF } = useExportPDF();
+const exportando = ref(false);
 const userId = ref(null);
 
 const idLigaActiva = ref(
@@ -906,6 +919,17 @@ const getFlagCode = (team) => {
 
   return flagCodes[team] || "un";
 };
+
+const handleExportPDF = async () => {
+  exportando.value = true;
+  await exportarPDF(
+    partidosAgrupados.value,
+    formatDate,
+    getFlagCode,
+    nombreLigaActiva.value
+  );
+  exportando.value = false;
+}
 </script>
 
 <style scoped>
