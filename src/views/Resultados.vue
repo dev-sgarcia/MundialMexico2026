@@ -21,14 +21,14 @@
           class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
         >
           <section
-            class="container-fluid h-100 d-flex flex-column overflow-hidden"
+            class="container-fluid h-100 d-flex flex-column overflow-hidden px-3 px-md-4"
           >
-            <PageHeader />
-
-            <div class="sticky-top bg-black z-3">
+            <div
+              class="d-flex justify-content-between align-items-start mb-4 mt-4"
+            >
               <div>
                 <h2 class="fw-bold mb-1">
-                  Resultados :
+                  Resultados
                   <span
                     v-if="
                       nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
@@ -38,13 +38,19 @@
                     {{ nombreLigaActiva }}
                   </span>
                 </h2>
+
                 <p class="text-white-50 mb-0">
                   Consulta los marcadores oficiales y sigue el torneo en tiempo
                   real.
                 </p>
               </div>
+
+              <PageHeader />
+            </div>
+
+            <div class="sticky-top bg-black z-3">
               <div
-                class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-1 mb-4"
+                class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
               >
                 <div class="btn-group">
                   <button

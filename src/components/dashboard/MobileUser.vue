@@ -50,6 +50,29 @@
 
       <hr class="border-success border-opacity-50 my-3" />
 
+      <nav class="nav flex-column gap-2">
+        <RouterLink
+          to="/bases"
+          class="nav-link d-flex align-items-center gap-2 rounded-4 px-3 py-2 fw-semibold text-white-50"
+          active-class="text-white bg-success bg-opacity-25"
+        >
+          <PhCalendarCheck size="18" weight="fill" />
+          <span>Reglas</span>
+        </RouterLink>
+
+        <RouterLink
+          v-if="isAdmin"
+          to="/quinielas"
+          class="nav-link d-flex align-items-center gap-2 rounded-4 px-3 py-2 fw-semibold text-white-50"
+          active-class="text-white bg-success bg-opacity-25"
+        >
+          <PhTrophy size="18" weight="fill" />
+          <span>Mis Quinielas</span>
+        </RouterLink>
+      </nav>
+
+      <hr class="border-success border-opacity-50 my-3" />
+
       <button
         class="btn btn-outline-danger rounded-3 fw-semibold w-100"
         type="button"
@@ -63,18 +86,33 @@
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
-
+import { PhCalendarCheck, PhTrophy } from "@phosphor-icons/vue";
 const router = useRouter();
 const user = ref(null);
+const isAdmin = ref(false);
+
+const adminEmails = [
+  "ingeniero.mx@gmail.com",
+  "javiergonzalezr93@gmail.com",
+  "rubencruz4052@gmail.com",
+];
+
+const setAdminStatus = (currentUser) => {
+  isAdmin.value =
+    !!currentUser?.email && adminEmails.includes(currentUser.email);
+};
 
 onMounted(async () => {
   const { data } = await supabase.auth.getSession();
+
   user.value = data.session?.user || null;
+  setAdminStatus(user.value);
 
   supabase.auth.onAuthStateChange((_event, session) => {
     user.value = session?.user || null;
+    setAdminStatus(user.value);
   });
 });
 
@@ -102,6 +140,10 @@ const handleLogout = async () => {
 </script>
 
 <style scoped>
+.mobile-user-menu {
+  width: 280px;
+}
+
 .avatar-sm {
   width: 28px;
   height: 28px;
@@ -110,9 +152,5 @@ const handleLogout = async () => {
 .avatar-lg {
   width: 82px;
   height: 82px;
-}
-
-.mobile-user-menu {
-  width: 260px;
 }
 </style>

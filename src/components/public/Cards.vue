@@ -23,7 +23,6 @@
         {{ item.btn }}
       </button> -->
 
-
       <button
         type="button"
         class="mobile-menu-item btn btn-link d-flex align-items-center gap-3 text-decoration-none text-light fw-bold p-3 rounded-3 w-100 text-start bg-transparent border-0 shadow-none"
@@ -35,9 +34,6 @@
         <PhHandsClapping class="menu-icon" weight="fill" />
         <span>ZONA FAN</span>
       </button>
-
-
-
     </div>
   </section>
 </template>
@@ -52,50 +48,52 @@ import {
 } from "@heroicons/vue/24/solid";
 import { useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 //DECLARA EL ROUTER AQUÍ, AL PRINCIPIO
 const router = useRouter();
 
 const validateZonaFan = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   // 1. Si no hay sesión, mandamos a loguearse
   if (!session) {
     Swal.fire({
-      title: 'Inicia sesión',
-      text: 'Para acceder a la Zona Fan, primero debes iniciar sesión con Google.',
-      icon: 'info',
-      confirmButtonColor: '#1e7f3f'
+      title: "Inicia sesión",
+      text: "Para acceder a la Zona Fan, primero debes iniciar sesión con Google.",
+      icon: "info",
+      confirmButtonColor: "#1e7f3f",
     });
     return;
   } else {
-        router.push('/juega');
+    router.push("/juega");
   }
 
   // 2. Si hay sesión, verificamos si ya tiene ligas registradas
   const { data, error } = await supabase
-    .from('league_members')
-    .select('league_id')
-    .eq('user_id', session.user.id)
+    .from("league_members")
+    .select("league_id")
+    .eq("user_id", session.user.id)
     .limit(1);
 
   if (error || !data || data.length === 0) {
     // Si no tiene ligas, lo mandamos a unirse a una
-    router.push('/juega');
+    router.push("/juega");
   } else {
     // Si ya tiene ligas, lo mandamos al dashboard
-    router.push('/dashboard');
+    router.push("/bases");
   }
 };
 
 const items = [
   {
-     image: new URL("/src/assets/results2.png", import.meta.url).href,
-     title: "ZONA FAN",
-     desc: "Accede a la plataforma con gmail y tu código para integrarte a una liga.",
-     btn: "ZONA FAN",
-     theme: "red",
-     route: "/juega",    
+    image: new URL("/src/assets/results2.png", import.meta.url).href,
+    title: "ZONA FAN",
+    desc: "Accede a la plataforma con gmail y tu código para integrarte a una liga.",
+    btn: "ZONA FAN",
+    theme: "red",
+    route: "/juega",
   },
   {
     image: new URL("/src/assets/rules.png", import.meta.url).href,
@@ -137,8 +135,7 @@ const items = [
 
 .card {
   transition: all 0.3s ease;
-  background:
-    rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.03);
   padding: 20px;
   border-radius: 24px;
   text-align: center;

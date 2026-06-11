@@ -1,5 +1,5 @@
 <template>
-  <div class="rules-page bg-black min-vh-100 text-white pb-5 pb-lg-0">
+  <div class="bg-black min-vh-100 text-white pb-5 pb-lg-0">
     <div class="container-fluid px-3 pt-0 pb-3">
       <div class="row g-0">
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
@@ -7,220 +7,195 @@
             <Sidebar />
           </div>
         </aside>
+
         <main
           class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
         >
-          <section class="container-fluid">
-            <div
-              class="hero-banner position-relative rounded-4 mb-3 mb-xl-4 p-3 p-md-4"
-            >
-              <div class="hero-profile-inside d-none d-lg-flex">
+          <section class="bg-black min-vh-100 text-white pt-0 pb-4">
+            <div class="container-fluid px-3 px-md-4">
+              <div
+                class="d-flex justify-content-between align-items-start mb-4 mt-4"
+              >
+                <div>
+                  <h2 class="fw-bold mb-1">Radar Mundialista</h2>
+
+                  <p class="text-secondary mb-1">
+                    Estadísticas y tendencias de tu quiniela
+                  </p>
+                </div>
+
                 <PageHeader />
               </div>
-              <div class="row align-items-center h-100 g-3">
-                <div class="col-12 col-lg-5 col-xl-3">
-                  <span
-                    class="rules-kicker text-uppercase fw-bold d-block mb-2"
+
+              <div class="row g-4 align-items-stretch">
+                <!-- Card país campeón -->
+                <div class="col-12 col-xl-8">
+                  <div
+                    class="card champion-card text-white rounded-4 border border-success border-opacity-25 p-3 p-md-4 h-100"
                   >
-                    Mundial México 2026
-                  </span>
+                    <h5 class="fw-bold mb-4">
+                      País campeón elegido por los participantes
+                    </h5>
 
-                  <h1 class="rules-title mb-3">
-                    REGLAS DE
-                    <span class="title-highlight">LA QUINIELA</span>
-                  </h1>
+                    <div class="row g-4 align-items-start">
+                      <!-- Dona + lista -->
+                      <div class="col-12 col-lg-4">
+                        <div class="text-center mb-4">
+                          <div class="champion-donut mx-auto">
+                            <svg viewBox="0 0 42 42" class="champion-donut-svg">
+                              <circle
+                                v-for="slice in donutSlices"
+                                :key="slice.rawCode"
+                                class="champion-donut-slice"
+                                cx="21"
+                                cy="21"
+                                r="15.915"
+                                fill="transparent"
+                                :stroke="slice.color"
+                                stroke-width="8"
+                                :stroke-dasharray="`${slice.percentage} ${
+                                  100 - slice.percentage
+                                }`"
+                                :stroke-dashoffset="slice.offset"
+                              />
+                            </svg>
 
-                  <div class="title-line"></div>
-                </div>
+                            <div class="champion-donut-center">
+                              <h2 class="fw-bold mb-0">{{ totalVotes }}</h2>
+                              <span class="text-white-50">Total</span>
+                            </div>
+                          </div>
+                        </div>
 
-                <div class="col-12 col-lg-4 col-xl-3 hero-copy-col">
-                  <p class="hero-copy text-justify mb-0">
-                    Conoce cómo se reparten los premios, cómo se calculan los
-                    puntos y cómo puedes convertirte en campeón.
-                  </p>
-                </div>
+                        <div class="d-flex flex-column gap-2">
+                          <div
+                            v-for="country in countriesWithPercentages"
+                            :key="country.rawCode"
+                            class="champion-country-row rounded-3 p-2"
+                          >
+                            <div
+                              class="d-flex align-items-center justify-content-between gap-3"
+                            >
+                              <div
+                                class="d-flex align-items-center gap-2 min-w-0"
+                              >
+                                <img
+                                  :src="`https://flagcdn.com/w40/${country.flag}.png`"
+                                  :alt="country.name"
+                                  width="22"
+                                />
 
-                <div class="d-none d-xl-block col-xl-4"></div>
-              </div>
-            </div>
+                                <span class="text-truncate">
+                                  {{ country.name }}
+                                </span>
+                              </div>
 
+                              <span class="fw-semibold text-nowrap">
+                                {{ country.votes }} ({{ country.percentage }}%)
+                              </span>
+                            </div>
+                          </div>
 
-<div v-if="cargandoReglas" class="text-center py-5 text-white-50">
-              <div class="spinner-border text-success mb-3" role="status"></div>
-              <p>Buscando reglas de la liga...</p>
-            </div>
+                          <div
+                            v-if="!countriesWithPercentages.length"
+                            class="text-white-50 small text-center py-3"
+                          >
+                            Aún no hay países seleccionados.
+                          </div>
+                        </div>
+                      </div>
 
-            <div v-else-if="reglasLiga" class="row g-3 mb-4">
-              
-              <div class="col-12 col-md-6 col-xl-4">
-                <article class="rule-card stadium-mercedesbenz rule-green h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
-                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-trophy"></i></div>
-                  <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">Dinámica de Premios</h5>
-                    <div class="rule-divider divider-green mb-3"></div>
-                    <p class="mb-0 text-justify">{{ reglasLiga.dinamica_premios }}</p>
-                  </div>
-                  <div class="stadium-overlay"></div>
-                  <div class="stadium-info">
-                    <div class="fw-bold text-white small">Mercedes-Benz Stadium</div>
-                    <div class="text-white-50 small">Atlanta, USA · Mundial 2026</div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="col-12 col-md-6 col-xl-4">
-                <article class="rule-card stadium-monterrey rule-blue h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
-                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-sack-dollar"></i></div>
-                  <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">{{ reglasLiga.bolsa1_titulo }}</h5>
-                    <div class="rule-divider divider-blue mb-3"></div>
-                    
-                    <div v-if="reglasLiga.bolsa1_1er" class="points-row"><span>1º Lugar</span><strong>{{ reglasLiga.bolsa1_1er }}</strong></div>
-                    <div v-if="reglasLiga.bolsa1_2do" class="points-row"><span>2º Lugar</span><strong>{{ reglasLiga.bolsa1_2do }}</strong></div>
-                    <div v-if="reglasLiga.bolsa1_3er" class="points-row mb-0"><span>3º Lugar</span><strong>{{ reglasLiga.bolsa1_3er }}</strong></div>
-                    
-                    <p v-if="!reglasLiga.bolsa1_1er && !reglasLiga.bolsa1_2do && !reglasLiga.bolsa1_3er" class="mb-0 text-white-50 text-center small">
-                      Dinámica por definir.
-                    </p>
-                  </div>                  <div class="stadium-overlay"></div>
-                  <div class="stadium-info">
-                    <div class="fw-bold text-white small">Estadio BBVA</div>
-                    <div class="text-white-50 small">Monterrey, México · Mundial 2026</div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="col-12 col-md-6 col-xl-4">
-                <article class="rule-card stadium-sofi rule-gold h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
-                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-crown"></i></div>
-                  <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">{{ reglasLiga.bolsa2_titulo }}</h5>
-                    <div class="rule-divider divider-gold mb-3"></div>
-                    <div class="points-row"><span>1º Lugar</span><strong>{{ reglasLiga.bolsa2_1er }}</strong></div>
-                    <div class="points-row"><span>2º Lugar</span><strong>{{ reglasLiga.bolsa2_2do }}</strong></div>
-                    <div class="points-row mb-0"><span>3º Lugar</span><strong>{{ reglasLiga.bolsa2_3er }}</strong></div>
-                  </div>
-                  <div class="stadium-overlay"></div>
-                  <div class="stadium-info">
-                    <div class="fw-bold text-white small">SoFi Stadium</div>
-                    <div class="text-white-50 small">Los Ángeles, USA · Sede Mundial 2026</div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="col-12 col-md-6 col-xl-4">
-                <article class="rule-card stadium-toronto rule-purple h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
-                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-bullseye"></i></div>
-                  <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">Sistema de Puntuación</h5>
-                    <div class="rule-divider divider-purple mb-3"></div>
-                    <p class="mb-2 text-justify"><strong>{{ reglasLiga.puntos_exacto }} puntos</strong> Si aciertas al resultado del juego (ganador o empate), incluyendo el marcador exacto.</p>
-                    <p class="mb-0 text-justify"><strong>{{ reglasLiga.puntos_acierto }} punto(s)</strong> Si aciertas al resultado del juego (ganador o empate), pero fallas en el marcador exacto.</p>
-                  </div>
-                  <div class="stadium-overlay"></div>
-                  <div class="stadium-info">
-                    <div class="fw-bold text-white small">BMO Field</div>
-                    <div class="text-white-50 small">Toronto, Canadá · Mundial 2026</div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="col-12 col-md-6 col-xl-4">
-                <article class="rule-card stadium-metlife rule-cyan h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
-                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-star"></i></div>
-                  <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">Bono de Oro</h5>
-                    <div class="rule-divider divider-cyan mb-3"></div>
-                    <p class="mb-0 text-justify">{{ reglasLiga.bono_oro_desc }}</p>
-                  </div>
-                  <div class="stadium-overlay"></div>
-                  <div class="stadium-info">
-                    <div class="fw-bold text-white small">MetLife Stadium</div>
-                    <div class="text-white-50 small">New Jersey, USA · Final Mundial 2026</div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="col-12 col-md-6 col-xl-4">
-                <article class="rule-card stadium-guadalajara rule-red h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
-                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-scale-balanced"></i></div>
-                  <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">Desempate</h5>
-                    <div class="rule-divider divider-red mb-3"></div>
-                    <p class="mb-0 text-justify">{{ reglasLiga.desempate_desc }}</p>
-                  </div>
-                  <div class="stadium-overlay"></div>
-                  <div class="stadium-info">
-                    <div class="fw-bold text-white small">Estadio Akron</div>
-                    <div class="text-white-50 small">Guadalajara, México · Mundial 2026</div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="col-12 col-md-6 col-xl-4">
-                <article class="rule-card stadium-azteca rule-orange h-100 p-3 d-flex flex-column flex-sm-row align-items-center align-items-sm-start text-center text-sm-start gap-3">
-                  <div class="rule-icon flex-shrink-0"><i class="fa-solid fa-ticket"></i></div>
-                  <div class="rule-content flex-grow-1">
-                    <h5 class="mb-1">Cuota y Fechas</h5>
-                    <div class="rule-divider divider-orange mb-3"></div>
-                    <p class="mb-0 text-justify">{{ reglasLiga.cuota_inscripcion }}</p>
-                  </div>
-                  <div class="stadium-overlay"></div>
-                  <div class="stadium-info">
-                    <div class="fw-bold text-white small">Estadio Azteca</div>
-                    <div class="text-white-50 small">CDMX, México · Mundial 2026</div>
-                  </div>
-                </article>
-              </div>
-
-            </div>
-
-            <!-- <div v-else class="text-center py-5">
-              <div class="bg-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                <i class="fa-solid fa-clipboard-list fs-1 text-secondary"></i>
-              </div>
-              <h5 class="text-white fw-bold">Reglas no definidas</h5>
-              <p class="text-white-50">El administrador aún no ha configurado las reglas y premios para esta liga.</p>
-            </div> -->
-
-
-            <div v-else class="text-center py-5">
-              <div class="bg-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                <i class="fa-solid fa-clipboard-list fs-1 text-secondary"></i>
-              </div>
-              <h5 class="text-white fw-bold">Reglas no definidas</h5>
-              <p class="text-white-50 mb-3">El administrador aún no ha configurado las reglas y premios para esta liga.</p>
-              
-              <div class="d-inline-flex flex-column align-items-center">
-                <small class="text-white-50 text-uppercase mb-1" style="font-size: 0.7rem;">ID de la Liga seleccionada</small>
-                <code class="bg-dark text-warning border border-secondary border-opacity-25 px-3 py-2 rounded-3 user-select-all fs-6">
-                  {{ idLigaActiva }}
-                </code>
-              </div>
-            </div>
-
-
-
-            <div class="cta-card rounded-4 p-3 p-md-4 mb-3">
-              <div class="row align-items-center g-3">
-                <div class="col-auto">
-                  <div class="cta-icon">
-                    <i class="fa-solid fa-trophy"></i>
+                      <!-- Mapa -->
+                      <div class="col-12 col-lg-8">
+                        <div
+                          ref="mapRef"
+                          class="world-map-wrapper bg-success bg-opacity-10 rounded-4 overflow-hidden"
+                        ></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="col">
-                  <h3 class="h5 fw-black text-white mb-1">
-                    ¡QUE GANE <span>EL MEJOR!</span>
-                  </h3>
-                  <p class="text-white-50 small mb-0">
-                    Participa, diviértete y demuestra tus conocimientos.
-                  </p>
-                </div>
-                <div class="col-12 col-md-auto">
-                  <RouterLink to="/predicciones" class="btn-play">
-                    <i class="fa-solid fa-futbol"></i> IR A JUGAR
-                    <i class="fa-solid fa-chevron-right"></i>
-                  </RouterLink>
+
+                <!-- Card ganadores por grupo -->
+                <div class="col-12 col-xl-4">
+                  <div
+                    class="card champion-card text-white rounded-4 border border-success border-opacity-25 p-3 p-md-4 h-100"
+                  >
+                    <div class="mb-4">
+                      <h5 class="fw-bold mb-1">
+                        Equipos más elegidos para ganar grupo
+                      </h5>
+
+                      <div
+                        class="d-flex justify-content-between align-items-center flex-wrap gap-2"
+                      >
+                        <p class="text-white-50 small mb-0">
+                          Basado en predicciones guardadas
+                        </p>
+
+                        <select
+                          v-model="selectedGroup"
+                          class="form-select form-select-sm w-auto bg-dark text-white border-secondary"
+                        >
+                          <option
+                            v-for="group in availableGroups"
+                            :key="group"
+                            :value="group"
+                          >
+                            Grupo {{ group }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div
+                      v-if="selectedGroupTeams.length"
+                      class="d-flex flex-column gap-3"
+                    >
+                      <div v-for="team in selectedGroupTeams" :key="team.code">
+                        <div
+                          class="d-flex justify-content-between align-items-center gap-3 mb-2"
+                        >
+                          <div class="d-flex align-items-center gap-2 min-w-0">
+                            <img
+                              :src="`https://flagcdn.com/w40/${team.flag}.png`"
+                              :alt="team.name"
+                              width="24"
+                            />
+
+                            <span class="fw-semibold text-truncate">
+                              {{ team.name }}
+                            </span>
+                          </div>
+
+                          <span class="fw-bold text-warning text-nowrap">
+                            {{ team.percentage }}%
+                          </span>
+                        </div>
+
+                        <div
+                          class="progress bg-secondary bg-opacity-25"
+                          style="height: 8px"
+                        >
+                          <div
+                            class="progress-bar bg-warning"
+                            role="progressbar"
+                            :style="{ width: `${team.percentage}%` }"
+                            :aria-valuenow="team.percentage"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          ></div>
+                        </div>
+
+                        <small class="text-white-50">
+                          {{ team.votes }} votos
+                        </small>
+                      </div>
+                    </div>
+
+                    <div v-else class="text-white-50 small text-center py-4">
+                      Aún no hay predicciones para este grupo.
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -228,765 +203,620 @@
         </main>
       </div>
     </div>
-
-
     <BottomNav />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { supabase } from "@/supabaseClient";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
-import BottomNav from "@/components/dashboard/BottomNav.vue";
-import UserProfile from "@/components/common/UserProfile.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
+import BottomNav from "@/components/dashboard/BottomNav.vue";
+
+import { supabase } from "@/supabaseClient";
+import jsVectorMap from "jsvectormap";
+import "jsvectormap/dist/jsvectormap.css";
+import "jsvectormap/dist/maps/world.js";
 
 const route = useRoute();
 
-const userId = ref(null);
+const mapRef = ref(null);
+let mapInstance = null;
 
-const idLigaActiva = ref(
-  route.query.ligaId || localStorage.getItem("ligaIdActiva") || null,
+const championCountries = ref([]);
+const groupWinnerVotes = ref({});
+const groupCatalog = ref({});
+const selectedGroup = ref("A");
+
+const countryCatalog = {
+  mx: { name: "México", color: "#16a34a" },
+  za: { name: "Sudáfrica", color: "#16a34a" },
+  kr: { name: "Corea del Sur", color: "#ef4444" },
+  cz: { name: "Chequia", color: "#2563eb" },
+  ca: { name: "Canadá", color: "#dc2626" },
+  ba: { name: "Bosnia y Herzegovina", color: "#2563eb" },
+  qa: { name: "Qatar", color: "#7f1d1d" },
+  ch: { name: "Suiza", color: "#dc2626" },
+  br: { name: "Brasil", color: "#22c55e" },
+  ma: { name: "Marruecos", color: "#dc2626" },
+  ht: { name: "Haití", color: "#2563eb" },
+  "gb-sct": { name: "Escocia", color: "#2563eb" },
+  us: { name: "Estados Unidos", color: "#2563eb" },
+  py: { name: "Paraguay", color: "#dc2626" },
+  au: { name: "Australia", color: "#1d4ed8" },
+  tr: { name: "Turquía", color: "#dc2626" },
+  de: { name: "Alemania", color: "#111827" },
+  cw: { name: "Curazao", color: "#2563eb" },
+  ci: { name: "Costa de Marfil", color: "#ea580c" },
+  ec: { name: "Ecuador", color: "#eab308" },
+  nl: { name: "Países Bajos", color: "#ea580c" },
+  jp: { name: "Japón", color: "#dc2626" },
+  se: { name: "Suecia", color: "#eab308" },
+  tn: { name: "Túnez", color: "#dc2626" },
+  be: { name: "Bélgica", color: "#facc15" },
+  eg: { name: "Egipto", color: "#111827" },
+  ir: { name: "Irán", color: "#16a34a" },
+  nz: { name: "Nueva Zelanda", color: "#111827" },
+  es: { name: "España", color: "#facc15" },
+  cv: { name: "Cabo Verde", color: "#2563eb" },
+  sa: { name: "Arabia Saudita", color: "#16a34a" },
+  uy: { name: "Uruguay", color: "#06b6d4" },
+  fr: { name: "Francia", color: "#2563eb" },
+  sn: { name: "Senegal", color: "#16a34a" },
+  iq: { name: "Irak", color: "#dc2626" },
+  no: { name: "Noruega", color: "#dc2626" },
+  ar: { name: "Argentina", color: "#38bdf8" },
+  dz: { name: "Argelia", color: "#16a34a" },
+  at: { name: "Austria", color: "#dc2626" },
+  jo: { name: "Jordania", color: "#111827" },
+  pt: { name: "Portugal", color: "#16a34a" },
+  cd: { name: "RD Congo", color: "#2563eb" },
+  uz: { name: "Uzbekistán", color: "#38bdf8" },
+  co: { name: "Colombia", color: "#facc15" },
+  "gb-eng": { name: "Inglaterra", color: "#f8fafc" },
+  hr: { name: "Croacia", color: "#dc2626" },
+  gh: { name: "Ghana", color: "#facc15" },
+  pa: { name: "Panamá", color: "#2563eb" },
+};
+
+const mapCodeOverrides = {
+  "gb-eng": "GB",
+  "gb-sct": "GB",
+};
+
+const validGroups = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+];
+
+const getLeagueId = () => {
+  const leagueId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
+
+  if (route.query.ligaId) {
+    localStorage.setItem("ligaIdActiva", route.query.ligaId);
+  }
+
+  return leagueId;
+};
+
+const getEventId = () =>
+  route.query.eventoId || localStorage.getItem("eventoIdActiva");
+
+const getFlagCode = (team) => {
+  const flagCodes = {
+    México: "mx",
+    Sudáfrica: "za",
+    "Corea del Sur": "kr",
+    "República Checa": "cz",
+    Chequia: "cz",
+    Canadá: "ca",
+    "Bosnia y Herzegovina": "ba",
+    "Estados Unidos": "us",
+    Paraguay: "py",
+    Qatar: "qa",
+    Suiza: "ch",
+    Brasil: "br",
+    Marruecos: "ma",
+    Haití: "ht",
+    Escocia: "gb-sct",
+    Australia: "au",
+    Turquía: "tr",
+    Alemania: "de",
+    Curacao: "cw",
+    Curazao: "cw",
+    "Países Bajos": "nl",
+    Japón: "jp",
+    "Costa de Marfil": "ci",
+    Ecuador: "ec",
+    Suecia: "se",
+    Túnez: "tn",
+    España: "es",
+    "Cabo Verde": "cv",
+    Bélgica: "be",
+    Egipto: "eg",
+    "Arabia Saudita": "sa",
+    Uruguay: "uy",
+    Irán: "ir",
+    "Nueva Zelanda": "nz",
+    Francia: "fr",
+    Senegal: "sn",
+    Irak: "iq",
+    Noruega: "no",
+    Argentina: "ar",
+    Argelia: "dz",
+    Austria: "at",
+    Jordania: "jo",
+    Portugal: "pt",
+    "RD del Congo": "cd",
+    "RD Congo": "cd",
+    Inglaterra: "gb-eng",
+    Croacia: "hr",
+    Ghana: "gh",
+    Panamá: "pa",
+    Uzbekistán: "uz",
+    Colombia: "co",
+  };
+
+  return flagCodes[team] || "un";
+};
+
+/* =========================
+   GRUPOS
+========================= */
+
+const availableGroups = computed(() =>
+  Object.keys(groupCatalog.value).sort((a, b) =>
+    String(a).localeCompare(String(b), undefined, { numeric: true }),
+  ),
 );
 
-const nombreLigaActiva = ref(
-  route.query.ligaNombre ||
-    localStorage.getItem("ligaNombreActiva") ||
-    "Mi Quiniela",
-);
+const selectedGroupTeams = computed(() => {
+  const teamsFromCatalog = groupCatalog.value[selectedGroup.value] || [];
+  const votesByTeam = groupWinnerVotes.value[selectedGroup.value] || [];
 
+  const votesMap = new Map(votesByTeam.map((team) => [team.name, team.votes]));
 
-// 👇 SOLUCIÓN: Faltaba declarar la variable eventoIdActiva
-const eventoIdActiva = ref(
-  route.query.eventoId || localStorage.getItem("eventoIdActiva") || null,
-);
+  const total = votesByTeam.reduce((sum, team) => sum + team.votes, 0);
 
+  return teamsFromCatalog
+    .map((teamName) => {
+      const votes = votesMap.get(teamName) || 0;
+      const flag = getFlagCode(teamName);
 
-// --- VARIABLES PARA LAS REGLAS ---
-const reglasLiga = ref(null);
-const cargandoReglas = ref(true); // <--- Nueva variable de control
+      return {
+        code: flag,
+        flag,
+        name: teamName,
+        votes,
+        percentage: total ? Math.round((votes / total) * 100) : 0,
+      };
+    })
+    .sort((a, b) => b.percentage - a.percentage);
+});
 
-// --- FUNCIÓN PARA DESCARGAR REGLAS ---
-const cargarReglas = async () => {
-  if (!idLigaActiva.value || idLigaActiva.value === "null") {
-    cargandoReglas.value = false;
+const loadGroupCatalog = async () => {
+  const eventId = getEventId();
+
+  if (!eventId) return;
+
+  const { data, error } = await supabase
+    .from("matches")
+    .select("group_name, home_team, away_team")
+    .eq("event_id", eventId);
+
+  if (error) {
+    console.error("Error cargando catálogo de grupos:", error);
     return;
   }
-  
-  cargandoReglas.value = true; // Encendemos el spinner antes de buscar
-  
-  try {
-    const { data, error } = await supabase
-      .from("league_rules")
-      .select("*")
-      .eq("league_id", idLigaActiva.value)
-      .single(); 
 
-    if (error && error.code !== 'PGRST116') throw error;
-    
-    reglasLiga.value = data || null;
-  } catch (err) {
-    console.error("Error al cargar reglas:", err);
-  } finally {
-    // IMPORTANTE: Apagamos el spinner pase lo que pase
-    cargandoReglas.value = false; 
+  const grouped = {};
+
+  (data || []).forEach((match) => {
+    const group = match.group_name?.replace(/Grupo /i, "").trim();
+
+    if (!group) return;
+
+    if (!validGroups.includes(group)) return;
+
+    if (!grouped[group]) grouped[group] = new Set();
+
+    if (match.home_team) grouped[group].add(match.home_team);
+    if (match.away_team) grouped[group].add(match.away_team);
+  });
+
+  groupCatalog.value = Object.fromEntries(
+    Object.entries(grouped).map(([group, teams]) => [group, [...teams].sort()]),
+  );
+
+  if (groupCatalog.value.A) {
+    selectedGroup.value = "A";
+  } else if (availableGroups.value.length) {
+    selectedGroup.value = availableGroups.value[0];
   }
 };
 
-// Caché al inicio
-if (idLigaActiva.value && idLigaActiva.value !== "null") {
-  localStorage.setItem("ligaIdActiva", idLigaActiva.value);
-  localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
-}
+const loadGroupWinnerVotes = async () => {
+  const leagueId = getLeagueId();
 
-if (eventoIdActiva.value && eventoIdActiva.value !== "null") {
-  localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
-}
+  if (!leagueId) return;
 
-onMounted(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    userId.value = session.user.id;
+  const { data, error } = await supabase
+    .from("predictions")
+    .select(
+      `
+      home_score,
+      away_score,
+      matches (
+        group_name,
+        home_team,
+        away_team
+      )
+    `,
+    )
+    .eq("league_id", leagueId)
+    .not("home_score", "is", null)
+    .not("away_score", "is", null);
+
+  if (error) {
+    return;
   }
-  
-  // 👇 Llamamos a las reglas al entrar a la página
-  await cargarReglas();
-});
 
-watch(
-  () => route.query.ligaId,
-  async (newId) => { // 👇 Agregamos async aquí
-    if (newId && newId !== "null") {
-      idLigaActiva.value = newId;
-      nombreLigaActiva.value =
-        route.query.ligaNombre ||
-        localStorage.getItem("ligaNombreActiva") ||
-        "Mi Quiniela";
+  const grouped = {};
 
-      eventoIdActiva.value =
-        route.query.eventoId || localStorage.getItem("eventoIdActiva") || null;
+  (data || []).forEach((prediction) => {
+    const match = prediction.matches;
 
-      localStorage.setItem("ligaIdActiva", newId);
-      localStorage.setItem("ligaNombreActiva", nombreLigaActiva.value);
+    if (!match) return;
 
-      if (eventoIdActiva.value) {
-        localStorage.setItem("eventoIdActiva", eventoIdActiva.value);
-      }
-      
-      // 👇 Si cambian de liga en la URL, descargamos las nuevas reglas
-      await cargarReglas();
+    const group = match.group_name?.replace(/Grupo /i, "").trim();
+
+    if (!group) return;
+
+    const homeScore = Number(prediction.home_score);
+    const awayScore = Number(prediction.away_score);
+
+    if (homeScore === awayScore) return;
+
+    const winnerName =
+      homeScore > awayScore ? match.home_team : match.away_team;
+
+    const flag = getFlagCode(winnerName);
+
+    if (!grouped[group]) grouped[group] = {};
+
+    if (!grouped[group][winnerName]) {
+      grouped[group][winnerName] = {
+        code: flag,
+        flag,
+        name: winnerName,
+        votes: 0,
+      };
     }
-  },
-  { immediate: false },
+    grouped[group][winnerName].votes += 1;
+  });
+
+  groupWinnerVotes.value = Object.fromEntries(
+    Object.entries(grouped).map(([group, teams]) => [
+      group,
+      Object.values(teams).sort((a, b) => b.votes - a.votes),
+    ]),
+  );
+};
+//////////////////CHAMPIONSHIP///////////////////////////////
+const loadChampionCountries = async () => {
+  const leagueId = getLeagueId();
+
+  if (!leagueId) return;
+
+  const { data: picks, error } = await supabase
+    .from("league_members")
+    .select("user_id, champion_team")
+    .eq("league_id", leagueId)
+    .not("champion_team", "is", null);
+
+  if (error) {
+    console.error("Error cargando campeones:", error);
+    return;
+  }
+
+  const grouped = {};
+
+  (picks || []).forEach((item) => {
+    const rawCode = item.champion_team?.toLowerCase();
+
+    if (!rawCode) return;
+
+    if (!grouped[rawCode]) {
+      grouped[rawCode] = { votes: 0 };
+    }
+
+    grouped[rawCode].votes += 1;
+  });
+
+  championCountries.value = Object.entries(grouped).map(([rawCode, info]) => {
+    const country = countryCatalog[rawCode];
+
+    return {
+      code: mapCodeOverrides[rawCode] || rawCode.toUpperCase(),
+      rawCode,
+      flag: rawCode,
+      name: country?.name ?? rawCode.toUpperCase(),
+      color: country?.color ?? "#64748b",
+      votes: info.votes,
+    };
+  });
+};
+
+const totalVotes = computed(() =>
+  championCountries.value.reduce((total, country) => total + country.votes, 0),
 );
 
+const countriesWithPercentages = computed(() =>
+  championCountries.value
+    .map((country) => ({
+      ...country,
+      percentage: totalVotes.value
+        ? Math.round((country.votes / totalVotes.value) * 100)
+        : 0,
+    }))
+    .sort((a, b) => b.percentage - a.percentage),
+);
+
+const donutSlices = computed(() => {
+  let offset = 25;
+
+  return countriesWithPercentages.value.map((country) => {
+    const slice = {
+      ...country,
+      offset,
+    };
+
+    offset -= country.percentage;
+
+    return slice;
+  });
+});
+
+const countryColors = computed(() =>
+  championCountries.value.reduce((colors, country) => {
+    if (country.votes > 0) {
+      colors[country.code] = country.color;
+    }
+
+    return colors;
+  }, {}),
+);
+
+//////////////////////////MAPA///////////////////////////
+
+const getCountryRegions = (code) => {
+  if (!mapRef.value) return [];
+
+  return Array.from(mapRef.value.querySelectorAll(`path[data-code="${code}"]`));
+};
+
+const getMainRegion = (regions) => {
+  return regions.reduce((largest, region) => {
+    const regionBox = region.getBBox();
+    const largestBox = largest.getBBox();
+
+    const regionArea = regionBox.width * regionBox.height;
+    const largestArea = largestBox.width * largestBox.height;
+
+    return regionArea > largestArea ? region : largest;
+  });
+};
+
+const resetRegions = (regions) => {
+  regions.forEach((region) => {
+    region.style.setProperty("fill", "#1f2b38", "important");
+    region.style.setProperty("stroke", "#0f172a", "important");
+    region.style.setProperty("stroke-width", "0.5", "important");
+  });
+};
+
+const paintCountry = (code, color) => {
+  const regions = getCountryRegions(code);
+
+  if (!regions.length) return;
+
+  resetRegions(regions);
+
+  const regionToPaint = getMainRegion(regions);
+
+  regionToPaint.style.setProperty("fill", color, "important");
+  regionToPaint.style.setProperty(
+    "stroke",
+    "rgba(255, 255, 255, 0.45)",
+    "important",
+  );
+  regionToPaint.style.setProperty("stroke-width", "1", "important");
+};
+
+const paintSelectedCountries = () => {
+  Object.entries(countryColors.value).forEach(([code, color]) => {
+    paintCountry(code, color);
+  });
+};
+
+const initMap = async () => {
+  await nextTick();
+
+  if (!mapRef.value) return;
+
+  mapInstance = new jsVectorMap({
+    selector: mapRef.value,
+    map: "world",
+    backgroundColor: "transparent",
+    zoomButtons: false,
+    zoomOnScroll: false,
+
+    regionStyle: {
+      initial: {
+        fill: "#1f2b38",
+        stroke: "#0f172a",
+        strokeWidth: 0.5,
+      },
+      hover: {
+        fill: "#334155",
+      },
+    },
+
+    onRegionTooltipShow(event, tooltip, code) {
+      const country = countriesWithPercentages.value.find(
+        (item) => item.code === code,
+      );
+
+      if (!country) return;
+
+      tooltip.text(
+        `${country.name}: ${country.votes} votos (${country.percentage}%)`,
+      );
+    },
+  });
+
+  setTimeout(paintSelectedCountries, 300);
+  setTimeout(paintSelectedCountries, 800);
+};
+
+onMounted(async () => {
+  await loadChampionCountries();
+  await loadGroupCatalog();
+  await loadGroupWinnerVotes();
+  await initMap();
+});
+
+onBeforeUnmount(() => {
+  if (mapInstance) {
+    mapInstance.destroy();
+    mapInstance = null;
+  }
+});
 </script>
-
 <style scoped>
-.rules-page {
-  color: #fff;
-  background: #020807;
+.champion-card {
+  background: rgba(25, 135, 84, 0.1);
+  border: 1px solid rgba(25, 135, 84, 0.5) !important;
 }
 
-.fw-black {
-  font-weight: 900;
-}
-
-.rule-card,
-.example-card,
-.cta-card {
+.champion-donut {
+  width: 165px;
+  height: 165px;
   position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(8px);
-}
-
-/* HERO */
-.hero-banner {
-  min-height: 200px;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.9) 0%,
-      rgba(0, 0, 0, 0.72) 34%,
-      rgba(0, 0, 0, 0.32) 58%,
-      rgba(0, 0, 0, 0.05) 100%
-    ),
-    url("@/assets/trionda-stadium.png");
-  background-size: cover;
-  background-position: center bottom;
-}
-
-.hero-profile-inside {
-  position: absolute;
-  top: 0rem;
-  right: 0rem;
-  z-index: 10;
-}
-
-.hero-banner .row {
-  min-height: 100%;
-}
-
-.rules-kicker {
-  color: #48c866;
-  letter-spacing: 0.11rem;
-  font-size: 0.72rem;
-}
-
-.rules-title {
-  font-size: clamp(1.9rem, 3.2vw, 3.15rem);
-  line-height: 0.95;
-  font-weight: 900;
-  text-transform: uppercase;
-  color: #fff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.24);
-}
-
-.rules-title span {
-  display: block;
-  color: #4caf6a;
-  text-shadow:
-    0 0 6px rgba(76, 175, 106, 0.22),
-    0 0 12px rgba(76, 175, 106, 0.1);
-}
-
-.title-highlight {
-  display: inline-block;
-}
-
-.title-line {
-  width: 100%;
-  max-width: 420px;
-  height: 5px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    #00c853 0 45%,
-    #ffffff 45% 60%,
-    #ff3d3d 60%
-  );
-}
-
-.hero-copy-col {
-  border-left: 1px solid rgba(57, 211, 83, 0.35);
-  padding-left: 1rem;
-}
-
-.hero-copy {
-  max-width: 520px;
-  color: #fff;
-  font-size: 0.95rem;
-  line-height: 1.55;
-  font-weight: 600;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
-}
-
-/* RULE CARDS */
-.rule-card {
-  min-height: 148px;
-  border-radius: 1rem;
-  position: relative;
-  overflow: hidden;
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.86)),
-    var(--stadium-img) center/cover no-repeat;
-  border: 1px solid var(--card-color);
-  box-shadow:
-    0 0 9px var(--card-glow),
-    inset 0 0 22px var(--card-soft);
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease;
-  padding-bottom: 3.3rem !important;
-}
-
-.stadium-mercedesbenz {
-  --stadium-img: url("@/assets/stadiums/MercedesBenz-Stadium.png");
-}
-
-.stadium-monterrey {
-  --stadium-img: url("@/assets/stadiums/Monterrey-Stadium.png");
-}
-
-.stadium-sofi {
-  --stadium-img: url("@/assets/stadiums/Sofi-Stadium.png");
-}
-
-.stadium-toronto {
-  --stadium-img: url("@/assets/stadiums/BmoField-Stadium.png");
-}
-
-.stadium-metlife {
-  --stadium-img: url("@/assets/stadiums/Metlife-Stadium.png");
-}
-
-.stadium-guadalajara {
-  --stadium-img: url("@/assets/stadiums/Guadalajara-Stadium.png");
-}
-
-.rule-orange {
-  --card-bright: #ff9800;
-  --card-color: rgba(255, 152, 0, 0.48);
-  --card-glow: rgba(255, 152, 0, 0.2);
-  --card-soft: rgba(255, 152, 0, 0.075);
-}
-
-.divider-orange {
-  background: var(--card-bright);
-}
-
-.stadium-azteca {
-  --stadium-img: url("@/assets/stadiums/Guadalajara-Stadium.png"); 
-}
-
-.rule-card:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 0 12px var(--card-glow),
-    0 0 22px var(--card-soft),
-    0 12px 24px rgba(0, 0, 0, 0.42);
-}
-
-.rule-content {
-  min-width: 0;
-}
-
-.rule-number {
-  font-size: 1.45rem;
-  line-height: 1;
-  font-weight: 900;
-  color: var(--card-bright);
-  text-shadow:
-    0 0 6px var(--card-glow),
-    0 0 12px var(--card-glow);
-}
-
-.rule-icon,
-.rule-content {
-  position: relative;
-  z-index: 5;
-}
-
-.rule-icon {
-  width: 62px;
-  height: 62px;
+  display: grid;
+  place-items: center;
   border-radius: 50%;
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.12);
+}
+
+.champion-donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.champion-donut-slice {
+  transition:
+    opacity 0.2s ease,
+    filter 0.2s ease;
+}
+
+.champion-donut-slice:hover {
+  opacity: 0.95;
+  filter: brightness(1.15);
+}
+
+.champion-donut-center {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #000;
   display: grid;
   place-items: center;
-  font-size: 1.5rem;
-  color: var(--card-bright);
-  border: 1px solid var(--card-color);
-  background: radial-gradient(
-    circle,
-    var(--card-soft),
-    rgba(0, 0, 0, 0.46) 64%
-  );
-  box-shadow:
-    0 0 10px var(--card-glow),
-    0 0 18px var(--card-soft),
-    inset 0 0 14px var(--card-soft);
+  text-align: center;
+  position: absolute;
+  padding: 0.4rem;
 }
 
-.rule-icon i {
-  filter: drop-shadow(0 0 7px var(--card-bright));
+.champion-donut-center h2 {
+  font-size: 1.55rem;
+  line-height: 1;
 }
 
-.rule-card h5 {
+.champion-country-row {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.world-map-wrapper {
+  min-height: 360px;
+  background: transparent;
+}
+
+:deep(.jvm-container) {
+  background-color: transparent !important;
+}
+
+:deep(.jvm-region) {
+  transition: fill 0.2s ease;
+}
+
+:deep(.jvm-tooltip) {
+  background: #000;
+  border: 1px solid rgba(25, 135, 84, 0.45);
   color: #fff;
-  font-size: 0.96rem;
-  font-weight: 900;
-  line-height: 1.2;
-  text-wrap: balance;
-  text-shadow: 0 0 7px rgba(255, 255, 255, 0.18);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.8rem;
 }
 
-.rule-card p {
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 0.84rem;
-  line-height: 1.45;
-  margin: 0;
-}
-
-.rule-card {
-  cursor: pointer;
-}
-
-.rule-card strong {
-  color: #fff;
-}
-
-.rule-line {
-  width: 32px;
-  height: 3px;
-  display: block;
-  margin-bottom: 0.6rem;
-  border-radius: 999px;
-  background: var(--card-bright);
-  box-shadow: 0 0 7px var(--card-glow);
-}
-
-.points-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 0.82rem;
-  margin-bottom: 0.35rem;
-}
-
-.points-row strong {
-  color: var(--card-bright);
-  border: 1px solid var(--card-color);
-  border-radius: 0.45rem;
-  padding: 0.02rem 0.45rem;
-  box-shadow: 0 0 7px var(--card-soft);
-}
-
-.rule-green {
-  --card-bright: #58d36f;
-  --card-color: rgba(88, 211, 111, 0.48);
-  --card-glow: rgba(88, 211, 111, 0.2);
-  --card-soft: rgba(88, 211, 111, 0.075);
-}
-
-.rule-blue {
-  --card-bright: #6ea8fe;
-  --card-color: rgba(110, 168, 254, 0.48);
-  --card-glow: rgba(110, 168, 254, 0.2);
-  --card-soft: rgba(110, 168, 254, 0.075);
-}
-
-.rule-gold {
-  --card-bright: #d8b34d;
-  --card-color: rgba(216, 179, 77, 0.5);
-  --card-glow: rgba(216, 179, 77, 0.22);
-  --card-soft: rgba(216, 179, 77, 0.075);
-}
-
-.rule-purple {
-  --card-bright: #a970ff;
-  --card-color: rgba(169, 112, 255, 0.46);
-  --card-glow: rgba(169, 112, 255, 0.18);
-  --card-soft: rgba(169, 112, 255, 0.075);
-}
-
-.rule-cyan {
-  --card-bright: #4fd1c5;
-  --card-color: rgba(79, 209, 197, 0.46);
-  --card-glow: rgba(79, 209, 197, 0.18);
-  --card-soft: rgba(79, 209, 197, 0.075);
-}
-
-.rule-red {
-  --card-bright: #e57373;
-  --card-color: rgba(229, 115, 115, 0.48);
-  --card-glow: rgba(229, 115, 115, 0.2);
-  --card-soft: rgba(229, 115, 115, 0.075);
-}
-
-/* Agrega estos bloques junto a los demás colores y estadios */
-.rule-orange {
-  --card-bright: #ff9800;
-  --card-color: rgba(255, 152, 0, 0.48);
-  --card-glow: rgba(255, 152, 0, 0.2);
-  --card-soft: rgba(255, 152, 0, 0.075);
-}
-
-.divider-orange {
-  background: var(--card-bright);
-}
-
-.stadium-azteca {
-  /* Asegúrate de tener esta imagen en tu carpeta assets/stadiums, o usa otra que ya tengas */
-  --stadium-img: url("@/assets/stadiums/Guadalajara-Stadium.png"); 
-}
-
-
-/* EXAMPLE / CTA */
-.example-card {
-  border: 1px solid rgba(59, 255, 91, 0.16);
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.example-card h5 {
-  font-size: 0.98rem;
-}
-
-.example-card p {
-  font-size: 0.9rem;
-}
-
-.cta-card {
-  border: 1px solid rgba(88, 211, 111, 0.38);
-  background:
-    linear-gradient(90deg, rgba(27, 27, 27, 0.74), rgba(4, 12, 10, 0.88)),
-    url("@/assets/footer.png") center/cover no-repeat;
-  box-shadow:
-    0 0 12px rgba(88, 211, 111, 0.16),
-    inset 0 0 24px rgba(88, 211, 111, 0.05);
-}
-
-.cta-icon {
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  color: #d8b34d;
-  font-size: 1.9rem;
-  text-shadow:
-    0 0 8px rgba(216, 179, 77, 0.4),
-    0 0 16px rgba(216, 179, 77, 0.16);
-}
-
-.cta-card h3 span {
-  color: #4caf6a;
-  text-shadow: 0 0 7px rgba(76, 175, 106, 0.28);
-}
-
-.btn-play {
-  min-height: 46px;
-  padding: 0 1.15rem;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, #157347, #063f1e);
-  border: 1px solid rgba(88, 211, 111, 0.58);
-  box-shadow:
-    0 0 9px rgba(88, 211, 111, 0.28),
-    inset 0 0 10px rgba(255, 255, 255, 0.08);
-}
-
-/* RESPONSIVE */
-.sidebar-fixed {
-  width: 16.66666667%;
-  max-width: 280px;
-}
-
-.rule-divider {
-  width: 42px;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--card-bright);
-  box-shadow: 0 0 7px var(--card-glow);
-}
-
-.text-justify {
-  text-align: justify;
-}
-
-.divider-green,
-.divider-blue,
-.divider-gold,
-.divider-purple,
-.divider-cyan,
-.divider-red {
-  background: var(--card-bright);
-}
-
-@media (min-width: 992px) and (max-width: 1199.98px) {
-  .sidebar-fixed {
-    width: 25%;
-  }
-}
-
-@media (max-width: 1199.98px) {
-  .hero-banner {
-    min-height: 200px;
+@media (max-width: 991.98px) {
+  .world-map-wrapper {
+    min-height: 280px;
   }
 
-  .rule-card {
-    min-height: 142px;
+  .champion-donut {
+    width: 150px;
+    height: 150px;
   }
 
-  .rule-icon {
-    width: 58px;
-    height: 58px;
-    font-size: 1.4rem;
+  .champion-donut-center {
+    width: 70px;
+    height: 70px;
   }
 
-  .rule-number {
+  .champion-donut-center h2 {
     font-size: 1.35rem;
   }
 }
 
-@media (max-width: 991.98px) {
-  .rules-page {
-    overflow-x: hidden;
-  }
-
-  .hero-banner {
-    min-height: auto;
-    background:
-      linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.9) 0%,
-        rgba(0, 0, 0, 0.74) 55%,
-        rgba(0, 0, 0, 0.58) 100%
-      ),
-      url("@/assets/trionda-stadium.png") center/cover no-repeat;
-  }
-
-  .hero-copy-col {
-    border-left: 0;
-    padding-left: 0;
-  }
-
-  .hero-copy {
-    max-width: 100%;
-    font-size: 0.9rem;
-  }
-
-  .rules-title {
-    font-size: clamp(2rem, 9vw, 2.75rem);
-  }
-
-  .rules-kicker {
-    font-size: 0.68rem;
-  }
-
-  .rule-card {
-    min-height: auto;
-  }
-
-  .rule-content {
-    width: 100%;
-  }
-
-  .rule-icon {
-    width: 58px;
-    height: 58px;
-    font-size: 1.4rem;
-  }
-
-  .rule-card h5 {
-    font-size: 0.98rem;
-  }
-
-  .rule-card p,
-  .points-row {
-    font-size: 0.86rem;
-  }
-
-  .points-row {
-    width: min(100%, 240px);
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .rule-divider {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .cta-card .row {
-    text-align: center;
-  }
-
-  .cta-icon {
-    width: 46px;
-    height: 46px;
-    margin: 0 auto;
-    font-size: 1.65rem;
-  }
-
-  .btn-play {
-    width: 100%;
-  }
-}
-
 @media (max-width: 575.98px) {
-  .rule-card {
-    background:
-      linear-gradient(145deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.9)),
-      var(--stadium-img) center/cover no-repeat;
+  .world-map-wrapper {
+    min-height: 230px;
   }
-}
 
-.hero-banner {
-  border-radius: 1rem !important;
-}
+  .champion-donut {
+    width: 140px;
+    height: 140px;
+  }
 
-.rules-kicker,
-.rules-title,
-.hero-copy {
-  text-align: center;
-}
+  .champion-donut-center {
+    width: 64px;
+    height: 64px;
+  }
 
-.title-line {
-  max-width: 260px;
-  height: 4px;
-  margin: 0 auto;
-}
-
-.hero-copy {
-  line-height: 1.45;
-}
-
-.text-justify {
-  text-align: left;
-}
-
-.rule-card {
-  border-radius: 1rem;
-  padding: 1rem !important;
-}
-
-.rule-icon {
-  width: 54px;
-  height: 54px;
-  font-size: 1.3rem;
-}
-
-.rule-card h5 {
-  margin-bottom: 0.35rem !important;
-}
-
-.rule-divider {
-  width: 38px;
-  height: 3px;
-  margin-bottom: 0.8rem !important;
-}
-
-.points-row {
-  width: 100%;
-  max-width: 230px;
-  gap: 0.75rem;
-}
-
-.points-row strong {
-  min-width: 48px;
-  text-align: center;
-}
-
-.cta-card {
-  border-radius: 1rem !important;
-}
-
-.cta-card .col-auto,
-.cta-card .col {
-  width: 100%;
-}
-
-.stadium-overlay {
-  position: absolute;
-  inset: 0;
-
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.92) 0%,
-    rgba(0, 0, 0, 0.55) 35%,
-    transparent 70%
-  );
-
-  opacity: 0;
-  transition: opacity 0.3s ease;
-
-  z-index: 1;
-}
-
-.stadium-info {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0.35rem 0.85rem;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  transform: translateY(100%);
-  transition: transform 0.25s ease;
-  z-index: 6;
-  display: flex;
-  align-items: baseline;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.stadium-info .fw-bold,
-.stadium-info .text-white-50 {
-  margin-bottom: 0;
-}
-
-.stadium-info .small {
-  font-size: 0.72rem;
-  line-height: 1.15;
-}
-
-.rule-card:hover .stadium-overlay {
-  opacity: 1;
-}
-
-.rule-card:hover .stadium-info {
-  transform: translateY(0);
+  .champion-donut-center h2 {
+    font-size: 1.2rem;
+  }
 }
 </style>

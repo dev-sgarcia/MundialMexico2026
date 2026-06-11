@@ -20,7 +20,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { supabase } from "@/supabaseClient"; // <-- Importamos Supabase
+import { supabase } from "@/supabaseClient";
 import MobileUser from "@/components/dashboard/MobileUser.vue";
 import {
   PhTrophy,
@@ -29,6 +29,7 @@ import {
   PhRanking,
   PhCalendarCheck,
   PhStar,
+  PhChartPieSlice,
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
@@ -54,8 +55,8 @@ onMounted(async () => {
 
 // --- CONFIGURACIÓN DEL MENÚ MÓVIL ---
 const allMenuItems = [
-  { label: "Reglas", to: "/dashboard", icon: PhCalendarCheck },
-  { label: "Ligas", to: "/quinielas", icon: PhTrophy, adminOnly: true },
+  { label: "Reglas", to: "/dashboard", icon: PhChartPieSlice },
+  // { label: "Ligas", to: "/quinielas", icon: PhTrophy, adminOnly: true },
   { label: "Predic.", to: "/predicciones", icon: PhSoccerBall },
   { label: "Result.", to: "/resultados", icon: PhChartBar },
   { label: "Ranking", to: "/posiciones", icon: PhRanking },

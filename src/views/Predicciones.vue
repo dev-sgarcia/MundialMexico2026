@@ -12,42 +12,52 @@
           class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 vh-100 overflow-hidden px-0 pt-0 pb-5 pb-lg-1"
         >
           <section
-            class="container-fluid h-100 d-flex flex-column overflow-hidden"
+            class="container-fluid h-100 d-flex flex-column overflow-hidden px-3 px-md-4"
           >
-            <div class="sticky-top bg-black z-3">
-              <PageHeader />
-
-              <div>
-                <h2 class="fw-bold mb-1">
-                  Mis predicciones :
-                  <span
-                    v-if="
-                      nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
-                    "
-                    class="text-gold ms-lg-2 d-block d-lg-inline"
-                  >
-                    {{ nombreLigaActiva }}
-                  </span>
-                </h2>
-
-                <p class="text-white-50 mb-0">
-                  Realiza tus predicciones para sumar puntos y escalar
-                  posiciones.
-                </p>
-              </div>
-              <div class="d-flex justify-content-end mb-2">
-              <button
-              class="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
-              :disabled="exportando || cargando"
-              @click="handleExportPDF"
+            <div class="mb-2 mt-4">
+              <div
+                class="d-flex justify-content-between align-items-start gap-3"
               >
-              <span v-if="exportando" class="spinner-border spinner-border-sm"></span>
-              <span v-else">📄</span>
-              {{ exportando ? 'Generando...' : 'Descargar partidos' }}
-              </button>
+                <div class="min-w-0">
+                  <h2 class="fw-bold mb-1">
+                    Mis predicciones
+                    <span
+                      v-if="
+                        nombreLigaActiva && nombreLigaActiva !== 'Mi Quiniela'
+                      "
+                      class="text-gold ms-lg-2 d-block d-lg-inline"
+                    >
+                      {{ nombreLigaActiva }}
+                    </span>
+                  </h2>
+
+                  <p class="text-white-50 mb-0">
+                    Realiza tus predicciones para sumar puntos y escalar
+                    posiciones.
+                  </p>
+                </div>
+
+                <PageHeader />
               </div>
+
+              <div class="d-none d-lg-flex justify-content-end mt-0">
+                <button
+                  class="btn btn-outline-success btn-sm d-flex align-items-center gap-2 px-3"
+                  :disabled="exportando || cargando"
+                  @click="handleExportPDF"
+                >
+                  <span
+                    v-if="exportando"
+                    class="spinner-border spinner-border-sm"
+                  ></span>
+                  <span v-else>📄</span>
+                  {{ exportando ? "Generando..." : "Descargar partidos" }}
+                </button>
+              </div>
+            </div>
+            <div class="sticky-top bg-black z-3">
               <!-- RESUMEN -->
-              <div class="card prediction-card text-white rounded-4 mt-3 mb-2">
+              <div class="card prediction-card text-white rounded-4 mt-1 mb-2">
                 <div class="card-body p-3 p-lg-4">
                   <div
                     class="d-flex justify-content-between align-items-center flex-column flex-lg-row gap-3"
@@ -398,7 +408,6 @@
         </main>
       </div>
     </div>
-
     <BottomNav />
   </div>
 </template>
@@ -411,7 +420,7 @@ import Swal from "sweetalert2";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
-import {useExportPDF} from "@/composables/exportPDF.js";
+import { useExportPDF } from "@/composables/exportPDF.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -926,10 +935,10 @@ const handleExportPDF = async () => {
     partidosAgrupados.value,
     formatDate,
     getFlagCode,
-    nombreLigaActiva.value
+    nombreLigaActiva.value,
   );
   exportando.value = false;
-}
+};
 </script>
 
 <style scoped>

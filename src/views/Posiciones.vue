@@ -11,21 +11,28 @@
         <main
           class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
         >
-          <section class="container-fluid">
-            <!-- HEADER -->
-            <PageHeader />
-
-            <div class="bg-black z-3 mb-4">
+          <section class="container-fluid px-3 px-md-4">
+            <div
+              class="d-flex justify-content-between align-items-start mb-4 mt-4"
+            >
               <div>
-                <h2 class="fw-bold mb-1 d-flex align-items-center gap-2">
-                  Tabla de posiciones general
-                </h2>
+                <h2 class="fw-bold mb-1">Tabla de posiciones general</h2>
 
                 <p class="text-white-50 mb-0">
-                  Ranking general de participantes de la quiniela:
-                  {{ nombreQuinielaActiva }}
+                  Ranking general de participantes de la quiniela
+                  <span
+                    v-if="
+                      nombreQuinielaActiva &&
+                      nombreQuinielaActiva !== 'Mi Quiniela'
+                    "
+                    class="text-gold"
+                  >
+                    {{ nombreQuinielaActiva }}
+                  </span>
                 </p>
               </div>
+
+              <PageHeader />
             </div>
             <!-- CARDS SUPERIORES -->
             <div class="row g-3 mb-4">
@@ -488,7 +495,6 @@
                           </td>
 
                           <td>
-
                             <div class="d-flex align-items-center gap-2 py-1">
                               <img
                                 v-if="jugador.avatar_url"
@@ -499,17 +505,17 @@
                                 height="38"
                                 style="object-fit: cover"
                               />
-                                <!-- AGREGAR ESTA NUEVA IMAGEN -->
-                                <img
-                                  v-else
-                                  src="@/assets/avatar-gmail.png"
-                                  :alt="jugador.nombre"
-                                  class="rounded-circle border border-success border-opacity-50 bg-dark p-1"
-                                  width="38"
-                                  height="38"
-                                  style="object-fit: contain"
-                                />
-                                
+                              <!-- AGREGAR ESTA NUEVA IMAGEN -->
+                              <img
+                                v-else
+                                src="@/assets/avatar-gmail.png"
+                                :alt="jugador.nombre"
+                                class="rounded-circle border border-success border-opacity-50 bg-dark p-1"
+                                width="38"
+                                height="38"
+                                style="object-fit: contain"
+                              />
+
                               <div class="d-flex flex-column">
                                 <span
                                   class="fw-bold text-white text-truncate"
@@ -524,8 +530,6 @@
                                 >
                               </div>
                             </div>
-
-
 
                             <!-- <div class="d-flex align-items-center gap-2 py-1">
                               <img
