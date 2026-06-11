@@ -239,7 +239,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { supabase } from "@/supabaseClient";
 import Swal from "sweetalert2";
 import { PhPencilSimple } from "@phosphor-icons/vue";
@@ -347,109 +347,58 @@ const unirseALiga = async () => {
   }
 };
 
-const worldCupTeams = ref([
-  {
-    México: "mx",
-    Sudáfrica: "za",
-    "Corea del Sur": "kr",
-    Chequia: "cz",
-    Canadá: "ca",
-    "Bosnia y Herzegovina": "ba",
-    Catar: "qa",
-    Suiza: "ch",
-    Brasil: "br",
-    Marruecos: "ma",
-    Haití: "ht",
-    Escocia: "gb-sct",
-    "Estados Unidos": "us",
-    Paraguay: "py",
-    Australia: "au",
-    Turquía: "tr",
-    Alemania: "de",
-    Curazao: "cw",
-    "Costa de Marfil": "ci",
-    Ecuador: "ec",
-    "Países Bajos": "nl",
-    Japón: "jp",
-    Suecia: "se",
-    Túnez: "tn",
-    Bélgica: "be",
-    Egipto: "eg",
-    Irán: "ir",
-    "Nueva Zelanda": "nz",
-    España: "es",
-    "Cabo Verde": "cv",
-    "Arabia Saudita": "sa",
-    Uruguay: "uy",
-    Francia: "fr",
-    Senegal: "sn",
-    Irak: "iq",
-    Noruega: "no",
-    Argentina: "ar",
-    Argelia: "dz",
-    Austria: "at",
-    Jordania: "jo",
-    Portugal: "pt",
-    "RD Congo": "cd",
-    Uzbekistán: "uz",
-    Colombia: "co",
-    Inglaterra: "gb-eng",
-    Croacia: "hr",
-    Ghana: "gh",
-    Panamá: "pa",
-  },
-]);
-
-const qualifiedCodes = [
-  "mx",
-  "za",
-  "kr",
-  "cz",
-  "ca",
-  "ba",
-  "qa",
-  "ch",
-  "br",
-  "ma",
-  "ht",
-  "gb-sct",
-  "us",
-  "py",
-  "au",
-  "tr",
-  "de",
-  "cw",
-  "ci",
-  "ec",
-  "nl",
-  "jp",
-  "se",
-  "tn",
-  "be",
-  "eg",
-  "ir",
-  "nz",
-  "es",
-  "cv",
-  "sa",
-  "uy",
-  "fr",
-  "sn",
-  "iq",
-  "no",
-  "ar",
-  "dz",
-  "at",
-  "jo",
-  "pt",
-  "cd",
-  "uz",
-  "co",
-  "gb-eng",
-  "hr",
-  "gh",
-  "pa",
-];
+const worldCupTeams = ref(
+  [
+    { name: "México", code: "mx" },
+    { name: "Sudáfrica", code: "za" },
+    { name: "Corea del Sur", code: "kr" },
+    { name: "Chequia", code: "cz" },
+    { name: "Canadá", code: "ca" },
+    { name: "Bosnia y Herzegovina", code: "ba" },
+    { name: "Catar", code: "qa" },
+    { name: "Suiza", code: "ch" },
+    { name: "Brasil", code: "br" },
+    { name: "Marruecos", code: "ma" },
+    { name: "Haití", code: "ht" },
+    { name: "Escocia", code: "gb-sct" },
+    { name: "Estados Unidos", code: "us" },
+    { name: "Paraguay", code: "py" },
+    { name: "Australia", code: "au" },
+    { name: "Turquía", code: "tr" },
+    { name: "Alemania", code: "de" },
+    { name: "Curazao", code: "cw" },
+    { name: "Costa de Marfil", code: "ci" },
+    { name: "Ecuador", code: "ec" },
+    { name: "Países Bajos", code: "nl" },
+    { name: "Japón", code: "jp" },
+    { name: "Suecia", code: "se" },
+    { name: "Túnez", code: "tn" },
+    { name: "Bélgica", code: "be" },
+    { name: "Egipto", code: "eg" },
+    { name: "Irán", code: "ir" },
+    { name: "Nueva Zelanda", code: "nz" },
+    { name: "España", code: "es" },
+    { name: "Cabo Verde", code: "cv" },
+    { name: "Arabia Saudita", code: "sa" },
+    { name: "Uruguay", code: "uy" },
+    { name: "Francia", code: "fr" },
+    { name: "Senegal", code: "sn" },
+    { name: "Irak", code: "iq" },
+    { name: "Noruega", code: "no" },
+    { name: "Argentina", code: "ar" },
+    { name: "Argelia", code: "dz" },
+    { name: "Austria", code: "at" },
+    { name: "Jordania", code: "jo" },
+    { name: "Portugal", code: "pt" },
+    { name: "RD Congo", code: "cd" },
+    { name: "Uzbekistán", code: "uz" },
+    { name: "Colombia", code: "co" },
+    { name: "Inglaterra", code: "gb-eng" },
+    { name: "Croacia", code: "hr" },
+    { name: "Ghana", code: "gh" },
+    { name: "Panamá", code: "pa" },
+  ].sort((a, b) => a.name.localeCompare(b.name)),
+);
 
 const cargarLigas2 = async () => {
   const { data: liga, error: errLiga } = await supabase
@@ -550,31 +499,12 @@ onMounted(async () => {
       await cargarLigas(session.user.id);
       await cargarLigas2();
     }
-
-    const res = await fetch(
-      "https://restcountries.com/v3.1/all?fields=name,cca2,translations",
-    );
-    const data = await res.json();
-
-    worldCupTeams.value = data
-      .filter((c) => qualifiedCodes.includes(c.cca2?.toLowerCase()))
-      .map((c) => {
-        let name = c.translations.spa.common;
-        if (c.cca2 === "GB") name = "Inglaterra";
-        if (c.cca2 === "US") name = "Estados Unidos";
-        return { name, code: c.cca2.toLowerCase() };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name));
   } catch (err) {
     console.error("Error loading setup:", err);
   } finally {
     loading.value = false;
   }
 });
-
-const selectTeam = (team) => {
-  selectedTeam.value = team;
-};
 
 const toggleDropdown = (leagueId) => {
   const liga = misLigas.value.find((x) => x.league_id === leagueId);
@@ -670,7 +600,6 @@ const subirLogoLiga = async (file, liga) => {
 
 .menu-background {
   position: relative;
-
   min-height: 100vh;
 
   background:
@@ -681,7 +610,8 @@ const subirLogoLiga = async (file, liga) => {
     ),
     url("/src/assets/fifa-world-cup.png") center/cover no-repeat;
 
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .overlay {
@@ -748,37 +678,25 @@ const subirLogoLiga = async (file, liga) => {
 
 .custom-teleport-dropdown {
   position: fixed;
-
   inset: 0;
-
   display: flex;
-
-  align-items: center;
-
+  align-items: flex-start;
   justify-content: center;
-
   z-index: 99999;
-
-  background: rgba(0, 0, 0, 0.55);
-
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(5px);
-
-  padding: 1rem;
+  padding: 5rem 1rem 1rem;
+  overflow-y: auto;
 }
 
 .dropdown-card {
   width: min(100%, 420px);
-
-  max-height: 70vh;
-
+  max-height: 75dvh;
   overflow-y: auto;
-
+  -webkit-overflow-scrolling: touch;
   border-radius: 22px;
-
   background: #101820;
-
   border: 1px solid rgba(212, 175, 55, 0.35);
-
   padding: 1rem;
 }
 
