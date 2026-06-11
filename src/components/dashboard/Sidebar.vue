@@ -69,7 +69,9 @@ import {
   PhGearSix,
   PhRanking,
   PhCalendarCheck,
-  PhStar
+  PhStar,
+  PhChartPieSlice,
+  PhSquaresFour,
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
@@ -78,11 +80,13 @@ const route = useRoute();
 const isAdmin = ref(false);
 const adminEmails = [
   "tu_correo@ejemplo.com", // Reemplaza con tus correos reales
-  "otro_admin@ejemplo.com"
+  "otro_admin@ejemplo.com",
 ];
 
 onMounted(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   if (session && adminEmails.includes(session.user.email)) {
     isAdmin.value = true;
   }
@@ -91,12 +95,18 @@ onMounted(async () => {
 // --- CONFIGURACIÓN DEL MENÚ ---
 // Lista maestra con todas las opciones posibles
 const allMenuItems = [
-  { label: "Reglas", path: "/dashboard", icon: PhCalendarCheck },
-  { label: "Mis Quinielas", path: "/quinielas", icon: PhTrophy, adminOnly: true }, // <-- Bloqueo activado
+  { label: "Dashboard", path: "/dashboard", icon: PhChartPieSlice },
+  { label: "Reglas", path: "/bases", icon: PhCalendarCheck },
+  {
+    label: "Mis Quinielas",
+    path: "/quinielas",
+    icon: PhTrophy,
+    adminOnly: true,
+  }, // <-- Bloqueo activado
   { label: "Predicciones", path: "/predicciones", icon: PhSoccerBall },
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
-  { label: "VIP", path: "/vip", icon: PhStar, vipOnly: true },  
+  { label: "VIP", path: "/vip", icon: PhStar, vipOnly: true },
 ];
 
 // Leemos la memoria caché. Si dice 'true', la variable será verdadera
@@ -107,12 +117,12 @@ const esUsuarioVip = ref(localStorage.getItem("isVipActiva") === "true");
 //   return allMenuItems.filter(item => !item.adminOnly || isAdmin.value);
 // });
 const menuItems = computed(() => {
-  return allMenuItems.filter(item => {
+  return allMenuItems.filter((item) => {
     // Filtro para el admin que ya tenías
     if (item.adminOnly && !isAdmin.value) return false;
 
     // 👇 NUEVO: Filtro para VIP
-    if (item.vipOnly && !esUsuarioVip.value) return false; 
+    if (item.vipOnly && !esUsuarioVip.value) return false;
 
     return true; // Si pasa los filtros, se muestra
   });
@@ -120,10 +130,25 @@ const menuItems = computed(() => {
 
 const obtenerRutaConLiga = (basePath) => {
   // Rescatamos de la URL o de la memoria caché
-  const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
-  const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
+  const currentLigaId =
+    route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  const currentLigaNombre =
+    route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
   // 👇 Rescatamos el eventoId
-  const currentEventoId = route.query.eventoId || localStorage.getItem("eventoIdActiva");
+  const currentEventoId =
+    route.query.eventoId || localStorage.getItem("eventoIdActiva");
+
+  if (currentLigaId) {
+    localStorage.setItem("ligaIdActiva", currentLigaId);
+  }
+
+  if (currentLigaNombre) {
+    localStorage.setItem("ligaNombreActiva", currentLigaNombre);
+  }
+
+  if (currentEventoId) {
+    localStorage.setItem("eventoIdActiva", currentEventoId);
+  }
 
   return {
     path: basePath,

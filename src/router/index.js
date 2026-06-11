@@ -12,7 +12,13 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: () => import("@/views/Dashboard.vue"),
-    meta: { requiresAuth: true, requiresLiga: true }
+    meta: { requiresAuth: true, requiresLiga: true },
+  },
+  {
+    path: "/bases",
+    name: "Bases",
+    component: () => import("@/views/Bases.vue"),
+    meta: { requiresAuth: true, requiresLiga: true },
   },
   {
     path: "/reglas",
@@ -30,25 +36,25 @@ const routes = [
     path: "/juega",
     name: "Juega",
     component: () => import("@/views/Juega.vue"),
-    meta: { requiresAuth: true } // Requiere login, pero NO liga (aquí la eligen)
+    meta: { requiresAuth: true }, // Requiere login, pero NO liga (aquí la eligen)
   },
   {
     path: "/predicciones",
     name: "Predicciones",
     component: () => import("@/views/Predicciones.vue"),
-    meta: { requiresAuth: true, requiresLiga: true }
+    meta: { requiresAuth: true, requiresLiga: true },
   },
   {
     path: "/resultados",
     name: "Resultados",
     component: () => import("@/views/Resultados.vue"),
-    meta: { requiresAuth: true, requiresLiga: true }
+    meta: { requiresAuth: true, requiresLiga: true },
   },
   {
     path: "/admin-panel",
     name: "AdminPanel",
     component: () => import("@/views/Administracion.vue"),
-    meta: { requiresAuth: true } // Solo requiere login
+    meta: { requiresAuth: true }, // Solo requiere login
   },
   {
     path: "/juega-nosotros",
@@ -60,20 +66,20 @@ const routes = [
     path: "/posiciones",
     name: "Posiciones",
     component: () => import("@/views/Posiciones.vue"),
-    meta: { requiresAuth: true, requiresLiga: true }
+    meta: { requiresAuth: true, requiresLiga: true },
   },
   {
     path: "/quinielas",
     name: "Quinielas",
     component: () => import("@/views/Quinielas.vue"),
-    meta: { requiresAuth: true, requiresLiga: true }
+    meta: { requiresAuth: true, requiresLiga: true },
   },
   {
     path: "/vip",
     name: "VIP",
     component: () => import("@/views/Vip.vue"),
-    meta: { requiresAuth: true, requiresLiga: true }
-  }  
+    meta: { requiresAuth: true, requiresLiga: true },
+  },
 ];
 
 const router = createRouter({
@@ -83,16 +89,18 @@ const router = createRouter({
 
 // --- EL GUARDIÁN DE RUTAS (El cadenero) ---
 router.beforeEach(async (to, from) => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (to.meta.requiresAuth && !session) {
-    return '/'; // Regresas la ruta en lugar de llamar next()
+    return "/"; // Regresas la ruta en lugar de llamar next()
   }
 
   if (to.meta.requiresLiga) {
-    const ligaId = to.query.ligaId || localStorage.getItem('ligaIdActiva');
-    if (!ligaId || ligaId === 'null') {
-      return '/juega'; // Regresas la ruta
+    const ligaId = to.query.ligaId || localStorage.getItem("ligaIdActiva");
+    if (!ligaId || ligaId === "null") {
+      return "/juega"; // Regresas la ruta
     }
   }
 

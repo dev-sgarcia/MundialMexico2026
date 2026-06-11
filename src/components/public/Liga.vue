@@ -73,8 +73,8 @@
                   alt="Campeón"
                 />
                 <button
-                 v-if="isAdmin"
-                @click="abrirEditarLogo(liga)"
+                  v-if="isAdmin"
+                  @click="abrirEditarLogo(liga)"
                   class="btn btn-sm btn-edit-logo"
                   title="Cambiar imagen"
                 >
@@ -129,7 +129,7 @@
                             }}
                           </span>
                         </div>
-                        
+
                         <router-link
                           :to="{
                             path: '/dashboard',
@@ -143,7 +143,7 @@
                           class="btn btn-success btn-sm w-100 fw-bold mt-1"
                         >
                           Jugar
-                        </router-link>                        
+                        </router-link>
                         <!-- <router-link
                           :to="{
                             path: '/dashboard',
@@ -242,7 +242,7 @@
 import { ref, onMounted, computed } from "vue";
 import { supabase } from "@/supabaseClient";
 import Swal from "sweetalert2";
-import { PhPencilSimple } from '@phosphor-icons/vue';
+import { PhPencilSimple } from "@phosphor-icons/vue";
 import { useToast } from "vue-toastification";
 
 const loading = ref(true);
@@ -309,9 +309,7 @@ const unirseALiga = async () => {
       return;
     }
 
-    supabase.storage
-    .from("storage_logos")
-
+    supabase.storage.from("storage_logos");
 
     // 4. Si hay lugar, inscribimos al usuario
     const { error: errJoin } = await supabase
@@ -351,55 +349,55 @@ const unirseALiga = async () => {
 
 const worldCupTeams = ref([
   {
-  'México': 'mx',
-  'Sudáfrica': 'za',
-  'Corea del Sur': 'kr',
-  'Chequia': 'cz',
-  'Canadá': 'ca',
-  'Bosnia y Herzegovina': 'ba',
-  'Catar': 'qa',
-  'Suiza': 'ch',
-  'Brasil': 'br',
-  'Marruecos': 'ma',
-  'Haití': 'ht',
-  'Escocia': 'gb-sct',
-  'Estados Unidos': 'us',
-  'Paraguay': 'py',
-  'Australia': 'au',
-  'Turquía': 'tr',
-  'Alemania': 'de',
-  'Curazao': 'cw',
-  'Costa de Marfil': 'ci',
-  'Ecuador': 'ec',
-  'Países Bajos': 'nl',
-  'Japón': 'jp',
-  'Suecia': 'se',
-  'Túnez': 'tn',
-  'Bélgica': 'be',
-  'Egipto': 'eg',
-  'Irán': 'ir',
-  'Nueva Zelanda': 'nz',
-  'España': 'es',
-  'Cabo Verde': 'cv',
-  'Arabia Saudita': 'sa',
-  'Uruguay': 'uy',
-  'Francia': 'fr',
-  'Senegal': 'sn',
-  'Irak': 'iq',
-  'Noruega': 'no',
-  'Argentina': 'ar',
-  'Argelia': 'dz',
-  'Austria': 'at',
-  'Jordania': 'jo',
-  'Portugal': 'pt',
-  'RD Congo': 'cd',
-  'Uzbekistán': 'uz',
-  'Colombia': 'co',
-  'Inglaterra': 'gb-eng',
-  'Croacia': 'hr',
-  'Ghana': 'gh',
-  'Panamá': 'pa'
-}
+    México: "mx",
+    Sudáfrica: "za",
+    "Corea del Sur": "kr",
+    Chequia: "cz",
+    Canadá: "ca",
+    "Bosnia y Herzegovina": "ba",
+    Catar: "qa",
+    Suiza: "ch",
+    Brasil: "br",
+    Marruecos: "ma",
+    Haití: "ht",
+    Escocia: "gb-sct",
+    "Estados Unidos": "us",
+    Paraguay: "py",
+    Australia: "au",
+    Turquía: "tr",
+    Alemania: "de",
+    Curazao: "cw",
+    "Costa de Marfil": "ci",
+    Ecuador: "ec",
+    "Países Bajos": "nl",
+    Japón: "jp",
+    Suecia: "se",
+    Túnez: "tn",
+    Bélgica: "be",
+    Egipto: "eg",
+    Irán: "ir",
+    "Nueva Zelanda": "nz",
+    España: "es",
+    "Cabo Verde": "cv",
+    "Arabia Saudita": "sa",
+    Uruguay: "uy",
+    Francia: "fr",
+    Senegal: "sn",
+    Irak: "iq",
+    Noruega: "no",
+    Argentina: "ar",
+    Argelia: "dz",
+    Austria: "at",
+    Jordania: "jo",
+    Portugal: "pt",
+    "RD Congo": "cd",
+    Uzbekistán: "uz",
+    Colombia: "co",
+    Inglaterra: "gb-eng",
+    Croacia: "hr",
+    Ghana: "gh",
+    Panamá: "pa",
+  },
 ]);
 
 const qualifiedCodes = [
@@ -477,7 +475,7 @@ const cargarLigas = async (userId) => {
 };
 
 const establecerAccesoVip = (esVip) => {
-  localStorage.setItem('isVipActiva', esVip ? 'true' : 'false');
+  localStorage.setItem("isVipActiva", esVip ? "true" : "false");
 };
 
 const obtenerCampeonAsignado = (championTeamCode) => {
@@ -546,7 +544,7 @@ onMounted(async () => {
       data: { session },
     } = await supabase.auth.getSession();
     if (session) {
-      if(adminEmails.includes(session.user.email)){
+      if (adminEmails.includes(session.user.email)) {
         isAdmin.value = true;
       }
       await cargarLigas(session.user.id);
@@ -587,34 +585,28 @@ const closeDropdown = () => {
   selectedLeagueDropdown.value = null;
 };
 
-
 const abrirEditarLogo = async (liga) => {
-
   const input = document.createElement("input");
 
   input.type = "file";
   input.accept = "image/*";
 
   input.onchange = async (event) => {
-
     const file = event.target.files[0];
 
     if (!file) return;
 
     try {
-
       Swal.fire({
         title: "Subiendo imagen...",
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
-        }
+        },
       });
 
       await subirLogoLiga(file, liga);
-
     } catch (err) {
-
       console.error(err);
 
       Swal.fire({
@@ -622,29 +614,24 @@ const abrirEditarLogo = async (liga) => {
         text: "No fue posible subir la imagen.",
         icon: "error",
         background: "#1a1d20",
-        color: "#fff"
+        color: "#fff",
       });
-
     }
   };
 
   input.click();
 };
 
-
 const subirLogoLiga = async (file, liga) => {
-
   const extension = file.name.split(".").pop();
 
-  const fileName =
-    `league_${liga.leagues.id}_${Date.now()}.${extension}`;
+  const fileName = `league_${liga.leagues.id}_${Date.now()}.${extension}`;
 
-  const { error: uploadError } =
-    await supabase.storage
-      .from("storage_logos")
-      .upload(fileName, file, {
-        upsert: true
-      });
+  const { error: uploadError } = await supabase.storage
+    .from("storage_logos")
+    .upload(fileName, file, {
+      upsert: true,
+    });
 
   if (uploadError) throw uploadError;
 
@@ -654,13 +641,12 @@ const subirLogoLiga = async (file, liga) => {
 
   const publicUrl = data.publicUrl;
 
-  const { error: updateError } =
-    await supabase
-      .from("leagues")
-      .update({
-        logo_url: publicUrl
-      })
-      .eq("id", liga.leagues.id);
+  const { error: updateError } = await supabase
+    .from("leagues")
+    .update({
+      logo_url: publicUrl,
+    })
+    .eq("id", liga.leagues.id);
 
   if (updateError) throw updateError;
 
@@ -672,13 +658,11 @@ const subirLogoLiga = async (file, liga) => {
     icon: "success",
     confirmButtonColor: "#198754",
     background: "#1a1d20",
-    color: "#fff"
+    color: "#fff",
   });
 
   toast.success("Logo actualizado correctamente");
 };
-
-
 </script>
 
 <style scoped>
@@ -891,7 +875,4 @@ const subirLogoLiga = async (file, liga) => {
 .btn-edit-logo:hover {
   background: #d4af37;
 }
-
-
-
 </style>
