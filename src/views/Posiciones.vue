@@ -691,7 +691,7 @@ const search = ref("");
 const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
 
 const currentPage = ref(1);
-const itemsPerPage = 5;
+const itemsPerPage = 10;
 
 const totalPages = computed(() =>
   Math.ceil(posicionesTabla.value.length / itemsPerPage),

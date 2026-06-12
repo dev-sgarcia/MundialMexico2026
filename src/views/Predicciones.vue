@@ -381,7 +381,7 @@
                                 type="number"
                                 min="0"
                                 max="15"
-                                class="form-control bg-dark border-success text-center fw-bold w-25 mx-auto"
+                                class="form-control bg-dark border-success text-center fw-bold w-25 mx-auto px-1"
                                 :class="
                                   match.saved ? 'text-success' : 'text-warning'
                                 "
