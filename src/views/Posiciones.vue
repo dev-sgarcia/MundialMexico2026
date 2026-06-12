@@ -796,12 +796,19 @@ const cargarPosiciones = async () => {
 
     if (error) throw error;
 
-    // 1. Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
+    // Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
     tablaPosiciones.value = (data || []).map((jugador, index) => {
       let efectividad = "0%";
+      
       if (jugador.jugados > 0) {
-        const exitos = jugador.exactos + jugador.aciertos;
-        efectividad = ((exitos / jugador.jugados) * 100).toFixed(1) + "%";
+        // 1. Calculamos el máximo de puntos posibles (3 puntos por cada partido jugado)
+        const puntosPosibles = jugador.jugados * 3;
+        
+        // 2. Calculamos los puntos reales obtenidos en esos partidos
+        const puntosObtenidos = (jugador.exactos * 3) + (jugador.aciertos * 1);
+        
+        // 3. Sacamos el porcentaje real de efectividad
+        efectividad = ((puntosObtenidos / puntosPosibles) * 100).toFixed(1) + "%";
       }
 
       return {

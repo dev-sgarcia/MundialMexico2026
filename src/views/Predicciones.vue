@@ -413,6 +413,9 @@
 </template>
 
 <script setup>
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 import { computed, ref, onMounted, watch, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { supabase } from "@/supabaseClient";
@@ -929,16 +932,117 @@ const getFlagCode = (team) => {
   return flagCodes[team] || "un";
 };
 
-const handleExportPDF = async () => {
+// const handleExportPDF = async () => {
+//   exportando.value = true;
+//   await exportarPDF(
+//     partidosAgrupados.value,
+//     formatDate,
+//     getFlagCode,
+//     nombreLigaActiva.value,
+//   );
+//   exportando.value = false;
+// };
+
+const handleExportPDF = () => {
   exportando.value = true;
-  await exportarPDF(
-    partidosAgrupados.value,
-    formatDate,
-    getFlagCode,
-    nombreLigaActiva.value,
-  );
-  exportando.value = false;
+
+  try {
+    // Creamos un documento tamaño A4
+    const doc = new jsPDF('p', 'pt', 'a4');
+
+    // Título del documento
+    doc.setFontSize(14);
+    doc.text(`Mis Predicciones - ${nombreLigaActiva.value || 'Quiniela'}`, 40, 30);
+
+    // 1. Armamos los datos en bruto recorriendo tu arreglo
+    const tableData = [];
+
+    partidosAgrupados.value.forEach(grupo => {
+      grupo.partidos.forEach(match => {
+        const fecha = formatDate(grupo.fecha);
+        const hora = match.time || '';
+        const grupoTexto = `G. ${match.group}`;
+        
+        // Formateamos los marcadores vacíos como guiones
+        const pronosticoLocal = match.homeScore !== null && match.homeScore !== '' ? match.homeScore : '-';
+        const pronosticoVisitante = match.awayScore !== null && match.awayScore !== '' ? match.awayScore : '-';
+        const marcador = `${pronosticoLocal}  vs  ${pronosticoVisitante}`;
+
+        tableData.push([
+          fecha, 
+          hora, 
+          grupoTexto, 
+          match.homeTeam, 
+          marcador, 
+          match.awayTeam
+        ]);
+      });
+    });
+
+    // 2. Configuramos la tabla para que gaste el mínimo espacio posible
+    // doc.autoTable({
+    //   startY: 45,
+    //   head: [['Fecha', 'Hora', 'Grupo', 'Local', 'Pronóstico', 'Visitante']],
+    //   body: tableData,
+    //   theme: 'grid',
+    //   styles: {
+    //     fontSize: 8,         // Letra pequeña para meter más filas
+    //     cellPadding: 3,      // Relleno mínimo de la celda
+    //     halign: 'center',
+    //     valign: 'middle'
+    //   },
+    //   headStyles: {
+    //     fillColor: [25, 135, 84], // Verde oscuro de tu plataforma
+    //     textColor: 255,
+    //     fontSize: 9,
+    //     fontStyle: 'bold'
+    //   },
+    //   columnStyles: {
+    //     0: { halign: 'left', cellWidth: 80 },
+    //     1: { cellWidth: 40 },
+    //     2: { cellWidth: 40 },
+    //     3: { halign: 'right' },
+    //     4: { halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240] },
+    //     5: { halign: 'left' }
+    //   }
+    // });
+
+    autoTable(doc, {
+      startY: 45,
+      head: [['Fecha', 'Hora', 'Grupo', 'Local', 'Pronóstico', 'Visitante']],
+      body: tableData,
+      theme: 'grid',
+      styles: {
+        fontSize: 8,         // Letra pequeña para meter más filas
+        cellPadding: 3,      // Relleno mínimo de la celda
+        halign: 'center',
+        valign: 'middle'
+      },
+      headStyles: {
+        fillColor: [25, 135, 84], // Verde oscuro de tu plataforma
+        textColor: 255,
+        fontSize: 9,
+        fontStyle: 'bold'
+      },
+      columnStyles: {
+        0: { halign: 'left', cellWidth: 80 },
+        1: { cellWidth: 40 },
+        2: { cellWidth: 40 },
+        3: { halign: 'right' },
+        4: { halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240] },
+        5: { halign: 'left' }
+      }        
+    });    
+
+    // 3. Descargamos el archivo
+    doc.save('MisPredicciones_FansLeague.pdf');
+  } catch (error) {
+    console.error("Error al generar PDF condensado:", error);
+  } finally {
+    exportando.value = false;
+  }
 };
+
 </script>
 
 <style scoped>
