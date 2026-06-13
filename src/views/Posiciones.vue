@@ -792,8 +792,8 @@ const cargarPosiciones = async () => {
       .select("*")
       .eq("league_id", idLigaActiva.value)
       .order("puntos", { ascending: false })
-      .order("exactos", { ascending: false });
-
+      .order("exactos", { ascending: false })
+      .order("ultima_actualizacion", { ascending: true }); // <--- CRITERIO DE DESEMPATE
     if (error) throw error;
 
     // Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
