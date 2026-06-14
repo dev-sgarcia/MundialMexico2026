@@ -2,23 +2,13 @@
   <div class="bg-black min-vh-100 text-white overflow-hidden pb-5 pb-lg-0">
     <div class="container-fluid px-3 pt-0 pb-3">
       <div class="row g-0 h-100">
-        <!-- <aside
-          class="d-none d-lg-block col-lg-3 col-xl-2 vh-100 overflow-hidden"
-        >
-          <Sidebar />
-        </aside> -->
-
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
           <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
             <Sidebar />
           </div>
         </aside>
-
-        <!-- <main
-          class="col-12 col-lg-9 col-xl-10 vh-100 overflow-hidden px-0 pt-3 pb-5 pb-lg-1"
-        > -->
         <main
-          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
+          class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 vh-100 overflow-hidden px-0 pt-0 pb-5 pb-lg-1"
         >
           <section
             class="container-fluid h-100 d-flex flex-column overflow-hidden px-3 px-md-4"
@@ -173,7 +163,6 @@
               </div>
 
               <div v-else class="row g-3">
-                <!-- <div class="col-12 col-xl-8"> -->
                 <div class="col-12">
                   <div
                     v-if="partidosAgrupados.length === 0"
@@ -181,12 +170,6 @@
                   >
                     No hay partidos que coincidan con los filtros seleccionados.
                   </div>
-
-                  <!-- <div
-                    v-for="grupo in partidosAgrupados"
-                    :key="grupo.fecha"
-                    class="mb-5"
-                  > -->
                   <div
                     :id="'dia-' + grupo.fecha"
                     v-for="grupo in partidosAgrupados"
@@ -200,15 +183,10 @@
                     </h5>
 
                     <div class="row g-3">
-                      <!-- <div
-                        v-for="match in grupo.partidos"
-                        :key="match.id"
-                        class="col-12 col-md-6 col-xl-4"
-                      > -->
                       <div
                         v-for="match in grupo.partidos"
                         :key="match.id"
-                        class="col-12 col-md-6 col-xl-4"
+                        class="col-12 col-md-6"
                       >
                         <div
                           class="card results-card text-white rounded-4 h-100"
@@ -789,27 +767,74 @@ watch(
 );
 
 // --- COMPUTADOS Y FILTROS ---
+const isRealTeam = (team) => {
+  const value = String(team ?? "")
+    .trim()
+    .toLowerCase();
+
+  if (!value) return false;
+
+  return !(
+    value.includes("grupo") ||
+    value.includes("ganador") ||
+    value.includes("perdedor") ||
+    value.includes("vencedor") ||
+    value.includes("finalista") ||
+    value.includes("mejor")
+  );
+};
+
 const teams = computed(() => {
   const allTeams = matches.value.flatMap((match) => [
     match.homeTeam,
     match.awayTeam,
   ]);
-  return [...new Set(allTeams)].sort();
-});
 
-// const groups = computed(() => {
-//   return [...new Set(matches.value.map((match) => match.group))].sort();
-// });
-
-const groups = computed(() => {
-  return [...new Set(matches.value.map((match) => match.group))].sort(
-    (a, b) => {
-      // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
-      return String(a).localeCompare(String(b), undefined, { numeric: true });
-    },
+  return [...new Set(allTeams)].filter(isRealTeam).sort((a, b) =>
+    String(a).localeCompare(String(b), "es", {
+      sensitivity: "base",
+      numeric: true,
+    }),
   );
 });
 
+const groups = computed(() => {
+  const values = [...new Set(matches.value.map((match) => match.group))];
+
+  const phaseOrder = [
+    "Dieciseisavos",
+    "Octavos de final",
+    "Cuartos de final",
+    "Semifinal",
+    "Tercer lugar",
+    "Final",
+  ];
+
+  return values.sort((a, b) => {
+    const aIsGroup = /^[A-L]$/.test(a);
+    const bIsGroup = /^[A-L]$/.test(b);
+
+    // Ambos son grupos
+    if (aIsGroup && bIsGroup) {
+      return a.localeCompare(b);
+    }
+
+    // Los grupos siempre primero
+    if (aIsGroup) return -1;
+    if (bIsGroup) return 1;
+
+    // Fases eliminatorias
+    const aPhase = phaseOrder.indexOf(a);
+    const bPhase = phaseOrder.indexOf(b);
+
+    if (aPhase !== -1 && bPhase !== -1) {
+      return aPhase - bPhase;
+    }
+
+    // Fallback
+    return String(a).localeCompare(String(b), "es");
+  });
+});
 const filteredMatches = computed(() => {
   return matches.value.filter((match) => {
     const statusValid =
@@ -1019,5 +1044,21 @@ const getFlagCode = (team) => {
 .sidebar-fixed {
   width: 16.66666667%;
   max-width: 280px;
+}
+
+@media (max-width: 991.98px) {
+  main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  section {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .scroll-clean {
+    overflow: visible !important;
+  }
 }
 </style>

@@ -168,11 +168,11 @@
                   <div
                     v-for="match in grupo.partidos"
                     :key="match.id"
-                    class="col-12 col-lg-6"
+                    class="col-12 col-md-6"
                   >
                     <!-- CARD DESKTOP ORIGINAL -->
                     <div
-                      class="card prediction-card text-white rounded-4 h-100 d-none d-lg-block"
+                      class="card prediction-card text-white rounded-4 h-100 d-none d-xl-block"
                       :class="{
                         'card-locked': esPartidoBloqueado(match),
                         'card-pending': !esPartidoBloqueado(match),
@@ -204,15 +204,16 @@
 
                               <input
                                 v-model="match.homeScore"
-                                type="number"
-                                min="0"
-                                max="15"
+                                type="text"
+                                inputmode="numeric"
+                                maxlength="2"
                                 class="form-control bg-dark border-success text-center fw-bold score-input"
                                 :class="
                                   match.saved ? 'text-success' : 'text-warning'
                                 "
                                 placeholder="-"
                                 :disabled="esPartidoBloqueado(match)"
+                                @input="limitScoreLength(match, 'homeScore')"
                                 @change="guardarPronostico(match)"
                               />
                             </div>
@@ -232,15 +233,16 @@
                           >
                             <input
                               v-model="match.awayScore"
-                              type="number"
-                              min="0"
-                              max="15"
+                              type="text"
+                              inputmode="numeric"
+                              maxlength="2"
                               class="form-control bg-dark border-success text-center fw-bold score-input"
                               :class="
                                 match.saved ? 'text-success' : 'text-warning'
                               "
                               placeholder="-"
                               :disabled="esPartidoBloqueado(match)"
+                              @input="limitScoreLength(match, 'awayScore')"
                               @change="guardarPronostico(match)"
                             />
 
@@ -286,7 +288,7 @@
                     </div>
                     <!-- CARD MOBILE -->
                     <div
-                      class="card prediction-card text-white rounded-4 h-100 d-lg-none"
+                      class="card prediction-card text-white rounded-4 h-100 d-xl-none"
                       :class="{ 'card-locked': esPartidoBloqueado(match) }"
                     >
                       <div class="card-body p-3">
@@ -312,15 +314,17 @@
                                 width="52"
                               />
 
-                              <span class="fw-bold text-white small lh-sm">
+                              <span
+                                class="fw-bold text-white small lh-sm team-name-mobile"
+                              >
                                 {{ match.homeTeam }}
                               </span>
-
                               <input
                                 v-model="match.homeScore"
-                                type="number"
-                                min="0"
-                                max="15"
+                                type="text"
+                                inputmode="numeric"
+                                maxlength="2"
+                                @input="limitScoreLength(match, 'homeScore')"
                                 class="form-control bg-dark border-success text-center fw-bold w-25 mx-auto px-1"
                                 :class="
                                   match.saved ? 'text-success' : 'text-warning'
@@ -372,15 +376,18 @@
                                 width="52"
                               />
 
-                              <span class="fw-bold text-white small lh-sm">
+                              <span
+                                class="fw-bold text-white small lh-sm team-name-mobile"
+                              >
                                 {{ match.awayTeam }}
                               </span>
 
                               <input
                                 v-model="match.awayScore"
-                                type="number"
-                                min="0"
-                                max="15"
+                                type="text"
+                                inputmode="numeric"
+                                maxlength="2"
+                                @input="limitScoreLength(match, 'awayScore')"
                                 class="form-control bg-dark border-success text-center fw-bold w-25 mx-auto px-1"
                                 :class="
                                   match.saved ? 'text-success' : 'text-warning'
@@ -783,26 +790,73 @@ const guardarPronostico = async (match) => {
   }
 };
 
+const isRealTeam = (team) => {
+  const value = String(team ?? "")
+    .trim()
+    .toLowerCase();
+
+  if (!value) return false;
+
+  return !(
+    value.includes("grupo") ||
+    value.includes("ganador") ||
+    value.includes("perdedor") ||
+    value.includes("vencedor") ||
+    value.includes("finalista") ||
+    value.includes("mejor")
+  );
+};
+
 const teams = computed(() => {
   const allTeams = matches.value.flatMap((match) => [
     match.homeTeam,
     match.awayTeam,
   ]);
 
-  return [...new Set(allTeams)].sort();
+  return [...new Set(allTeams)].filter(isRealTeam).sort((a, b) =>
+    String(a).localeCompare(String(b), "es", {
+      sensitivity: "base",
+      numeric: true,
+    }),
+  );
 });
 
-// const groups = computed(() => {
-//   return [...new Set(matches.value.map((match) => match.group))].sort();
-// });
-
 const groups = computed(() => {
-  return [...new Set(matches.value.map((match) => match.group))].sort(
-    (a, b) => {
-      // localeCompare con 'numeric: true' entiende que el 10 es mayor que el 9
-      return String(a).localeCompare(String(b), undefined, { numeric: true });
-    },
-  );
+  const values = [...new Set(matches.value.map((match) => match.group))];
+
+  const phaseOrder = [
+    "Dieciseisavos",
+    "Octavos de final",
+    "Cuartos de final",
+    "Semifinal",
+    "Tercer lugar",
+    "Final",
+  ];
+
+  return values.sort((a, b) => {
+    const aIsGroup = /^[A-L]$/.test(a);
+    const bIsGroup = /^[A-L]$/.test(b);
+
+    // Ambos son grupos
+    if (aIsGroup && bIsGroup) {
+      return a.localeCompare(b);
+    }
+
+    // Los grupos siempre primero
+    if (aIsGroup) return -1;
+    if (bIsGroup) return 1;
+
+    // Fases eliminatorias
+    const aPhase = phaseOrder.indexOf(a);
+    const bPhase = phaseOrder.indexOf(b);
+
+    if (aPhase !== -1 && bPhase !== -1) {
+      return aPhase - bPhase;
+    }
+
+    // Fallback
+    return String(a).localeCompare(String(b), "es");
+  });
 });
 
 const filteredMatches = computed(() => {
@@ -948,33 +1002,43 @@ const handleExportPDF = () => {
 
   try {
     // Creamos un documento tamaño A4
-    const doc = new jsPDF('p', 'pt', 'a4');
+    const doc = new jsPDF("p", "pt", "a4");
 
     // Título del documento
     doc.setFontSize(14);
-    doc.text(`Mis Predicciones - ${nombreLigaActiva.value || 'Quiniela'}`, 40, 30);
+    doc.text(
+      `Mis Predicciones - ${nombreLigaActiva.value || "Quiniela"}`,
+      40,
+      30,
+    );
 
     // 1. Armamos los datos en bruto recorriendo tu arreglo
     const tableData = [];
 
-    partidosAgrupados.value.forEach(grupo => {
-      grupo.partidos.forEach(match => {
+    partidosAgrupados.value.forEach((grupo) => {
+      grupo.partidos.forEach((match) => {
         const fecha = formatDate(grupo.fecha);
-        const hora = match.time || '';
+        const hora = match.time || "";
         const grupoTexto = `G. ${match.group}`;
-        
+
         // Formateamos los marcadores vacíos como guiones
-        const pronosticoLocal = match.homeScore !== null && match.homeScore !== '' ? match.homeScore : '-';
-        const pronosticoVisitante = match.awayScore !== null && match.awayScore !== '' ? match.awayScore : '-';
+        const pronosticoLocal =
+          match.homeScore !== null && match.homeScore !== ""
+            ? match.homeScore
+            : "-";
+        const pronosticoVisitante =
+          match.awayScore !== null && match.awayScore !== ""
+            ? match.awayScore
+            : "-";
         const marcador = `${pronosticoLocal}  vs  ${pronosticoVisitante}`;
 
         tableData.push([
-          fecha, 
-          hora, 
-          grupoTexto, 
-          match.homeTeam, 
-          marcador, 
-          match.awayTeam
+          fecha,
+          hora,
+          grupoTexto,
+          match.homeTeam,
+          marcador,
+          match.awayTeam,
         ]);
       });
     });
@@ -1009,33 +1073,33 @@ const handleExportPDF = () => {
 
     autoTable(doc, {
       startY: 45,
-      head: [['Fecha', 'Hora', 'Grupo', 'Local', 'Pronóstico', 'Visitante']],
+      head: [["Fecha", "Hora", "Grupo", "Local", "Pronóstico", "Visitante"]],
       body: tableData,
-      theme: 'grid',
+      theme: "grid",
       styles: {
-        fontSize: 8,         // Letra pequeña para meter más filas
-        cellPadding: 3,      // Relleno mínimo de la celda
-        halign: 'center',
-        valign: 'middle'
+        fontSize: 8, // Letra pequeña para meter más filas
+        cellPadding: 3, // Relleno mínimo de la celda
+        halign: "center",
+        valign: "middle",
       },
       headStyles: {
         fillColor: [25, 135, 84], // Verde oscuro de tu plataforma
         textColor: 255,
         fontSize: 9,
-        fontStyle: 'bold'
+        fontStyle: "bold",
       },
       columnStyles: {
-        0: { halign: 'left', cellWidth: 80 },
+        0: { halign: "left", cellWidth: 80 },
         1: { cellWidth: 40 },
         2: { cellWidth: 40 },
-        3: { halign: 'right' },
-        4: { halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240] },
-        5: { halign: 'left' }
-      }        
-    });    
+        3: { halign: "right" },
+        4: { halign: "center", fontStyle: "bold", fillColor: [240, 240, 240] },
+        5: { halign: "left" },
+      },
+    });
 
     // 3. Descargamos el archivo
-    doc.save('MisPredicciones_FansLeague.pdf');
+    doc.save("MisPredicciones_FansLeague.pdf");
   } catch (error) {
     console.error("Error al generar PDF condensado:", error);
   } finally {
@@ -1043,6 +1107,11 @@ const handleExportPDF = () => {
   }
 };
 
+const limitScoreLength = (match, field) => {
+  match[field] = String(match[field] ?? "")
+    .replace(/\D/g, "")
+    .slice(0, 2);
+};
 </script>
 
 <style scoped>
@@ -1094,12 +1163,6 @@ const handleExportPDF = () => {
 .score-input-mobile {
   width: 54px;
   height: 42px;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 
 input[type="number"] {
@@ -1158,5 +1221,14 @@ input:disabled {
   .progress-mobile {
     width: 100%;
   }
+}
+
+.team-name-mobile {
+  min-height: 2.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
 }
 </style>
