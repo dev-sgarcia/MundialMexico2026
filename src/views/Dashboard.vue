@@ -37,10 +37,10 @@
                       País campeón elegido por los participantes
                     </h5>
 
-                    <div class="row g-4 align-items-start">
+                    <div class="row g-4 align-items-stretch">
                       <!-- Dona + lista -->
                       <div class="col-12 col-lg-4">
-                        <div class="text-center mb-4">
+                        <div class="text-center mb-1">
                           <div class="champion-donut mx-auto">
                             <svg viewBox="0 0 42 42" class="champion-donut-svg">
                               <circle
@@ -69,9 +69,9 @@
 
                         <div class="d-flex flex-column gap-2">
                           <div
-                            v-for="country in countriesWithPercentages"
+                            v-for="country in visibleChampionCountries"
                             :key="country.rawCode"
-                            class="champion-country-row rounded-3 p-2"
+                            class="champion-country-row rounded-3 px-2 py-1"
                           >
                             <div
                               class="d-flex align-items-center justify-content-between gap-3"
@@ -95,7 +95,26 @@
                               </span>
                             </div>
                           </div>
+                          <div
+                            v-if="countriesWithPercentages.length > 4"
+                            class="text-center mt-2"
+                          >
+                            <button
+                              type="button"
+                              class="btn btn-link btn-sm text-success text-decoration-none"
+                              @click="
+                                showAllChampionCountries =
+                                  !showAllChampionCountries
+                              "
+                            >
+                              <span v-if="!showAllChampionCountries">
+                                Ver
+                                {{ countriesWithPercentages.length - 4 }} más
+                              </span>
 
+                              <span v-else> Ver menos </span>
+                            </button>
+                          </div>
                           <div
                             v-if="!countriesWithPercentages.length"
                             class="text-white-50 small text-center py-3"
@@ -119,9 +138,9 @@
                 <!-- Card ganadores por grupo -->
                 <div class="col-12 col-xl-4">
                   <div
-                    class="card champion-card text-white rounded-4 border border-success border-opacity-25 p-3 p-md-4 h-100"
+                    class="card champion-card text-white rounded-4 border border-success border-opacity-25 p-3 p-md-4 h-100 d-flex flex-column"
                   >
-                    <div class="mb-4">
+                    <div class="mb-3">
                       <h5 class="fw-bold mb-1">
                         Equipos más elegidos para ganar grupo
                       </h5>
@@ -149,7 +168,7 @@
                     </div>
                     <div
                       v-if="selectedGroupTeams.length"
-                      class="d-flex flex-column gap-3"
+                      class="d-flex flex-column justify-content-center gap-2 flex-grow-1"
                     >
                       <div v-for="team in selectedGroupTeams" :key="team.code">
                         <div
@@ -198,6 +217,192 @@
                   </div>
                 </div>
               </div>
+              <div class="row g-3 mt-1">
+                <div class="col-12 col-md-6 col-xl-4">
+                  <div
+                    class="card bg-dark bg-opacity-50 text-white rounded-4 border border-success border-opacity-50 p-2 p-md-4 h-100"
+                  >
+                    <p class="fw-bold text-success mb-4">
+                      Más fácil de predecir
+                    </p>
+
+                    <div v-if="easiestMatch" class="text-center">
+                      <div
+                        class="d-flex justify-content-center align-items-center gap-2 mb-2"
+                      >
+                        <div class="text-center">
+                          <img
+                            :src="`https://flagcdn.com/w40/${easiestMatch.home_flag}.png`"
+                            :alt="easiestMatch.home_team"
+                            width="34"
+                            class="mb-2"
+                          />
+                          <p class="small text-white-50 mb-0">
+                            {{ easiestMatch.home_team }}
+                          </p>
+                        </div>
+
+                        <h5 class="fw-bold mb-0">
+                          {{ easiestMatch.real_home_score }} -
+                          {{ easiestMatch.real_away_score }}
+                        </h5>
+
+                        <div class="text-center">
+                          <img
+                            :src="`https://flagcdn.com/w40/${easiestMatch.away_flag}.png`"
+                            :alt="easiestMatch.away_team"
+                            width="28"
+                            class="mb-1"
+                          />
+                          <p class="small text-white-50 mb-0 lh-sm">
+                            {{ easiestMatch.away_team }}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p class="fw-bold text-success mb-1">
+                        {{ easiestMatch.correct_predictions }} usuarios
+                        acertaron
+                      </p>
+
+                      <small class="text-white-50">
+                        {{ easiestMatch.accuracy }}% acertó el resultado exacto
+                      </small>
+                    </div>
+
+                    <div v-else class="text-white-50 small text-center py-4">
+                      Aún no hay partidos finalizados.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4">
+                  <div
+                    class="card bg-dark bg-opacity-50 text-white rounded-4 border border-danger border-opacity-50 p-3 p-md-4 h-100"
+                  >
+                    <p class="fw-bold text-danger mb-4">
+                      Más difícil de predecir
+                    </p>
+
+                    <div v-if="hardestMatch" class="text-center">
+                      <div
+                        class="d-flex justify-content-center align-items-center gap-3 mb-3"
+                      >
+                        <div class="text-center">
+                          <img
+                            :src="`https://flagcdn.com/w40/${hardestMatch.home_flag}.png`"
+                            :alt="hardestMatch.home_team"
+                            width="34"
+                            class="mb-2"
+                          />
+                          <p class="small text-white-50 mb-0">
+                            {{ hardestMatch.home_team }}
+                          </p>
+                        </div>
+
+                        <h3 class="fw-bold mb-0">
+                          {{ hardestMatch.real_home_score }} -
+                          {{ hardestMatch.real_away_score }}
+                        </h3>
+
+                        <div class="text-center">
+                          <img
+                            :src="`https://flagcdn.com/w40/${hardestMatch.away_flag}.png`"
+                            :alt="hardestMatch.away_team"
+                            width="34"
+                            class="mb-2"
+                          />
+                          <p class="small text-white-50 mb-0">
+                            {{ hardestMatch.away_team }}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p class="fw-bold text-danger mb-1">
+                        {{ hardestMatch.correct_predictions }} usuarios
+                        acertaron
+                      </p>
+
+                      <small class="text-white-50">
+                        {{ hardestMatch.accuracy }}% acertó el resultado exacto
+                      </small>
+                    </div>
+
+                    <div v-else class="text-white-50 small text-center py-4">
+                      Aún no hay partidos finalizados.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4">
+                  <div
+                    class="card bg-dark bg-opacity-50 text-white rounded-4 border border-info border-opacity-50 p-3 p-md-4 h-100"
+                  >
+                    <p class="fw-bold text-info mb-4">Equipo sorpresa</p>
+
+                    <div v-if="surpriseTeam" class="text-center">
+                      <div
+                        class="d-flex justify-content-center align-items-center gap-3 mb-1"
+                      >
+                        <div class="text-center">
+                          <img
+                            v-if="surpriseTeam.home_flag"
+                            :src="`https://flagcdn.com/w40/${surpriseTeam.home_flag}.png`"
+                            :alt="surpriseTeam.home_team"
+                            width="34"
+                            class="mb-1"
+                          />
+
+                          <div class="small text-white-50">
+                            {{ surpriseTeam.home_favorite_percentage }}%
+                          </div>
+                        </div>
+
+                        <span class="text-white-50 small">vs</span>
+
+                        <div class="text-center">
+                          <img
+                            v-if="surpriseTeam.away_flag"
+                            :src="`https://flagcdn.com/w40/${surpriseTeam.away_flag}.png`"
+                            :alt="surpriseTeam.away_team"
+                            width="34"
+                            class="mb-1"
+                          />
+
+                          <div class="small text-white-50">
+                            {{ surpriseTeam.away_favorite_percentage }}%
+                          </div>
+                        </div>
+                      </div>
+
+                      <h3 class="fw-bold mb-1">
+                        {{ surpriseTeam.team }}
+                      </h3>
+
+                      <p class="fw-bold text-info mb-1">
+                        {{ surpriseTeam.type }}
+                      </p>
+
+                      <div class="mt-1">
+                        <small class="d-block text-white-50">
+                          🎯 {{ surpriseTeam.exact_predictions }}
+                          usuarios acertaron marcador exacto
+                        </small>
+
+                        <small class="d-block text-white-50 mt-1">
+                          ✅ {{ surpriseTeam.result_predictions }}
+                          usuarios acertaron ganador o empate
+                          <span class="fw-bold text-info">
+                            ({{ surpriseTeam.result_percentage }}%)
+                          </span>
+                        </small>
+                      </div>
+                    </div>
+
+                    <div v-else class="text-white-50 small text-center py-4">
+                      Aún no hay datos suficientes.
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
         </main>
@@ -228,9 +433,12 @@ const championCountries = ref([]);
 const groupWinnerVotes = ref({});
 const groupCatalog = ref({});
 const selectedGroup = ref("A");
+const showAllChampionCountries = ref(false);
+const matchAccuracy = ref([]);
+const surpriseMatches = ref([]);
 
 const countryCatalog = {
-  mx: { name: "México", color: "#16a34a" },
+  mx: { name: "México", color: "#006341" },
   za: { name: "Sudáfrica", color: "#16a34a" },
   kr: { name: "Corea del Sur", color: "#ef4444" },
   cz: { name: "Chequia", color: "#2563eb" },
@@ -238,7 +446,7 @@ const countryCatalog = {
   ba: { name: "Bosnia y Herzegovina", color: "#2563eb" },
   qa: { name: "Qatar", color: "#7f1d1d" },
   ch: { name: "Suiza", color: "#dc2626" },
-  br: { name: "Brasil", color: "#22c55e" },
+  br: { name: "Brasil", color: "#FEDF00" },
   ma: { name: "Marruecos", color: "#dc2626" },
   ht: { name: "Haití", color: "#2563eb" },
   "gb-sct": { name: "Escocia", color: "#2563eb" },
@@ -246,10 +454,10 @@ const countryCatalog = {
   py: { name: "Paraguay", color: "#dc2626" },
   au: { name: "Australia", color: "#1d4ed8" },
   tr: { name: "Turquía", color: "#dc2626" },
-  de: { name: "Alemania", color: "#111827" },
+  de: { name: "Alemania", color: "#D71016" },
   cw: { name: "Curazao", color: "#2563eb" },
   ci: { name: "Costa de Marfil", color: "#ea580c" },
-  ec: { name: "Ecuador", color: "#eab308" },
+  ec: { name: "Ecuador", color: "#ffd100" },
   nl: { name: "Países Bajos", color: "#ea580c" },
   jp: { name: "Japón", color: "#dc2626" },
   se: { name: "Suecia", color: "#eab308" },
@@ -258,19 +466,19 @@ const countryCatalog = {
   eg: { name: "Egipto", color: "#111827" },
   ir: { name: "Irán", color: "#16a34a" },
   nz: { name: "Nueva Zelanda", color: "#111827" },
-  es: { name: "España", color: "#facc15" },
+  es: { name: "España", color: "#AA151B" },
   cv: { name: "Cabo Verde", color: "#2563eb" },
   sa: { name: "Arabia Saudita", color: "#16a34a" },
   uy: { name: "Uruguay", color: "#06b6d4" },
-  fr: { name: "Francia", color: "#2563eb" },
+  fr: { name: "Francia", color: "#013896" },
   sn: { name: "Senegal", color: "#16a34a" },
   iq: { name: "Irak", color: "#dc2626" },
   no: { name: "Noruega", color: "#dc2626" },
-  ar: { name: "Argentina", color: "#38bdf8" },
+  ar: { name: "Argentina", color: "#75aadb" },
   dz: { name: "Argelia", color: "#16a34a" },
   at: { name: "Austria", color: "#dc2626" },
   jo: { name: "Jordania", color: "#111827" },
-  pt: { name: "Portugal", color: "#16a34a" },
+  pt: { name: "Portugal", color: "#046A38" },
   cd: { name: "RD Congo", color: "#2563eb" },
   uz: { name: "Uzbekistán", color: "#38bdf8" },
   co: { name: "Colombia", color: "#facc15" },
@@ -513,6 +721,237 @@ const loadGroupWinnerVotes = async () => {
     ]),
   );
 };
+//////////////////PREDICTIONS/////////////////////////////////
+const finishedMatchesAccuracy = computed(() =>
+  matchAccuracy.value.filter((match) => match.total_predictions > 0),
+);
+
+const hardestMatch = computed(() => {
+  return (
+    [...finishedMatchesAccuracy.value].sort(
+      (a, b) => a.accuracy - b.accuracy,
+    )[0] || null
+  );
+});
+
+const easiestMatch = computed(() => {
+  return (
+    [...finishedMatchesAccuracy.value].sort(
+      (a, b) => b.accuracy - a.accuracy,
+    )[0] || null
+  );
+});
+//////////////////SURPRISE TEAM//////////////////////////////
+const surpriseTeam = computed(() => surpriseMatches.value[0] || null);
+const loadSurpriseTeam = async () => {
+  const leagueId = getLeagueId();
+
+  if (!leagueId) return;
+
+  const { data, error } = await supabase
+    .from("predictions")
+    .select(
+      `
+      home_score,
+      away_score,
+      matches (
+        id,
+        group_name,
+        home_team,
+        away_team,
+        home_score,
+        away_score
+      )
+    `,
+    )
+    .eq("league_id", leagueId)
+    .not("home_score", "is", null)
+    .not("away_score", "is", null);
+
+  if (error) {
+    console.error("Error cargando equipo sorpresa:", error);
+    return;
+  }
+
+  const grouped = {};
+
+  (data || []).forEach((prediction) => {
+    const match = prediction.matches;
+
+    if (!match) return;
+    if (match.home_score === null || match.away_score === null) return;
+
+    const matchId = match.id;
+
+    if (!grouped[matchId]) {
+      grouped[matchId] = {
+        match_id: matchId,
+        group_name: match.group_name,
+        home_team: match.home_team,
+        away_team: match.away_team,
+        home_flag: getFlagCode(match.home_team),
+        away_flag: getFlagCode(match.away_team),
+        real_home_score: Number(match.home_score),
+        real_away_score: Number(match.away_score),
+        total_predictions: 0,
+        home_favorite_votes: 0,
+        away_favorite_votes: 0,
+        draw_votes: 0,
+        exact_predictions: 0,
+        result_predictions: 0,
+      };
+    }
+
+    grouped[matchId].total_predictions += 1;
+
+    const predictedHome = Number(prediction.home_score);
+    const predictedAway = Number(prediction.away_score);
+
+    const realHome = grouped[matchId].real_home_score;
+    const realAway = grouped[matchId].real_away_score;
+
+    const isExact = predictedHome === realHome && predictedAway === realAway;
+
+    if (isExact) {
+      grouped[matchId].exact_predictions += 1;
+    }
+
+    const predictedResult =
+      predictedHome > predictedAway
+        ? "HOME"
+        : predictedAway > predictedHome
+          ? "AWAY"
+          : "DRAW";
+
+    const realResult =
+      realHome > realAway ? "HOME" : realAway > realHome ? "AWAY" : "DRAW";
+
+    if (predictedResult === realResult) {
+      grouped[matchId].result_predictions += 1;
+    }
+
+    if (predictedHome > predictedAway) {
+      grouped[matchId].home_favorite_votes += 1;
+    } else if (predictedAway > predictedHome) {
+      grouped[matchId].away_favorite_votes += 1;
+    } else {
+      grouped[matchId].draw_votes += 1;
+    }
+  });
+
+  const surprises = Object.values(grouped)
+    .map((match) => {
+      const homeWon = match.real_home_score > match.real_away_score;
+      const awayWon = match.real_away_score > match.real_home_score;
+      const draw = match.real_home_score === match.real_away_score;
+
+      if (homeWon) {
+        return {
+          ...match,
+          team: match.home_team,
+          flag: match.home_flag,
+          exact_predictions: match.exact_predictions,
+          result_predictions: match.result_predictions,
+          exact_percentage: match.total_predictions
+            ? Math.round(
+                (match.exact_predictions / match.total_predictions) * 100,
+              )
+            : 0,
+          result_percentage: match.total_predictions
+            ? Math.round(
+                (match.result_predictions / match.total_predictions) * 100,
+              )
+            : 0,
+          home_favorite_percentage: match.total_predictions
+            ? Math.round(
+                (match.home_favorite_votes / match.total_predictions) * 100,
+              )
+            : 0,
+          away_favorite_percentage: match.total_predictions
+            ? Math.round(
+                (match.away_favorite_votes / match.total_predictions) * 100,
+              )
+            : 0,
+          surprise_votes: match.home_favorite_votes,
+          type: "Victoria inesperada",
+        };
+      }
+
+      if (awayWon) {
+        return {
+          ...match,
+          team: match.away_team,
+          flag: match.away_flag,
+          exact_predictions: match.exact_predictions,
+          result_predictions: match.result_predictions,
+          exact_percentage: match.total_predictions
+            ? Math.round(
+                (match.exact_predictions / match.total_predictions) * 100,
+              )
+            : 0,
+          result_percentage: match.total_predictions
+            ? Math.round(
+                (match.result_predictions / match.total_predictions) * 100,
+              )
+            : 0,
+          home_favorite_percentage: match.total_predictions
+            ? Math.round(
+                (match.home_favorite_votes / match.total_predictions) * 100,
+              )
+            : 0,
+          away_favorite_percentage: match.total_predictions
+            ? Math.round(
+                (match.away_favorite_votes / match.total_predictions) * 100,
+              )
+            : 0,
+          type: "Victoria inesperada",
+        };
+      }
+
+      if (draw) {
+        const lessFavoredTeam =
+          match.home_favorite_votes <= match.away_favorite_votes
+            ? { name: match.home_team, flag: match.home_flag }
+            : { name: match.away_team, flag: match.away_flag };
+
+        return {
+          ...match,
+          team: lessFavoredTeam.name,
+          flag: lessFavoredTeam.flag,
+          exact_predictions: match.exact_predictions,
+          result_predictions: match.result_predictions,
+          exact_percentage: match.total_predictions
+            ? Math.round(
+                (match.exact_predictions / match.total_predictions) * 100,
+              )
+            : 0,
+          result_percentage: match.total_predictions
+            ? Math.round(
+                (match.result_predictions / match.total_predictions) * 100,
+              )
+            : 0,
+          home_favorite_percentage: match.total_predictions
+            ? Math.round(
+                (match.home_favorite_votes / match.total_predictions) * 100,
+              )
+            : 0,
+          away_favorite_percentage: match.total_predictions
+            ? Math.round(
+                (match.away_favorite_votes / match.total_predictions) * 100,
+              )
+            : 0,
+          surprise_votes: match.draw_votes,
+          type: "Empate inesperado",
+        };
+      }
+
+      return null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.surprise_votes - b.surprise_votes);
+
+  surpriseMatches.value = surprises;
+};
 //////////////////CHAMPIONSHIP///////////////////////////////
 const loadChampionCountries = async () => {
   const leagueId = getLeagueId();
@@ -572,6 +1011,12 @@ const countriesWithPercentages = computed(() =>
     }))
     .sort((a, b) => b.percentage - a.percentage),
 );
+
+const visibleChampionCountries = computed(() => {
+  return showAllChampionCountries.value
+    ? countriesWithPercentages.value
+    : countriesWithPercentages.value.slice(0, 4);
+});
 
 const donutSlices = computed(() => {
   let offset = 25;
@@ -690,10 +1135,86 @@ const initMap = async () => {
   setTimeout(paintSelectedCountries, 800);
 };
 
+const loadMatchAccuracy = async () => {
+  const leagueId = getLeagueId();
+
+  if (!leagueId) return;
+
+  const { data, error } = await supabase
+    .from("predictions")
+    .select(
+      `
+      home_score,
+      away_score,
+      matches (
+        id,
+        group_name,
+        home_team,
+        away_team,
+        home_score,
+        away_score
+      )
+    `,
+    )
+    .eq("league_id", leagueId)
+    .not("home_score", "is", null)
+    .not("away_score", "is", null);
+
+  if (error) {
+    console.error("Error cargando dificultad por partido:", error);
+    return;
+  }
+
+  const grouped = {};
+
+  (data || []).forEach((prediction) => {
+    const match = prediction.matches;
+
+    if (!match) return;
+    if (match.home_score === null || match.away_score === null) return;
+
+    const matchId = match.id;
+
+    if (!grouped[matchId]) {
+      grouped[matchId] = {
+        match_id: matchId,
+        group_name: match.group_name,
+        home_team: match.home_team,
+        away_team: match.away_team,
+        home_flag: getFlagCode(match.home_team),
+        away_flag: getFlagCode(match.away_team),
+        real_home_score: Number(match.home_score),
+        real_away_score: Number(match.away_score),
+        total_predictions: 0,
+        correct_predictions: 0,
+      };
+    }
+
+    grouped[matchId].total_predictions += 1;
+
+    const isExact =
+      Number(prediction.home_score) === Number(match.home_score) &&
+      Number(prediction.away_score) === Number(match.away_score);
+
+    if (isExact) {
+      grouped[matchId].correct_predictions += 1;
+    }
+  });
+
+  matchAccuracy.value = Object.values(grouped).map((match) => ({
+    ...match,
+    accuracy: match.total_predictions
+      ? Math.round((match.correct_predictions / match.total_predictions) * 100)
+      : 0,
+  }));
+};
+
 onMounted(async () => {
   await loadChampionCountries();
   await loadGroupCatalog();
   await loadGroupWinnerVotes();
+  await loadMatchAccuracy();
+  await loadSurpriseTeam();
   await initMap();
 });
 
@@ -711,8 +1232,8 @@ onBeforeUnmount(() => {
 }
 
 .champion-donut {
-  width: 165px;
-  height: 165px;
+  width: 130px;
+  height: 130px;
   position: relative;
   display: grid;
   place-items: center;
@@ -755,11 +1276,12 @@ onBeforeUnmount(() => {
 }
 
 .champion-country-row {
+  font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.04);
 }
 
 .world-map-wrapper {
-  min-height: 360px;
+  min-height: 300px;
   background: transparent;
 }
 
