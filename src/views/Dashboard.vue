@@ -334,9 +334,9 @@
                 </div>
                 <div class="col-12 col-md-6 col-xl-4">
                   <div
-                    class="card bg-dark bg-opacity-50 text-white rounded-4 border border-info border-opacity-50 p-3 p-md-4 h-100"
+                    class="card bg-dark bg-opacity-50 text-white rounded-4 border border-warning border-opacity-50 p-3 p-md-4 h-100"
                   >
-                    <p class="fw-bold text-info mb-4">Equipo sorpresa</p>
+                    <p class="fw-bold text-warning mb-4">Equipo sorpresa</p>
 
                     <div v-if="surpriseTeam" class="text-center">
                       <div
@@ -377,7 +377,7 @@
                         {{ surpriseTeam.team }}
                       </h3>
 
-                      <p class="fw-bold text-info mb-1">
+                      <p class="fw-bold text-warning mb-1">
                         {{ surpriseTeam.type }}
                       </p>
 
@@ -390,7 +390,7 @@
                         <small class="d-block text-white-50 mt-1">
                           ✅ {{ surpriseTeam.result_predictions }}
                           usuarios acertaron ganador o empate
-                          <span class="fw-bold text-info">
+                          <span class="fw-bold">
                             ({{ surpriseTeam.result_percentage }}%)
                           </span>
                         </small>
@@ -838,118 +838,75 @@ const loadSurpriseTeam = async () => {
       grouped[matchId].draw_votes += 1;
     }
   });
-
   const surprises = Object.values(grouped)
     .map((match) => {
       const homeWon = match.real_home_score > match.real_away_score;
       const awayWon = match.real_away_score > match.real_home_score;
       const draw = match.real_home_score === match.real_away_score;
 
-      if (homeWon) {
-        return {
-          ...match,
-          team: match.home_team,
-          flag: match.home_flag,
-          exact_predictions: match.exact_predictions,
-          result_predictions: match.result_predictions,
-          exact_percentage: match.total_predictions
-            ? Math.round(
-                (match.exact_predictions / match.total_predictions) * 100,
-              )
-            : 0,
-          result_percentage: match.total_predictions
-            ? Math.round(
-                (match.result_predictions / match.total_predictions) * 100,
-              )
-            : 0,
-          home_favorite_percentage: match.total_predictions
-            ? Math.round(
-                (match.home_favorite_votes / match.total_predictions) * 100,
-              )
-            : 0,
-          away_favorite_percentage: match.total_predictions
-            ? Math.round(
-                (match.away_favorite_votes / match.total_predictions) * 100,
-              )
-            : 0,
-          surprise_votes: match.home_favorite_votes,
-          type: "Victoria inesperada",
-        };
-      }
+      const total = match.total_predictions || 0;
 
-      if (awayWon) {
-        return {
-          ...match,
-          team: match.away_team,
-          flag: match.away_flag,
-          exact_predictions: match.exact_predictions,
-          result_predictions: match.result_predictions,
-          exact_percentage: match.total_predictions
-            ? Math.round(
-                (match.exact_predictions / match.total_predictions) * 100,
-              )
-            : 0,
-          result_percentage: match.total_predictions
-            ? Math.round(
-                (match.result_predictions / match.total_predictions) * 100,
-              )
-            : 0,
-          home_favorite_percentage: match.total_predictions
-            ? Math.round(
-                (match.home_favorite_votes / match.total_predictions) * 100,
-              )
-            : 0,
-          away_favorite_percentage: match.total_predictions
-            ? Math.round(
-                (match.away_favorite_votes / match.total_predictions) * 100,
-              )
-            : 0,
-          type: "Victoria inesperada",
-        };
-      }
+      const resultVotes = homeWon
+        ? match.home_favorite_votes
+        : awayWon
+          ? match.away_favorite_votes
+          : match.draw_votes;
 
-      if (draw) {
-        const lessFavoredTeam =
-          match.home_favorite_votes <= match.away_favorite_votes
-            ? { name: match.home_team, flag: match.home_flag }
-            : { name: match.away_team, flag: match.away_flag };
+      const resultPercentage = total
+        ? Math.round((resultVotes / total) * 100)
+        : 0;
 
-        return {
-          ...match,
-          team: lessFavoredTeam.name,
-          flag: lessFavoredTeam.flag,
-          exact_predictions: match.exact_predictions,
-          result_predictions: match.result_predictions,
-          exact_percentage: match.total_predictions
-            ? Math.round(
-                (match.exact_predictions / match.total_predictions) * 100,
-              )
-            : 0,
-          result_percentage: match.total_predictions
-            ? Math.round(
-                (match.result_predictions / match.total_predictions) * 100,
-              )
-            : 0,
-          home_favorite_percentage: match.total_predictions
-            ? Math.round(
-                (match.home_favorite_votes / match.total_predictions) * 100,
-              )
-            : 0,
-          away_favorite_percentage: match.total_predictions
-            ? Math.round(
-                (match.away_favorite_votes / match.total_predictions) * 100,
-              )
-            : 0,
-          surprise_votes: match.draw_votes,
-          type: "Empate inesperado",
-        };
-      }
+      const exactPercentage = total
+        ? Math.round((match.exact_predictions / total) * 100)
+        : 0;
 
-      return null;
+      if (resultVotes === 0) return null;
+
+      return {
+        ...match,
+        team: homeWon
+          ? match.home_team
+          : awayWon
+            ? match.away_team
+            : match.home_favorite_votes <= match.away_favorite_votes
+              ? match.home_team
+              : match.away_team,
+
+        flag: homeWon
+          ? match.home_flag
+          : awayWon
+            ? match.away_flag
+            : match.home_favorite_votes <= match.away_favorite_votes
+              ? match.home_flag
+              : match.away_flag,
+
+        type: draw ? "Empate inesperado" : "Victoria inesperada",
+
+        result_predictions: resultVotes,
+        result_percentage: resultPercentage,
+        exact_percentage: exactPercentage,
+
+        home_favorite_percentage: total
+          ? Math.round((match.home_favorite_votes / total) * 100)
+          : 0,
+
+        away_favorite_percentage: total
+          ? Math.round((match.away_favorite_votes / total) * 100)
+          : 0,
+
+        draw_percentage: total
+          ? Math.round((match.draw_votes / total) * 100)
+          : 0,
+      };
     })
     .filter(Boolean)
-    .sort((a, b) => a.surprise_votes - b.surprise_votes);
-
+    .sort((a, b) => {
+      return (
+        a.result_percentage - b.result_percentage ||
+        a.exact_percentage - b.exact_percentage ||
+        a.result_predictions - b.result_predictions
+      );
+    });
   surpriseMatches.value = surprises;
 };
 //////////////////CHAMPIONSHIP///////////////////////////////
