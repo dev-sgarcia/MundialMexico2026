@@ -860,8 +860,6 @@ const loadSurpriseTeam = async () => {
         ? Math.round((match.exact_predictions / total) * 100)
         : 0;
 
-      if (resultVotes === 0) return null;
-
       return {
         ...match,
         team: homeWon
@@ -909,6 +907,7 @@ const loadSurpriseTeam = async () => {
     });
   surpriseMatches.value = surprises;
 };
+
 //////////////////CHAMPIONSHIP///////////////////////////////
 const loadChampionCountries = async () => {
   const leagueId = getLeagueId();
