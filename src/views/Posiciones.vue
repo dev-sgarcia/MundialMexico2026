@@ -111,8 +111,15 @@
                   class="card bg-primary bg-opacity-10 text-white border border-primary border-opacity-50 rounded-4 shadow-sm h-100"
                 >
                   <div
-                    class="card-body p-3 text-center d-flex flex-column justify-content-center"
+                    class="card-body p-3 text-center d-flex flex-column justify-content-center position-relative"
                   >
+                    <button
+                      class="btn btn-link text-light p-0 opacity-75 position-absolute top-0 end-0 m-3"
+                      @click="compartirPosicion"
+                    >
+                      <PhShareNetwork size="22" />
+                    </button>
+
                     <div
                       class="d-flex justify-content-center align-items-center gap-1 mb-3"
                     >
@@ -121,16 +128,19 @@
                         weight="fill"
                         class="text-primary flex-shrink-0"
                       />
+
                       <small
                         class="text-white-50 fw-bold text-uppercase"
                         style="font-size: 0.75rem"
-                        >Tu posición</small
                       >
+                        Tu posición
+                      </small>
                     </div>
 
                     <h3 class="fw-bold mb-1 text-primary">
                       {{ hayPuntos ? `${miPosicion}°` : "—" }}
                     </h3>
+
                     <span class="text-white-50 small lh-sm d-block mt-1">
                       {{
                         hayPuntos
@@ -530,38 +540,6 @@
                                 >
                               </div>
                             </div>
-
-                            <!-- <div class="d-flex align-items-center gap-2 py-1">
-                              <img
-                                v-if="jugador.avatar_url"
-                                :src="jugador.avatar_url"
-                                :alt="jugador.nombre"
-                                class="rounded-circle border border-secondary border-opacity-25"
-                                width="38"
-                                height="38"
-                                style="object-fit: cover"
-                              />
-                              <div
-                                v-else
-                                class="rounded-circle border border-secondary border-opacity-25 d-flex align-items-center justify-content-center bg-dark"
-                                style="width: 38px; height: 38px"
-                              >
-                                <PhUser size="20" class="text-white-50" />
-                              </div>
-                              <div class="d-flex flex-column">
-                                <span
-                                  class="fw-bold text-white text-truncate"
-                                  style="max-width: 160px"
-                                  >{{ jugador.nombre }}</span
-                                >
-                                <span
-                                  v-if="jugador.user_id === userId"
-                                  class="badge text-bg-success text-uppercase"
-                                  style="font-size: 0.6rem; width: fit-content"
-                                  >Tú</span
-                                >
-                              </div>
-                            </div> -->
                           </td>
 
                           <td class="text-center d-none d-md-table-cell">
@@ -658,7 +636,19 @@
         </main>
       </div>
     </div>
-
+    <div class="share-export-hidden">
+      <SharePositionImage
+        ref="shareImageRef"
+        :user-name="miNombre"
+        :avatar-url="miAvatar"
+        :points="misPuntos"
+        :invite-code="codigoInvitacion"
+        :league-name="nombreQuinielaActiva"
+        :position="miPosicion"
+        :total-players="totalParticipantes"
+        :effectiveness="miEfectividad"
+      />
+    </div>
     <BottomNav />
   </div>
 </template>
@@ -668,6 +658,7 @@ import { ref, computed, onMounted } from "vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
+import SharePositionImage from "@/components/common/SharePositionImage.vue";
 
 import {
   PhCrown,
@@ -675,6 +666,7 @@ import {
   PhMagnifyingGlass,
   PhMedal,
   PhRanking,
+  PhShareNetwork,
   PhTarget,
   PhUser,
 } from "@phosphor-icons/vue";
@@ -682,7 +674,9 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Swal from "sweetalert2";
+import html2canvas from "html2canvas";
 
+const shareImageRef = ref(null);
 const router = useRouter();
 const route = useRoute();
 
@@ -781,11 +775,24 @@ const totalParticipantes = ref(0);
 const distanciaLider = ref(0);
 const miEfectividad = ref("0%");
 
-const tablaPosiciones = ref([]);
+// Datos para compartir
+const miNombre = ref("Participante");
+const miAvatar = ref("");
+const misPuntos = ref(0);
+const codigoInvitacion = ref("");
 
+const tablaPosiciones = ref([]);
 const cargarPosiciones = async () => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") return;
+  const { data: liga, error: errorLiga } = await supabase
+    .from("leagues")
+    .select("invite_code")
+    .eq("id", idLigaActiva.value)
+    .single();
 
+  if (!errorLiga) {
+    codigoInvitacion.value = liga?.invite_code || "";
+  }
   try {
     const { data, error } = await supabase
       .from("vw_posiciones")
@@ -799,16 +806,17 @@ const cargarPosiciones = async () => {
     // Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
     tablaPosiciones.value = (data || []).map((jugador, index) => {
       let efectividad = "0%";
-      
+
       if (jugador.jugados > 0) {
         // 1. Calculamos el máximo de puntos posibles (3 puntos por cada partido jugado)
         const puntosPosibles = jugador.jugados * 3;
-        
+
         // 2. Calculamos los puntos reales obtenidos en esos partidos
-        const puntosObtenidos = (jugador.exactos * 3) + (jugador.aciertos * 1);
-        
+        const puntosObtenidos = jugador.exactos * 3 + jugador.aciertos * 1;
+
         // 3. Sacamos el porcentaje real de efectividad
-        efectividad = ((puntosObtenidos / puntosPosibles) * 100).toFixed(1) + "%";
+        efectividad =
+          ((puntosObtenidos / puntosPosibles) * 100).toFixed(1) + "%";
       }
 
       return {
@@ -834,7 +842,7 @@ const cargarPosiciones = async () => {
 
       if (miIndice !== -1) {
         const misDatos = tablaPosiciones.value[miIndice];
-
+        misPuntos.value = misDatos.puntos || 0;
         // Card 2: TU POSICIÓN
         miPosicion.value = misDatos.posicion;
 
@@ -883,6 +891,14 @@ onMounted(async () => {
 
   userId.value = session.user.id;
 
+  miNombre.value =
+    session.user.user_metadata?.full_name ||
+    session.user.user_metadata?.name ||
+    session.user.email ||
+    "Participante";
+
+  miAvatar.value = session.user.user_metadata?.avatar_url || "";
+
   // await cargarPosiciones();
 
   // 1. Validar si tiene al menos una liga
@@ -907,6 +923,50 @@ onMounted(async () => {
 
   await cargarPosiciones();
 });
+
+const compartirPosicion = async () => {
+  if (!shareImageRef.value) return;
+
+  if (miAvatar.value?.includes("googleusercontent")) {
+    miAvatar.value = "";
+  }
+
+  const element = shareImageRef.value.$el;
+
+  const canvas = await html2canvas(element, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true,
+    width: 1080,
+    height: 1350,
+    windowWidth: 1080,
+    windowHeight: 1350,
+  });
+
+  canvas.toBlob(async (blob) => {
+    if (!blob) return;
+
+    const file = new File([blob], "mi-posicion-fansleague.png", {
+      type: "image/png",
+    });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "Mi posición en FansLeague",
+        text: `Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}
+      ⚽ ¿Podrás superarme?
+      🎟️ Código de invitación: ${codigoInvitacion.value}
+      👉 https://fansleague.com.mx`,
+      });
+    } else {
+      const link = document.createElement("a");
+      link.download = "mi-posicion-fansleague.png";
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    }
+  }, "image/png");
+};
 </script>
 
 <style scoped>
@@ -1005,5 +1065,12 @@ onMounted(async () => {
   .top-player-third .fs-5 {
     font-size: 1rem !important;
   }
+}
+
+.share-export-hidden {
+  position: fixed;
+  left: -99999px;
+  top: -99999px;
+  pointer-events: none;
 }
 </style>
