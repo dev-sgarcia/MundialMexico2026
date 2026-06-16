@@ -30,19 +30,19 @@
 
           <div class="stat-box mb-3">
             <div class="stat-icon">⭐</div>
-            <div>
-              <div class="stat-label text-center">PUNTOS</div>
-              <div class="stat-value gold text-center">{{ points }}</div>
+
+            <div class="text-center">
+              <div class="stat-label">PUNTOS</div>
+              <div class="stat-value gold">{{ points }}</div>
             </div>
           </div>
 
           <div class="stat-box">
             <div class="stat-icon green">🎯</div>
-            <div>
-              <div class="stat-label text-center">EFECTIVIDAD</div>
-              <div class="stat-value green-text text-center">
-                {{ effectiveness }}
-              </div>
+
+            <div class="text-center">
+              <div class="stat-label">EFECTIVIDAD</div>
+              <div class="stat-value gold">{{ effectiveness }}</div>
             </div>
           </div>
 
@@ -71,9 +71,9 @@
           </div>
 
           <h1 class="user-name">{{ userName || "Participante" }}</h1>
-          <p class="league-subtitle">
+          <!-- <p class="league-subtitle">
             {{ leagueName }}
-          </p>
+          </p> -->
           <div class="profile-divider"></div>
 
           <div class="profile-position-label">POSICIÓN</div>
@@ -148,7 +148,7 @@ const medalClass = computed(() => {
   height: 1350px;
   position: relative;
   overflow: hidden;
-
+  border: 4px solid #f2d56b;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -199,7 +199,7 @@ const medalClass = computed(() => {
 }
 
 .league-title {
-  color: #18c66a;
+  color: #f2d56b;
   font-size: 34px;
   font-weight: 900;
   letter-spacing: 4px;
@@ -230,13 +230,13 @@ const medalClass = computed(() => {
 }
 
 .label-main {
-  font-size: 33px;
+  font-size: 42px;
   font-weight: 900;
 }
 
 .position-number {
   font-size: 180px;
-  letter-spacing: -8px;
+  letter-spacing: -10px;
   line-height: 0.9;
   font-weight: 900;
   color: #f6c000;
@@ -246,43 +246,41 @@ const medalClass = computed(() => {
 }
 
 .participants {
-  font-size: 29px;
+  font-size: 36px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.78);
+  color: #fff;
 }
 
 .stat-box {
-  height: 118px;
+  height: 120px;
   border: 1px solid rgba(242, 213, 107, 0.25);
-  border-radius: 22px;
-  padding: 20px 28px;
+  border-radius: 18px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  justify-content: center;
+  gap: 16px;
   background: rgba(0, 0, 0, 0.42);
 }
 
 .stat-icon {
-  width: 74px;
-  height: 74px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 38px;
-  background: rgba(242, 213, 107, 0.12);
-}
-
-.stat-icon.green {
-  background: rgba(24, 198, 106, 0.14);
+  width: 55px;
+  text-align: center;
+  height: auto;
+  background: transparent;
+  border-radius: 0;
+  font-size: 46px;
+  line-height: 1;
 }
 
 .stat-label {
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 900;
+  line-height: 1;
 }
 
 .stat-value {
-  font-size: 52px;
+  font-size: 62px;
   font-weight: 900;
   line-height: 1;
 }
@@ -292,31 +290,31 @@ const medalClass = computed(() => {
 }
 
 .green-text {
-  color: #18c66a;
+  color: #f2d56b;
 }
 
 .slogan {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: 900;
 }
 
 .slogan strong {
   display: block;
   color: #18c66a;
-  font-size: 30px;
+  font-size: 40px;
   font-style: italic;
 }
 
 .profile-card {
   min-height: 560px;
-  border: 4px solid #d9b94d;
+  border: 2px solid #d9b94d;
   border-radius: 46px;
   padding: 90px 38px 42px;
   text-align: center;
   position: relative;
-  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(8px);
-  box-shadow: 0 0 24px rgba(242, 213, 107, 0.25);
+  background: rgba(0, 0, 0, 0.72);
+  box-shadow: 0 0 40px rgba(242, 213, 107, 0.15);
 }
 
 .medal-badge {
@@ -332,7 +330,7 @@ const medalClass = computed(() => {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  border: 6px solid rgba(255, 255, 255, 0.5);
+  border: 4px solid rgba(255, 255, 255, 0.5);
 }
 
 .medal-badge span {
@@ -372,7 +370,6 @@ const medalClass = computed(() => {
   height: 220px;
   margin: 0 auto 32px;
   border-radius: 50%;
-  border: 6px solid #e0bf55;
   padding: 6px;
   background: #111;
 }
@@ -471,7 +468,7 @@ const medalClass = computed(() => {
 
 .invite-code strong {
   display: block;
-  font-size: 56px;
+  font-size: 40px;
   line-height: 1.05;
   font-weight: 900;
   letter-spacing: 2px;

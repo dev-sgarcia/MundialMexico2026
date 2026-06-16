@@ -111,15 +111,8 @@
                   class="card bg-primary bg-opacity-10 text-white border border-primary border-opacity-50 rounded-4 shadow-sm h-100"
                 >
                   <div
-                    class="card-body p-3 text-center d-flex flex-column justify-content-center position-relative"
+                    class="card-body p-3 text-center d-flex flex-column justify-content-center"
                   >
-                    <button
-                      class="btn btn-link text-light p-0 opacity-75 position-absolute top-0 end-0 m-3"
-                      @click="compartirPosicion"
-                    >
-                      <PhShareNetwork size="22" />
-                    </button>
-
                     <div
                       class="d-flex justify-content-center align-items-center gap-1 mb-3"
                     >
@@ -137,8 +130,18 @@
                       </small>
                     </div>
 
-                    <h3 class="fw-bold mb-1 text-primary">
+                    <h3
+                      class="fw-bold mb-1 text-primary d-flex justify-content-center align-items-center gap-2"
+                    >
                       {{ hayPuntos ? `${miPosicion}°` : "—" }}
+
+                      <button
+                        v-if="hayPuntos"
+                        class="btn btn-link text-secondary p-0 d-flex align-items-center mt-1"
+                        @click="compartirPosicion"
+                      >
+                        <PhShareFat size="22" />
+                      </button>
                     </h3>
 
                     <span class="text-white-50 small lh-sm d-block mt-1">
@@ -666,7 +669,7 @@ import {
   PhMagnifyingGlass,
   PhMedal,
   PhRanking,
-  PhShareNetwork,
+  PhShareFat,
   PhTarget,
   PhUser,
 } from "@phosphor-icons/vue";
@@ -685,7 +688,7 @@ const search = ref("");
 const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
 
 const currentPage = ref(1);
-const itemsPerPage = 10;
+const itemsPerPage = 7;
 
 const totalPages = computed(() =>
   Math.ceil(posicionesTabla.value.length / itemsPerPage),
@@ -878,6 +881,37 @@ const validarAcceso = async (userId) => {
   }
 };
 
+///////////////////Alerta temporal///////////////////////////////
+const mostrarTutorialCompartir = () => {
+  const yaVioTutorial = localStorage.getItem("tutorial-compartir-posicion");
+
+  if (yaVioTutorial) return;
+
+  Swal.fire({
+    title: "🎉 ¡Ahora puedes compartir tu posición!",
+    html: `
+    <div class="text-center">
+      <div style="font-size:64px;color:#94a3b8;line-height:1;">
+        ↪
+      </div>
+
+      <p class="mt-3 mb-2">
+        Comparte tu lugar en la quiniela y presume tu ranking.
+      </p>
+
+      <p class="mb-0">
+        Busca este icono junto a tu posición para compartirla con otros participantes.
+      </p>
+    </div>
+  `,
+    confirmButtonText: "Entendido",
+    confirmButtonColor: "#198754",
+    background: "#111",
+    color: "#fff",
+  });
+  // localStorage.setItem("tutorial-compartir-posicion", "true");
+};
+
 // El onMounted blindado
 onMounted(async () => {
   const {
@@ -922,6 +956,7 @@ onMounted(async () => {
   }
 
   await cargarPosiciones();
+  mostrarTutorialCompartir();
 });
 
 const compartirPosicion = async () => {
@@ -954,10 +989,7 @@ const compartirPosicion = async () => {
       await navigator.share({
         files: [file],
         title: "Mi posición en FansLeague",
-        text: `Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}
-      ⚽ ¿Podrás superarme?
-      🎟️ Código de invitación: ${codigoInvitacion.value}
-      👉 https://fansleague.com.mx`,
+        text: `🏆 Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}. ⚽ ¿Crees poder alcanzarme? Únete a mi *QUINIELA* en 👉 https://fansleague.com.mx usando el código ${codigoInvitacion.value}`,
       });
     } else {
       const link = document.createElement("a");
