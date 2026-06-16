@@ -17,9 +17,11 @@
 
             <div class="bg-black z-3 mb-4">
               <div>
-                <h2 class="fw-bold mb-1 d-flex align-items-center gap-2 text-warning">
-                <PhStar weight="fill" /> Posiciones VIP
-                </h2>                
+                <h2
+                  class="fw-bold mb-1 d-flex align-items-center gap-2 text-warning"
+                >
+                  <PhStar weight="fill" /> Posiciones VIP
+                </h2>
 
                 <p class="text-white-50 mb-0">
                   Ranking general de participantes de la quiniela:
@@ -114,16 +116,31 @@
                         weight="fill"
                         class="text-primary flex-shrink-0"
                       />
+
                       <small
                         class="text-white-50 fw-bold text-uppercase"
                         style="font-size: 0.75rem"
-                        >Tu posición</small
                       >
+                        Tu posición
+                      </small>
                     </div>
 
-                    <h3 class="fw-bold mb-1 text-primary">
-                      {{ hayPuntos ? `${miPosicion}°` : "—" }}
-                    </h3>
+                    <div
+                      class="d-flex justify-content-center align-items-center gap-2 mb-1"
+                    >
+                      <h3 class="fw-bold mb-0 text-primary">
+                        {{ hayPuntos ? `${miPosicion}°` : "—" }}
+                      </h3>
+
+                      <button
+                        v-if="hayPuntos"
+                        class="btn btn-link text-secondary p-0 d-flex align-items-center"
+                        @click="compartirPosicion"
+                        title="Compartir posición"
+                      >
+                        <PhShareFat size="18" />
+                      </button>
+                    </div>
                     <span class="text-white-50 small lh-sm d-block mt-1">
                       {{
                         hayPuntos
@@ -223,10 +240,12 @@
               >
                 <div class="card-body p-3 p-md-4">
                   <div class="d-flex align-items-center gap-2 mb-3">
-
-                    <h5 class="mb-0 fw-bold text-warning text-uppercase" style="letter-spacing: 0.5px">
-                    Tabla VIP Exclusiva
-                    </h5>                    
+                    <h5
+                      class="mb-0 fw-bold text-warning text-uppercase"
+                      style="letter-spacing: 0.5px"
+                    >
+                      Tabla VIP Exclusiva
+                    </h5>
                   </div>
 
                   <div
@@ -616,7 +635,19 @@
         </main>
       </div>
     </div>
-
+    <div class="share-export-hidden">
+      <SharePositionImage
+        ref="shareImageRef"
+        :user-name="miNombre"
+        :avatar-url="miAvatar"
+        :points="misPuntos"
+        :invite-code="codigoInvitacion"
+        :league-name="nombreQuinielaActiva"
+        :position="miPosicion"
+        :total-players="totalParticipantes"
+        :effectiveness="miEfectividad"
+      />
+    </div>
     <BottomNav />
   </div>
 </template>
@@ -626,12 +657,15 @@ import { ref, computed, onMounted } from "vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
+import html2canvas from "html2canvas";
+import SharePositionImage from "@/components/common/SharePositionImage.vue";
 
 import {
   PhCrown,
   PhLightning,
   PhMagnifyingGlass,
   PhMedal,
+  PhShareFat,
   PhRanking,
   PhTarget,
   PhUser,
@@ -641,6 +675,7 @@ import { useRouter, useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Swal from "sweetalert2";
 
+const shareImageRef = ref(null);
 const router = useRouter();
 const route = useRoute();
 
@@ -649,7 +684,7 @@ const search = ref("");
 const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
 
 const currentPage = ref(1);
-const itemsPerPage = 5;
+const itemsPerPage = 7;
 
 const totalPages = computed(() =>
   Math.ceil(posicionesTabla.value.length / itemsPerPage),
@@ -739,10 +774,27 @@ const totalParticipantes = ref(0);
 const distanciaLider = ref(0);
 const miEfectividad = ref("0%");
 
+// Datos para compartir
+const miNombre = ref("Participante");
+const miAvatar = ref("");
+const misPuntos = ref(0);
+const codigoInvitacion = ref("");
+
 const tablaPosiciones = ref([]);
 
 const cargarPosiciones = async () => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") return;
+
+  // Obtener código de invitación
+  const { data: liga, error: errorLiga } = await supabase
+    .from("leagues")
+    .select("invite_code")
+    .eq("id", idLigaActiva.value)
+    .single();
+
+  if (!errorLiga) {
+    codigoInvitacion.value = liga?.invite_code || "";
+  }
 
   try {
     // 1. NUEVO: Obtenemos solo a los usuarios que son VIP en esta liga
@@ -755,7 +807,7 @@ const cargarPosiciones = async () => {
     if (vipError) throw vipError;
 
     // Creamos un arreglo solo con los IDs de los VIP
-    const vipUserIds = vipUsers.map(v => v.user_id);
+    const vipUserIds = vipUsers.map((v) => v.user_id);
 
     // 2. Obtenemos las posiciones generales (como siempre)
     const { data, error } = await supabase
@@ -768,8 +820,8 @@ const cargarPosiciones = async () => {
     if (error) throw error;
 
     // 3. NUEVO: Filtramos la data para que solo queden los VIP
-    const datosVipFiltrados = (data || []).filter(jugador => 
-      vipUserIds.includes(jugador.user_id)
+    const datosVipFiltrados = (data || []).filter((jugador) =>
+      vipUserIds.includes(jugador.user_id),
     );
 
     //1. Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
@@ -780,17 +832,18 @@ const cargarPosiciones = async () => {
       //   efectividad = ((exitos / jugador.jugados) * 100).toFixed(1) + "%";
       // }
 
-       if (jugador.jugados > 0) {
-         // Calculamos el máximo de puntos posibles (3 puntos por cada partido jugado)
-         const puntosPosibles = jugador.jugados * 3;
-        
-         // Calculamos los puntos reales obtenidos en esos partidos
-         const puntosObtenidos = (jugador.exactos * 3) + (jugador.aciertos * 1);
-        
-         // Sacamos el porcentaje real de efectividad
-         efectividad = ((puntosObtenidos / puntosPosibles) * 100).toFixed(1) + "%";
-       }
-    return {
+      if (jugador.jugados > 0) {
+        // Calculamos el máximo de puntos posibles (3 puntos por cada partido jugado)
+        const puntosPosibles = jugador.jugados * 3;
+
+        // Calculamos los puntos reales obtenidos en esos partidos
+        const puntosObtenidos = jugador.exactos * 3 + jugador.aciertos * 1;
+
+        // Sacamos el porcentaje real de efectividad
+        efectividad =
+          ((puntosObtenidos / puntosPosibles) * 100).toFixed(1) + "%";
+      }
+      return {
         ...jugador,
         posicion: index + 1,
         efectividad,
@@ -814,6 +867,7 @@ const cargarPosiciones = async () => {
         miPosicion.value = misDatos.posicion;
         distanciaLider.value = puntosLider.value - misDatos.puntos;
         miEfectividad.value = misDatos.efectividad;
+        misPuntos.value = misDatos.puntos;
       } else {
         // Si el usuario actual no es VIP, reseteamos sus métricas
         miPosicion.value = "—";
@@ -821,7 +875,7 @@ const cargarPosiciones = async () => {
         miEfectividad.value = "—";
       }
     } else {
-       // Reset por si no hay VIPs todavía
+      // Reset por si no hay VIPs todavía
       nombreLider.value = "-";
       puntosLider.value = 0;
       miPosicion.value = "-";
@@ -866,6 +920,13 @@ onMounted(async () => {
 
   userId.value = session.user.id;
 
+  miNombre.value =
+    session.user.user_metadata?.full_name ||
+    session.user.user_metadata?.name ||
+    session.user.email ||
+    "Participante";
+
+  miAvatar.value = session.user.user_metadata?.avatar_url || "";
   // await cargarPosiciones();
 
   // 1. Validar si tiene al menos una liga
@@ -890,6 +951,47 @@ onMounted(async () => {
 
   await cargarPosiciones();
 });
+
+const compartirPosicion = async () => {
+  if (!shareImageRef.value) return;
+
+  if (miAvatar.value?.includes("googleusercontent")) {
+    miAvatar.value = "";
+  }
+
+  const element = shareImageRef.value.$el;
+
+  const canvas = await html2canvas(element, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true,
+    width: 1080,
+    height: 1350,
+    windowWidth: 1080,
+    windowHeight: 1350,
+  });
+
+  canvas.toBlob(async (blob) => {
+    if (!blob) return;
+
+    const file = new File([blob], "mi-posicion-fansleague.png", {
+      type: "image/png",
+    });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "Mi posición en FansLeague",
+        text: `🏆 Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}. ⚽ ¿Crees poder alcanzarme? Únete a mi *QUINIELA* en 👉 https://fansleague.com.mx usando el código ${codigoInvitacion.value}`,
+      });
+    } else {
+      const link = document.createElement("a");
+      link.download = "mi-posicion-fansleague.png";
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    }
+  }, "image/png");
+};
 </script>
 
 <style scoped>
@@ -988,5 +1090,12 @@ onMounted(async () => {
   .top-player-third .fs-5 {
     font-size: 1rem !important;
   }
+}
+
+.share-export-hidden {
+  position: fixed;
+  left: -99999px;
+  top: -99999px;
+  pointer-events: none;
 }
 </style>
