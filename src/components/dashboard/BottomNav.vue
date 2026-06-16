@@ -15,10 +15,22 @@
       <MobileUser />
     </div>
   </nav>
+
+  <Teleport to="body">
+    <a 
+      v-if="linkWhatsapp" 
+      :href="linkWhatsapp" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="whatsapp-fab d-lg-none d-flex align-items-center justify-content-center shadow-lg"
+    >
+      <i class="fa-brands fa-whatsapp"></i>
+    </a>
+  </Teleport>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue"; // 👇 Agregamos watch
 import { useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import MobileUser from "@/components/dashboard/MobileUser.vue";
@@ -34,6 +46,38 @@ import {
 
 const route = useRoute();
 
+// --- WHATSAPP LINK ---
+const linkWhatsapp = ref(null);
+
+const cargarWhatsapp = async () => {
+  const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  if (!currentLigaId || currentLigaId === "null") return;
+  
+  try {
+    const { data, error } = await supabase
+      .from('leagues')
+      .select('whatsapp_link')
+      .eq('id', currentLigaId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    
+    linkWhatsapp.value = data?.whatsapp_link || null;
+  } catch (error) {
+    console.error("Error cargando WhatsApp:", error);
+  }
+};
+
+// Observamos si cambia de liga estando en celular
+watch(
+  () => route.query.ligaId,
+  (newId) => {
+    if (newId && newId !== "null") {
+      cargarWhatsapp();
+    }
+  }
+);
+
 // --- VALIDACIÓN DE ADMINISTRADOR ---
 const isAdmin = ref(false);
 const adminEmails = [
@@ -45,6 +89,9 @@ const adminEmails = [
 const esUsuarioVip = ref(localStorage.getItem("isVipActiva") === "true");
 
 onMounted(async () => {
+  // 👇 Cargamos el link cuando inicia la barra móvil
+  cargarWhatsapp();
+
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -56,7 +103,6 @@ onMounted(async () => {
 // --- CONFIGURACIÓN DEL MENÚ MÓVIL ---
 const allMenuItems = [
   { label: "Reglas", to: "/dashboard", icon: PhChartPieSlice },
-  // { label: "Ligas", to: "/quinielas", icon: PhTrophy, adminOnly: true },
   { label: "Predic.", to: "/predicciones", icon: PhSoccerBall },
   { label: "Result.", to: "/resultados", icon: PhChartBar },
   { label: "Ranking", to: "/posiciones", icon: PhRanking },
@@ -65,12 +111,8 @@ const allMenuItems = [
 
 const menuItems = computed(() => {
   return allMenuItems.filter((item) => {
-    // Filtro para el admin que ya tenías
     if (item.adminOnly && !isAdmin.value) return false;
-
-    // 👇 4. NUEVO: Filtro para ocultar/mostrar VIP
     if (item.vipOnly && !esUsuarioVip.value) return false;
-
     return true;
   });
 });
@@ -78,25 +120,21 @@ const menuItems = computed(() => {
 const isActive = (path) => route.path === path;
 
 const obtenerRutaConLiga = (basePath) => {
-  // Rescatamos de la URL o de la memoria caché
-  const currentLigaId =
-    route.query.ligaId || localStorage.getItem("ligaIdActiva");
-  const currentLigaNombre =
-    route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
-  // 👇 Rescatamos el eventoId
-  const currentEventoId =
-    route.query.eventoId || localStorage.getItem("eventoIdActiva");
+  const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
+  const currentEventoId = route.query.eventoId || localStorage.getItem("eventoIdActiva");
 
   return {
     path: basePath,
     query: {
       ligaId: currentLigaId,
       ligaNombre: currentLigaNombre,
-      eventoId: currentEventoId, // 👇 Lo inyectamos en la URL de destino
+      eventoId: currentEventoId,
     },
   };
 };
 </script>
+
 <style scoped>
 .bottom-nav {
   left: 1rem;
@@ -134,9 +172,26 @@ const obtenerRutaConLiga = (basePath) => {
   border-radius: 12px;
 }
 
-.bottom-nav-active {
-  color: #d4af37;
-  background: rgba(212, 175, 55, 0.12);
-  border-radius: 12px;
+/* 👇 ESTILOS DEL BOTÓN DE WHATSAPP */
+.whatsapp-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 85px; /* Altura perfecta para que no estorbe el BottomNav */
+  width: 55px;
+  height: 55px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
+  font-size: 1.9rem;
+  z-index: 9999 !important; /* Garantiza que siempre esté arriba */
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4) !important;
+}
+
+.whatsapp-fab:hover {
+  background-color: #1ebe57;
+  transform: scale(1.08);
+  color: white;
 }
 </style>

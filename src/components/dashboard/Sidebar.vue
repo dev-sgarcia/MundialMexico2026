@@ -54,12 +54,25 @@
       </RouterLink>
     </div>
   </aside>
+
+<Teleport to="body">
+  <a 
+    v-if="linkWhatsapp" 
+    :href="linkWhatsapp" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    class="whatsapp-fab d-flex align-items-center justify-content-center shadow-lg"
+  >
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+</Teleport>  
+
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, watch } from "vue"; // 👇 Agregamos 'watch'
 import { useRoute } from "vue-router";
-import { supabase } from "@/supabaseClient";
+import { supabase } from "@/supabaseClient"; // Ajusta si la ruta a tu cliente es diferente
 import {
   PhHouse,
   PhTrophy,
@@ -76,6 +89,38 @@ import {
 
 const route = useRoute();
 
+// --- WHATSAPP LINK ---
+const linkWhatsapp = ref(null);
+
+const cargarWhatsapp = async () => {
+  const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  if (!currentLigaId || currentLigaId === "null") return;
+  
+  try {
+    const { data, error } = await supabase
+      .from('leagues')
+      .select('whatsapp_link')
+      .eq('id', currentLigaId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    
+    linkWhatsapp.value = data?.whatsapp_link || null;
+  } catch (error) {
+    console.error("Error cargando WhatsApp:", error);
+  }
+};
+
+// Si el usuario cambia de liga navegando, actualizamos el link
+watch(
+  () => route.query.ligaId,
+  (newId) => {
+    if (newId && newId !== "null") {
+      cargarWhatsapp();
+    }
+  }
+);
+
 // --- VALIDACIÓN DE ADMINISTRADOR ---
 const isAdmin = ref(false);
 const adminEmails = [
@@ -84,6 +129,9 @@ const adminEmails = [
 ];
 
 onMounted(async () => {
+  // 👇 Cargamos el link al iniciar el componente
+  cargarWhatsapp();
+
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -112,50 +160,29 @@ const allMenuItems = [
 // Leemos la memoria caché. Si dice 'true', la variable será verdadera
 const esUsuarioVip = ref(localStorage.getItem("isVipActiva") === "true");
 
-// Vue filtrará esta lista automáticamente dependiendo de quién esté logueado
-// const menuItems = computed(() => {
-//   return allMenuItems.filter(item => !item.adminOnly || isAdmin.value);
-// });
 const menuItems = computed(() => {
   return allMenuItems.filter((item) => {
-    // Filtro para el admin que ya tenías
     if (item.adminOnly && !isAdmin.value) return false;
-
-    // 👇 NUEVO: Filtro para VIP
     if (item.vipOnly && !esUsuarioVip.value) return false;
-
-    return true; // Si pasa los filtros, se muestra
+    return true; 
   });
 });
 
 const obtenerRutaConLiga = (basePath) => {
-  // Rescatamos de la URL o de la memoria caché
-  const currentLigaId =
-    route.query.ligaId || localStorage.getItem("ligaIdActiva");
-  const currentLigaNombre =
-    route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
-  // 👇 Rescatamos el eventoId
-  const currentEventoId =
-    route.query.eventoId || localStorage.getItem("eventoIdActiva");
+  const currentLigaId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
+  const currentLigaNombre = route.query.ligaNombre || localStorage.getItem("ligaNombreActiva");
+  const currentEventoId = route.query.eventoId || localStorage.getItem("eventoIdActiva");
 
-  if (currentLigaId) {
-    localStorage.setItem("ligaIdActiva", currentLigaId);
-  }
-
-  if (currentLigaNombre) {
-    localStorage.setItem("ligaNombreActiva", currentLigaNombre);
-  }
-
-  if (currentEventoId) {
-    localStorage.setItem("eventoIdActiva", currentEventoId);
-  }
+  if (currentLigaId) localStorage.setItem("ligaIdActiva", currentLigaId);
+  if (currentLigaNombre) localStorage.setItem("ligaNombreActiva", currentLigaNombre);
+  if (currentEventoId) localStorage.setItem("eventoIdActiva", currentEventoId);
 
   return {
     path: basePath,
     query: {
       ligaId: currentLigaId,
       ligaNombre: currentLigaNombre,
-      eventoId: currentEventoId, // 👇 Lo inyectamos en la URL de destino
+      eventoId: currentEventoId, 
     },
   };
 };
@@ -184,5 +211,39 @@ const obtenerRutaConLiga = (basePath) => {
   height: 60px; /* Ajusta el alto según prefieras */
   width: auto;
   mix-blend-mode: screen; /* Esta es la magia que oculta el fondo negro */
+}
+
+
+
+.whatsapp-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 85px; 
+  width: 55px;
+  height: 55px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
+  font-size: 1.9rem;
+  z-index: 9999 !important;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4) !important;
+}
+
+.whatsapp-fab:hover {
+  background-color: #1ebe57;
+  transform: scale(1.08);
+  color: white;
+}
+
+@media (min-width: 992px) {
+  .whatsapp-fab {
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    font-size: 2.1rem;
+  }
 }
 </style>
