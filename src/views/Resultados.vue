@@ -448,7 +448,8 @@ const cargarResultados = async () => {
       };
     });
 
-    await cargarPrediccionesReales();
+    const matchIds = matches.value.map((m) => m.id);
+    await cargarPrediccionesReales(matchIds);
   } catch (error) {
     console.error("Error al cargar marcadores oficiales:", error);
   } finally {
@@ -462,27 +463,44 @@ const cargarResultados = async () => {
 };
 
 // Función para descargar las predicciones y los nombres de los usuarios
-const cargarPrediccionesReales = async () => {
-  if (!idLigaActiva.value) return;
+const cargarPrediccionesReales = async (matchIds = []) => {
+  if (!idLigaActiva.value || matchIds.length === 0) return;
 
   try {
-    // IMPORTANTE: Ajusta "usuarios ( nombre )" al nombre exacto de tu tabla
-    // de perfiles y la columna donde guardas el nombre de la persona.
-    // Puede que se llame "profiles ( name )", "users ( nombre_completo )", etc.
+    const pageSize = 1000;
+    let from = 0;
+    let allPredicciones = [];
+    let seguir = true;
 
-    const { data, error } = await supabase
-      .from("predictions")
-      .select(
-        `
-      match_id,
-      home_score,
-      away_score,
-      perfiles ( nombre ) 
-    `,
-      )
-      .eq("league_id", idLigaActiva.value);
-    if (error) throw error;
-    prediccionesLiga.value = data || [];
+    while (seguir) {
+      const { data, error } = await supabase
+        .from("predictions")
+        .select(
+          `
+          match_id,
+          league_id,
+          user_id,
+          home_score,
+          away_score,
+          perfiles ( nombre )
+        `,
+        )
+        .eq("league_id", idLigaActiva.value)
+        .in("match_id", matchIds)
+        .range(from, from + pageSize - 1);
+
+      if (error) throw error;
+
+      allPredicciones = [...allPredicciones, ...(data || [])];
+
+      if (!data || data.length < pageSize) {
+        seguir = false;
+      } else {
+        from += pageSize;
+      }
+    }
+
+    prediccionesLiga.value = allPredicciones;
   } catch (error) {
     console.error("Error al cargar predicciones:", error);
   }
