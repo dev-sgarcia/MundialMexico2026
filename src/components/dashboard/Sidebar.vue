@@ -17,9 +17,16 @@
         v-for="item in menuItems"
         :key="item.label"
         :to="obtenerRutaConLiga(item.path)"
+        class="menu-link nav-link d-flex align-items-center gap-2 rounded-4 px-3 py-2"
+        :class="{ 'vip-link': item.label === 'VIP' }"
+      >      
+      <!-- <RouterLink
+        v-for="item in menuItems"
+        :key="item.label"
+        :to="obtenerRutaConLiga(item.path)"
         class="menu-link nav-link d-flex align-items-center gap-2 rounded-4 px-3 py-2 fw-semibold text-white-50"
         active-class="text-white bg-success bg-opacity-25"
-      >
+      > -->
         <component :is="item.icon" size="18" weight="fill" />
         <span>{{ item.label }}</span>
       </RouterLink>
@@ -213,8 +220,6 @@ const obtenerRutaConLiga = (basePath) => {
   mix-blend-mode: screen; /* Esta es la magia que oculta el fondo negro */
 }
 
-
-
 .whatsapp-fab {
   position: fixed;
   right: 20px;
@@ -246,4 +251,35 @@ const obtenerRutaConLiga = (basePath) => {
     font-size: 2.1rem;
   }
 }
-</style>
+
+
+
+
+
+.menu-link {
+    color: #9CA3AF;
+}
+
+.menu-link svg,
+.menu-link i {
+    color: #9CA3AF;
+}
+
+/* Mantener el fondo verde del elemento seleccionado */
+.menu-link.router-link-active {
+    background: rgba(33, 77, 50, 0.50);
+}
+
+/* No cambiar el color del texto al seleccionar */
+.menu-link.router-link-active,
+.menu-link.router-link-active svg,
+.menu-link.router-link-active i {
+    color: #9CA3AF;
+}
+
+/* VIP siempre dorado */
+.vip-link,
+.vip-link svg,
+.vip-link i {
+    color: #C9A227 !important;
+}</style>

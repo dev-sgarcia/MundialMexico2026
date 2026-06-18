@@ -970,7 +970,7 @@ const compartirPosicion = async () => {
 
   const canvas = await html2canvas(element, {
     backgroundColor: null,
-    scale: 2,
+    scale: 1.5,
     useCORS: true,
     width: 1080,
     height: 1350,
@@ -982,7 +982,8 @@ const compartirPosicion = async () => {
     if (!blob) return;
 
     const file = new File([blob], "mi-posicion-fansleague.png", {
-      type: "image/png",
+      //type: "image/png",
+      type: "image/jpeg",
     });
 
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -993,11 +994,11 @@ const compartirPosicion = async () => {
       });
     } else {
       const link = document.createElement("a");
-      link.download = "mi-posicion-fansleague.png";
+      link.download = "mi-posicion-fansleague.jpg";
       link.href = URL.createObjectURL(blob);
       link.click();
     }
-  }, "image/png");
+  }, "image/jpeg", 0.70);
 };
 </script>
 

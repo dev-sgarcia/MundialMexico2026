@@ -263,55 +263,16 @@
                               class="mt-3 border-top border-success border-opacity-25 pt-2"
                             >
                               <button
-                                class="btn btn-sm text-success w-100 d-flex justify-content-between align-items-center px-1"
+                                class="btn btn-sm text-success w-100 d-flex justify-content-center align-items-center px-1"
                                 style="box-shadow: none"
-                                @click.stop="
-                                  match.mostrarAcertantes =
-                                    !match.mostrarAcertantes
-                                "
+                                @click.stop="abrirModalAcertantes(match)"
                               >
                                 <span class="small fw-bold">
-                                  🎯
-                                  {{ obtenerAcertantes(match).length }}
-                                  Acertaron
+                                  🎯 Ver Acertantes ({{ obtenerAcertantes(match).length }})
                                 </span>
-                                <span class="small fw-bold">{{
-                                  match.mostrarAcertantes ? "▲" : "▼"
-                                }}</span>
                               </button>
-
-                              <!-- Lista desplegable -->
-                              <div
-                                v-show="match.mostrarAcertantes"
-                                class="mt-2 bg-dark rounded-3 p-2 text-start shadow-sm border border-secondary border-opacity-25"
-                              >
-                                <div
-                                  v-if="obtenerAcertantes(match).length === 0"
-                                  class="small text-white-50 text-center py-2"
-                                >
-                                  Nadie acertó el marcador exacto.
-                                </div>
-                                <div v-else>
-                                  <div
-                                    v-for="(user, index) in obtenerAcertantes(
-                                      match,
-                                    )"
-                                    :key="index"
-                                    class="small d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10"
-                                  >
-                                    <span
-                                      class="text-white text-truncate"
-                                      style="max-width: 70%"
-                                      >{{ user.name }}</span
-                                    >
-                                    <span
-                                      class="badge text-bg-success rounded-pill"
-                                      >+3 pts</span
-                                    >
-                                  </div>
-                                </div>
-                              </div>
                             </div>
+
                           </div>
                         </div>
                       </div>
@@ -527,36 +488,99 @@ const cargarPrediccionesReales = async () => {
   }
 };
 
-// --- LÓGICA DE ACERTANTES ---
+
 // --- LÓGICA DE ACERTANTES ---
 const obtenerAcertantes = (match) => {
-  // 1. Si el partido no ha terminado o no tiene marcador oficial, nadie acierta aún.
   if (
-    match.status !== "finished" ||
-    match.homeScore === null ||
-    match.awayScore === null
-  ) {
-    return [];
-  }
+     match.status !== "finished" ||
+     match.homeScore === null ||
+     match.awayScore === null
+   ) {
+     return [];
+     } 
 
-  // 2. Filtramos la lista asegurándonos de convertir todo a los mismos tipos de datos
+  if (match.status !== "finished" || match.homeScore === null) return [];
+
+  // Filtramos limpiando los datos de posibles espacios o formatos incorrectos
   const ganadores = prediccionesLiga.value.filter((pred) => {
+    // 1. Si el usuario dejó la predicción en blanco, lo descartamos
+    if (
+      pred.home_score === null || 
+      pred.away_score === null || 
+      pred.home_score === "" || 
+      pred.away_score === ""
+    ) {
+      return false;
+    }
+
+    // 2. Normalizamos a números limpios
+    const pHome = Number(String(pred.home_score).replace(/['"]/g, '').trim());
+    const pAway = Number(String(pred.away_score).replace(/['"]/g, '').trim());
+    const mHome = Number(String(match.homeScore).replace(/['"]/g, '').trim());
+    const mAway = Number(String(match.awayScore).replace(/['"]/g, '').trim());
+
     return (
-      String(pred.match_id) === String(match.id) &&
-      Number(pred.home_score) === Number(match.homeScore) &&
-      Number(pred.away_score) === Number(match.awayScore)
+      String(pred.match_id).trim() === String(match.id).trim() &&
+      pHome === mHome &&
+      pAway === mAway
     );
   });
 
-  // 3. Mapeamos para obtener el nombre
+  // Mapeamos para obtener el nombre correcto
   return ganadores.map((pred) => {
-    // Si la base de datos devolvió el perfil como un arreglo (a veces pasa en joins), tomamos el primero
     const perfil = Array.isArray(pred.perfiles)
       ? pred.perfiles[0]
       : pred.perfiles;
+
     const nombreUsuario = perfil?.nombre || "Usuario Desconocido";
 
     return { name: nombreUsuario };
+  });
+};
+
+
+
+// --- MODAL DE ACERTANTES ---
+const abrirModalAcertantes = (match) => {
+  // 1. Obtenemos la lista de los que acertaron usando tu función existente
+  const acertantes = obtenerAcertantes(match);
+  
+  // 2. Construimos el HTML interno de la lista
+  let listaHtml = '';
+  
+  if (acertantes.length === 0) {
+    listaHtml = '<div class="text-white-50 my-4 text-center">Nadie acertó el marcador exacto en este partido.</div>';
+  } else {
+    listaHtml = '<div class="mt-3 text-start bg-dark rounded p-2 border border-secondary border-opacity-25" style="max-height: 250px; overflow-y: auto;">';
+    acertantes.forEach(user => {
+      listaHtml += `
+        <div class="d-flex justify-content-between align-items-center py-2 px-1 border-bottom border-secondary border-opacity-10">
+          <span class="text-white text-truncate" style="max-width: 75%">${user.name}</span>
+          <span class="badge text-bg-success rounded-pill">+3 pts</span>
+        </div>
+      `;
+    });
+    listaHtml += '</div>';
+  }
+
+  // 3. Lanzamos el modal de SweetAlert
+  Swal.fire({
+    title: `<span class="text-gold">🎯 Acertaron el Marcador</span>`,
+    html: `
+      <div class="mb-2 text-white fs-5 border-bottom border-success border-opacity-25 pb-2">
+        <img src="https://flagcdn.com/w40/${getFlagCode(match.homeTeam)}.png" width="20" class="me-2 rounded-1">
+        <strong>${match.homeTeam}</strong> ${match.homeScore} - ${match.awayScore} <strong>${match.awayTeam}</strong>
+        <img src="https://flagcdn.com/w40/${getFlagCode(match.awayTeam)}.png" width="20" class="ms-2 rounded-1">
+      </div>
+      ${listaHtml}
+    `,
+    background: "#1a1d20",
+    color: "#fff",
+    confirmButtonText: "Cerrar",
+    confirmButtonColor: "#198754",
+    customClass: {
+      popup: 'border border-success border-opacity-25 rounded-4'
+    }
   });
 };
 
