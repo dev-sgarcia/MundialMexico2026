@@ -654,29 +654,56 @@ const loadGroupCatalog = async () => {
   }
 };
 
+const fetchAllPredictionsWithMatches = async (leagueId) => {
+  const pageSize = 1000;
+  let from = 0;
+  let allData = [];
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("predictions")
+      .select(
+        `
+        home_score,
+        away_score,
+        matches (
+          id,
+          group_name,
+          home_team,
+          away_team,
+          home_score,
+          away_score
+        )
+      `,
+      )
+      .eq("league_id", leagueId)
+      .not("home_score", "is", null)
+      .not("away_score", "is", null)
+      .range(from, from + pageSize - 1);
+
+    if (error) throw error;
+
+    allData = [...allData, ...(data || [])];
+
+    if (!data || data.length < pageSize) break;
+
+    from += pageSize;
+  }
+
+  return allData;
+};
+
 const loadGroupWinnerVotes = async () => {
   const leagueId = getLeagueId();
 
   if (!leagueId) return;
 
-  const { data, error } = await supabase
-    .from("predictions")
-    .select(
-      `
-      home_score,
-      away_score,
-      matches (
-        group_name,
-        home_team,
-        away_team
-      )
-    `,
-    )
-    .eq("league_id", leagueId)
-    .not("home_score", "is", null)
-    .not("away_score", "is", null);
+  let data = [];
 
-  if (error) {
+  try {
+    data = await fetchAllPredictionsWithMatches(leagueId);
+  } catch (error) {
+    console.error("Error cargando predicciones:", error);
     return;
   }
 
@@ -748,27 +775,11 @@ const loadSurpriseTeam = async () => {
 
   if (!leagueId) return;
 
-  const { data, error } = await supabase
-    .from("predictions")
-    .select(
-      `
-      home_score,
-      away_score,
-      matches (
-        id,
-        group_name,
-        home_team,
-        away_team,
-        home_score,
-        away_score
-      )
-    `,
-    )
-    .eq("league_id", leagueId)
-    .not("home_score", "is", null)
-    .not("away_score", "is", null);
+  let data = [];
 
-  if (error) {
+  try {
+    data = await fetchAllPredictionsWithMatches(leagueId);
+  } catch (error) {
     console.error("Error cargando equipo sorpresa:", error);
     return;
   }
@@ -1096,27 +1107,11 @@ const loadMatchAccuracy = async () => {
 
   if (!leagueId) return;
 
-  const { data, error } = await supabase
-    .from("predictions")
-    .select(
-      `
-      home_score,
-      away_score,
-      matches (
-        id,
-        group_name,
-        home_team,
-        away_team,
-        home_score,
-        away_score
-      )
-    `,
-    )
-    .eq("league_id", leagueId)
-    .not("home_score", "is", null)
-    .not("away_score", "is", null);
+  let data = [];
 
-  if (error) {
+  try {
+    data = await fetchAllPredictionsWithMatches(leagueId);
+  } catch (error) {
     console.error("Error cargando dificultad por partido:", error);
     return;
   }
