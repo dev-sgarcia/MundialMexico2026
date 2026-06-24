@@ -307,6 +307,7 @@
                           v-if="jugador.avatar_url"
                           :src="jugador.avatar_url"
                           :alt="jugador.nombre"
+                          referrerpolicy="no-referrer"
                           class="top-player-avatar rounded-circle border mb-2"
                           :class="{
                             'border-warning': jugador.posicion === 1,
@@ -323,11 +324,19 @@
                           <PhUser size="26" class="text-white-50" />
                         </div>
 
-                        <h6 class="fw-bold mb-1 text-truncate">
+
+                        <h6 
+                          class="fw-bold mb-1 text-truncate"
+                          :class="jugador.has_paid ? 'text-gold' : 'text-white'"
+                        >
                           {{ jugador.nombre }}
                         </h6>
+                                                
+                        <!-- <h6 class="fw-bold mb-1 text-truncate">
+                          {{ jugador.nombre }}
+                        </h6> -->
 
-                        <div class="fw-bold">
+                        <!-- <div class="fw-bold">
                           <span
                             :class="{
                               'text-warning fs-4': jugador.posicion === 1,
@@ -337,7 +346,24 @@
                             {{ jugador.puntos }}
                           </span>
                           <small class="text-white-50"> pts</small>
-                        </div>
+                        </div> -->
+
+
+                        <div class="fw-bold">
+                          <span
+                            :class="{
+                              'fs-4': jugador.posicion === 1,
+                              'fs-5': jugador.posicion !== 1,
+                              'text-gold': jugador.has_paid,
+                              'text-white': !jugador.has_paid
+                            }"
+                          >
+                            {{ jugador.puntos }}
+                          </span>
+                          <small class="text-white-50"> pts</small>
+                        </div>                        
+                        
+
                       </div>
                     </div>
                   </div>
@@ -525,9 +551,11 @@
                               >
                                 <PhUser size="20" class="text-white-50" />
                               </div>
+
                               <div class="d-flex flex-column">
                                 <span
-                                  class="fw-bold text-white text-truncate"
+                                  class="fw-bold text-truncate"
+                                  :class="jugador.has_paid ? 'text-gold' : 'text-white'"
                                   style="max-width: 160px"
                                   >{{ jugador.nombre }}</span
                                 >
@@ -537,7 +565,7 @@
                                   style="font-size: 0.6rem; width: fit-content"
                                   >Tú</span
                                 >
-                              </div>
+                              </div>                              
                             </div>
                           </td>
 
@@ -560,14 +588,15 @@
                           >
                             {{ jugador.efectividad }}
                           </td>
-
                           <td class="text-center px-3 px-md-4">
-                            <span class="fs-4 fw-bold text-gold">{{
-                              jugador.puntos
-                            }}</span>
+                            <span 
+                              class="fs-4 fw-bold"
+                              :class="jugador.has_paid ? 'text-gold' : 'text-white'"
+                            >
+                              {{ jugador.puntos }}
+                            </span>
                           </td>
                         </tr>
-
                         <tr v-if="posicionesTabla.length === 0">
                           <td
                             colspan="6"
@@ -800,11 +829,17 @@ const cargarPosiciones = async () => {
     // 1. NUEVO: Obtenemos solo a los usuarios que son VIP en esta liga
     const { data: vipUsers, error: vipError } = await supabase
       .from("league_members")
-      .select("user_id")
+      .select("user_id, has_paid")
       .eq("league_id", idLigaActiva.value)
       .eq("is_vip", true);
 
     if (vipError) throw vipError;
+
+    // Creamos un diccionario rápido para saber quién ya pagó
+    const statusPagoVip = {};
+    vipUsers.forEach((v) => {
+      statusPagoVip[v.user_id] = v.has_paid;
+    });
 
     // Creamos un arreglo solo con los IDs de los VIP
     const vipUserIds = vipUsers.map((v) => v.user_id);
@@ -824,13 +859,9 @@ const cargarPosiciones = async () => {
       vipUserIds.includes(jugador.user_id),
     );
 
-    //1. Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
+    //4. Mapeamos los datos para inyectar la posición y la efectividad a toda la tabla
     tablaPosiciones.value = datosVipFiltrados.map((jugador, index) => {
       let efectividad = "0%";
-      // if (jugador.jugados > 0) {
-      //   const exitos = jugador.exactos + jugador.aciertos;
-      //   efectividad = ((exitos / jugador.jugados) * 100).toFixed(1) + "%";
-      // }
 
       if (jugador.jugados > 0) {
         // Calculamos el máximo de puntos posibles (3 puntos por cada partido jugado)
@@ -847,6 +878,7 @@ const cargarPosiciones = async () => {
         ...jugador,
         posicion: index + 1,
         efectividad,
+        has_paid: statusPagoVip[jugador.user_id] || false,
       };
     });
 
@@ -1097,5 +1129,9 @@ const compartirPosicion = async () => {
   left: -99999px;
   top: -99999px;
   pointer-events: none;
+}
+
+.text-gold {
+  color: #FFD700 !important; /* Tono dorado. Puedes usar #ffc107 si prefieres el de Bootstrap */
 }
 </style>
