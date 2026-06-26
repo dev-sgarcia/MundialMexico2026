@@ -881,37 +881,6 @@ const validarAcceso = async (userId) => {
   }
 };
 
-///////////////////Alerta temporal///////////////////////////////
-const mostrarTutorialCompartir = () => {
-  const yaVioTutorial = localStorage.getItem("tutorial-compartir-posicion");
-
-  if (yaVioTutorial) return;
-
-  Swal.fire({
-    title: "🎉 ¡Ahora puedes compartir tu posición!",
-    html: `
-    <div class="text-center">
-      <div style="font-size:64px;color:#94a3b8;line-height:1;">
-        ↪
-      </div>
-
-      <p class="mt-3 mb-2">
-        Comparte tu lugar en la quiniela y presume tu ranking.
-      </p>
-
-      <p class="mb-0">
-        Busca este icono junto a tu posición para compartirla con otros participantes.
-      </p>
-    </div>
-  `,
-    confirmButtonText: "Entendido",
-    confirmButtonColor: "#198754",
-    background: "#111",
-    color: "#fff",
-  });
-  // localStorage.setItem("tutorial-compartir-posicion", "true");
-};
-
 // El onMounted blindado
 onMounted(async () => {
   const {
@@ -956,7 +925,6 @@ onMounted(async () => {
   }
 
   await cargarPosiciones();
-  mostrarTutorialCompartir();
 });
 
 const compartirPosicion = async () => {
@@ -978,27 +946,31 @@ const compartirPosicion = async () => {
     windowHeight: 1350,
   });
 
-  canvas.toBlob(async (blob) => {
-    if (!blob) return;
+  canvas.toBlob(
+    async (blob) => {
+      if (!blob) return;
 
-    const file = new File([blob], "mi-posicion-fansleague.png", {
-      //type: "image/png",
-      type: "image/jpeg",
-    });
-
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        files: [file],
-        title: "Mi posición en FansLeague",
-        text: `🏆 Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}. ⚽ ¿Crees poder alcanzarme? Únete a mi *QUINIELA* en 👉 https://fansleague.com.mx usando el código ${codigoInvitacion.value}`,
+      const file = new File([blob], "mi-posicion-fansleague.png", {
+        //type: "image/png",
+        type: "image/jpeg",
       });
-    } else {
-      const link = document.createElement("a");
-      link.download = "mi-posicion-fansleague.jpg";
-      link.href = URL.createObjectURL(blob);
-      link.click();
-    }
-  }, "image/jpeg", 0.70);
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Mi posición en FansLeague",
+          text: `🏆 Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}. ⚽ ¿Crees poder alcanzarme? Únete a mi *QUINIELA* en 👉 https://fansleague.com.mx usando el código ${codigoInvitacion.value}`,
+        });
+      } else {
+        const link = document.createElement("a");
+        link.download = "mi-posicion-fansleague.jpg";
+        link.href = URL.createObjectURL(blob);
+        link.click();
+      }
+    },
+    "image/jpeg",
+    0.7,
+  );
 };
 </script>
 
