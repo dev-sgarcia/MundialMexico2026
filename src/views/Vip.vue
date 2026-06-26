@@ -11,24 +11,32 @@
         <main
           class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
         >
-          <section class="container-fluid">
-            <!-- HEADER -->
-            <PageHeader />
-
-            <div class="bg-black z-3 mb-4">
+          <section class="container-fluid px-3 px-md-4">            
+            <div
+              class="d-flex justify-content-between align-items-start mb-4 mt-4"
+            >
               <div>
-                <h2
+                <h2                
                   class="fw-bold mb-1 d-flex align-items-center gap-2 text-warning"
                 >
-                  <PhStar weight="fill" /> Posiciones VIP
+                  <PhStar weight="fill" />Posiciones VIP
                 </h2>
-
                 <p class="text-white-50 mb-0">
-                  Ranking general de participantes de la quiniela:
-                  {{ nombreQuinielaActiva }}
+                  Ranking VIP de participantes de la quiniela:
+                  <span
+                    v-if="
+                      nombreQuinielaActiva &&
+                      nombreQuinielaActiva !== 'Mi Quiniela'
+                    "
+                    class="text-gold"
+                  >
+                    {{ nombreQuinielaActiva }}
+                  </span>
                 </p>
               </div>
+              <PageHeader />
             </div>
+
             <!-- CARDS SUPERIORES -->
             <div class="row g-3 mb-4">
               <!-- 1. LÍDER ACTUAL -->
@@ -125,22 +133,20 @@
                       </small>
                     </div>
 
-                    <div
-                      class="d-flex justify-content-center align-items-center gap-2 mb-1"
+                    <h3
+                      class="fw-bold mb-1 text-primary d-flex justify-content-center align-items-center gap-2"
                     >
-                      <h3 class="fw-bold mb-0 text-primary">
-                        {{ hayPuntos ? `${miPosicion}°` : "—" }}
-                      </h3>
+                      {{ hayPuntos ? `${miPosicion}°` : "—" }}
 
                       <button
                         v-if="hayPuntos"
-                        class="btn btn-link text-secondary p-0 d-flex align-items-center"
+                        class="btn btn-link text-secondary p-0 d-flex align-items-center mt-1"
                         @click="compartirPosicion"
-                        title="Compartir posición"
                       >
-                        <PhShareFat size="18" />
+                        <PhShareFat size="22" />
                       </button>
-                    </div>
+                    </h3>
+
                     <span class="text-white-50 small lh-sm d-block mt-1">
                       {{
                         hayPuntos
@@ -307,7 +313,6 @@
                           v-if="jugador.avatar_url"
                           :src="jugador.avatar_url"
                           :alt="jugador.nombre"
-                          referrerpolicy="no-referrer"
                           class="top-player-avatar rounded-circle border mb-2"
                           :class="{
                             'border-warning': jugador.posicion === 1,
@@ -324,7 +329,6 @@
                           <PhUser size="26" class="text-white-50" />
                         </div>
 
-
                         <h6 
                           class="fw-bold mb-1 text-truncate"
                           :class="jugador.has_paid ? 'text-gold' : 'text-white'"
@@ -332,23 +336,6 @@
                           {{ jugador.nombre }}
                         </h6>
                                                 
-                        <!-- <h6 class="fw-bold mb-1 text-truncate">
-                          {{ jugador.nombre }}
-                        </h6> -->
-
-                        <!-- <div class="fw-bold">
-                          <span
-                            :class="{
-                              'text-warning fs-4': jugador.posicion === 1,
-                              'text-white fs-5': jugador.posicion !== 1,
-                            }"
-                          >
-                            {{ jugador.puntos }}
-                          </span>
-                          <small class="text-white-50"> pts</small>
-                        </div> -->
-
-
                         <div class="fw-bold">
                           <span
                             :class="{
@@ -361,9 +348,7 @@
                             {{ jugador.puntos }}
                           </span>
                           <small class="text-white-50"> pts</small>
-                        </div>                        
-                        
-
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -544,14 +529,16 @@
                                 height="38"
                                 style="object-fit: cover"
                               />
-                              <div
+                              <!-- AGREGAR ESTA NUEVA IMAGEN -->
+                              <img
                                 v-else
-                                class="rounded-circle border border-secondary border-opacity-25 d-flex align-items-center justify-content-center bg-dark"
-                                style="width: 38px; height: 38px"
-                              >
-                                <PhUser size="20" class="text-white-50" />
-                              </div>
-
+                                src="@/assets/avatar-null.png"
+                                :alt="jugador.nombre"
+                                class="rounded-circle border border-success border-opacity-50 bg-dark p-1"
+                                width="38"
+                                height="38"
+                                style="object-fit: contain"
+                              />
                               <div class="d-flex flex-column">
                                 <span
                                   class="fw-bold text-truncate"
@@ -567,7 +554,7 @@
                                 >
                               </div>                              
                             </div>
-                          </td>
+                          </td>                          
 
                           <td class="text-center d-none d-md-table-cell">
                             <span
@@ -686,7 +673,6 @@ import { ref, computed, onMounted } from "vue";
 import BottomNav from "@/components/dashboard/BottomNav.vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
-import html2canvas from "html2canvas";
 import SharePositionImage from "@/components/common/SharePositionImage.vue";
 
 import {
@@ -703,6 +689,7 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { supabase } from "@/supabaseClient";
 import Swal from "sweetalert2";
+import html2canvas from "html2canvas";
 
 const shareImageRef = ref(null);
 const router = useRouter();
@@ -813,8 +800,6 @@ const tablaPosiciones = ref([]);
 
 const cargarPosiciones = async () => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") return;
-
-  // Obtener código de invitación
   const { data: liga, error: errorLiga } = await supabase
     .from("leagues")
     .select("invite_code")
@@ -824,7 +809,6 @@ const cargarPosiciones = async () => {
   if (!errorLiga) {
     codigoInvitacion.value = liga?.invite_code || "";
   }
-
   try {
     // 1. NUEVO: Obtenemos solo a los usuarios que son VIP en esta liga
     const { data: vipUsers, error: vipError } = await supabase

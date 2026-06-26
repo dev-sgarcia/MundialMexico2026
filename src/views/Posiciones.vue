@@ -16,22 +16,23 @@
               class="d-flex justify-content-between align-items-start mb-4 mt-4"
             >
               <div>
-                <h2 class="fw-bold mb-1">Tabla de posiciones general</h2>
-
+                <h2 
+                  class="fw-bold mb-1 d-flex align-items-center gap-2 text-warning"
+                >
+                  <PhStar weight="fill" />Tabla de posiciones general
+                </h2>
                 <p class="text-white-50 mb-0">
-                  Ranking general de participantes de la quiniela
+                  Ranking GENERAL de participantes de la quiniela:
                   <span
                     v-if="
                       nombreQuinielaActiva &&
                       nombreQuinielaActiva !== 'Mi Quiniela'
                     "
-                    class="text-gold"
                   >
                     {{ nombreQuinielaActiva }}
                   </span>
                 </p>
               </div>
-
               <PageHeader />
             </div>
             <!-- CARDS SUPERIORES -->
@@ -243,7 +244,10 @@
               >
                 <div class="card-body p-3 p-md-4">
                   <div class="d-flex align-items-center gap-2 mb-3">
-                    <h5 class="mb-0 fw-bold text-white text-uppercase">
+                    <h5 
+                      class="mb-0 fw-bold text-white text-uppercase"
+                      style="letter-spacing: 0.5px"
+                    >
                       Top 3 de la quiniela
                     </h5>
                   </div>
@@ -323,7 +327,8 @@
                           <PhUser size="26" class="text-white-50" />
                         </div>
 
-                        <h6 class="fw-bold mb-1 text-truncate">
+                        <h6 
+                          class="fw-bold mb-1 text-truncate">
                           {{ jugador.nombre }}
                         </h6>
 
@@ -521,14 +526,13 @@
                               <!-- AGREGAR ESTA NUEVA IMAGEN -->
                               <img
                                 v-else
-                                src="@/assets/avatar-gmail.png"
+                                src="@/assets/avatar-null.png"
                                 :alt="jugador.nombre"
                                 class="rounded-circle border border-success border-opacity-50 bg-dark p-1"
                                 width="38"
                                 height="38"
                                 style="object-fit: contain"
                               />
-
                               <div class="d-flex flex-column">
                                 <span
                                   class="fw-bold text-white text-truncate"
@@ -564,14 +568,13 @@
                           >
                             {{ jugador.efectividad }}
                           </td>
-
                           <td class="text-center px-3 px-md-4">
-                            <span class="fs-4 fw-bold text-gold">{{
+                            <span 
+                              class="fs-4 fw-bold text-gold">{{
                               jugador.puntos
                             }}</span>
                           </td>
                         </tr>
-
                         <tr v-if="posicionesTabla.length === 0">
                           <td
                             colspan="6"
@@ -1078,4 +1081,6 @@ const compartirPosicion = async () => {
   top: -99999px;
   pointer-events: none;
 }
+
+
 </style>
