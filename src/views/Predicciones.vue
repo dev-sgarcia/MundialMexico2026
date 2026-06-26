@@ -511,6 +511,47 @@ const sincronizarHoraReal = async () => {
   }
 };
 
+const mostrarAlertaPago = async () => {
+  const key = "alerta-pago-quiniela-v1";
+  const vecesMostrada = Number(localStorage.getItem(key) || 0);
+
+  if (vecesMostrada >= 3) return;
+
+  await Swal.fire({
+    icon: "warning",
+    title: "Pago de la quiniela",
+    html: `
+<p class="mb-3">
+  Si estás participando en la modalidad
+  <strong>con premio económico</strong>,
+  recuerda realizar el pago de tu inscripción con <strong>Nancy</strong>  en recepción.
+</p>
+
+<p class="mb-3 small text-white-50">
+  Los participantes con
+  <strong class="text-warning">pago confirmado</strong>
+  aparecen en amarillo en
+  <strong>Posiciones VIP</strong>.
+</p>
+
+<p class="mb-0">
+  Si ya realizaste tu pago,
+  <strong>¡muchas gracias!</strong> ⚽🏆
+</p>
+  `,
+    confirmButtonText: "Entendido",
+    buttonsStyling: false,
+    background: "#1a1d20",
+    color: "#fff",
+    customClass: {
+      popup: "border border-dark rounded-4 shadow-lg",
+      confirmButton: "btn btn-warning fw-bold px-4",
+    },
+  });
+
+  localStorage.setItem(key, vecesMostrada + 1);
+};
+
 const normalizarFecha = (fechaTexto) => {
   if (!fechaTexto) return "9999-99-99";
 
@@ -671,6 +712,7 @@ onMounted(async () => {
     }
 
     await cargarPartidosYPredicciones();
+    await mostrarAlertaPago();
   } else {
     // Si no hay liga activa, mandamos a elegir una
     router.push("/juega");
