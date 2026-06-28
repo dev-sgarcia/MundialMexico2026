@@ -32,6 +32,46 @@
                     {{ nombreQuinielaActiva }}
                   </span>
                 </p>
+
+<!-- SELECTOR DE FASE -->
+<div class="vip-tabs mt-4">
+  <button
+    class="vip-tab"
+    :class="{ active: faseActual === 'grupos' }"
+    @click="cambiarFase('grupos')"
+  >
+    👥 Fase de Grupos
+  </button>
+
+  <button
+    class="vip-tab"
+    :class="{ active: faseActual === 'finalistas' }"
+    @click="cambiarFase('finalistas')"
+  >
+    🏆 Fase de Finalistas
+  </button>
+</div>
+
+<!-- BANNER -->
+<div class="fase-banner">
+  <div class="fase-info">
+    <div class="fase-titulo">
+      {{ faseActual=="grupos"
+          ? "FASE DE GRUPOS"
+          : "FASE DE FINALISTAS"
+      }}
+    </div>
+
+    <div class="fase-texto">
+      {{ faseActual=="grupos"
+      ? "Se contabilizan únicamente los partidos correspondientes a la fase de grupos. Ya tenemos a los ganadores de la quiniela la fase de grupos, pero la competencia continúa en la fase de eliminación directa."
+      : "Comienza un nuevo capítulo. Los puntos ahora corresponden únicamente a las rondas de eliminación directa, dentro de los 90 minutos de cada partido. No se contabilizan los penales ni prórrogas."
+      }}
+    </div>
+  </div>
+</div>
+
+
               </div>
               <PageHeader />
             </div>
@@ -320,12 +360,26 @@
                           }"
                         />
 
-                        <div
+                        <!-- <div
                           v-else
                           class="top-player-avatar rounded-circle border border-secondary mx-auto mb-2 d-flex align-items-center justify-content-center bg-dark"
                         >
                           <PhUser size="26" class="text-white-50" />
-                        </div>
+                        </div> -->
+                        
+                        <img
+                          v-else
+                          src="@/assets/avatar-null.png"
+                          :alt="jugador.nombre"
+                          class="top-player-avatar rounded-circle border mx-auto mb-2 bg-dark p-1"
+                          :class="{
+                            'border-warning': jugador.posicion === 1,
+                            'border-light': jugador.posicion === 2,
+                            'border-warning border-opacity-50': jugador.posicion === 3,
+                          }"
+                          style="object-fit: contain"
+                        />
+
 
                         <h6 
                           class="fw-bold mb-1 text-truncate">
@@ -683,6 +737,13 @@ import Swal from "sweetalert2";
 import html2canvas from "html2canvas";
 
 const shareImageRef = ref(null);
+const faseActual = ref("grupos");
+const cambiarFase = async (fase) => {
+  if (faseActual.value === fase) return;
+  faseActual.value = fase;
+  await cargarPosiciones();
+};
+
 const router = useRouter();
 const route = useRoute();
 
@@ -800,8 +861,13 @@ const cargarPosiciones = async () => {
     codigoInvitacion.value = liga?.invite_code || "";
   }
   try {
+    const nombreVista =
+    faseActual.value === "grupos"
+      ? "vw_posiciones_grupos"
+      : "vw_posiciones_finales";
+
     const { data, error } = await supabase
-      .from("vw_posiciones")
+      .from(nombreVista)
       .select("*")
       .eq("league_id", idLigaActiva.value)
       .order("puntos", { ascending: false })
@@ -1082,5 +1148,111 @@ const compartirPosicion = async () => {
   pointer-events: none;
 }
 
+
+
+/*=============================
+  TABS FASES
+==============================*/
+
+.vip-tabs{
+    display:flex;
+    width:100%;
+    background:#1d1d1d;
+    border-radius:18px;
+    padding:6px;
+    margin-top:15px;
+}
+
+.vip-tab{
+    flex:1;
+    border:none;
+    background:transparent;
+    color:#b8b8b8;
+    padding:14px;
+    border-radius:14px;
+    font-weight:700;
+    transition:.30s;
+    font-size:15px;
+}
+
+.vip-tab:hover{
+    color:white;
+}
+
+.vip-tab.active{
+    background:linear-gradient(
+        90deg,
+        #0d6efd,
+        #2196f3
+    );
+}
+
+/* Grupo de estilos para los líderes según la fase actual */
+.leader-grupos{
+    border:1px solid #c99a00;
+    background:linear-gradient(
+        180deg,
+        rgba(80,60,0,.40),
+        rgba(25,20,0,.40)
+    );
+}
+
+.leader-finalistas{
+    border:1px solid #0088ff;
+    background:linear-gradient(
+        180deg,
+        rgba(0,55,120,.35),
+        rgba(0,20,55,.35)
+    );
+}
+
+/*==================================
+    BANNER DE LA FASE
+===================================*/
+.fase-banner{
+    margin-top:20px;
+    padding:18px;
+    border-radius:18px;
+    background:linear-gradient(
+        180deg,
+        rgba(255,255,255,.05),
+        rgba(255,255,255,.02)
+    );
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.fase-titulo{
+    font-size:20px;
+    font-weight:700;
+    color:#ffffff;
+}
+
+.fase-texto{
+    margin-top:8px;
+    color:#cfcfcf;
+    line-height:1.5;
+}
+
+
+@media (max-width:768px){
+.fase-banner{
+    flex-direction:row;
+    padding:18px;
+}
+
+.fase-icono{
+    width:55px;
+    height:55px;
+    font-size:24px;
+}
+
+.fase-titulo{
+    font-size:22px;
+}
+
+.fase-texto{
+    font-size:15px;
+}
+}
 
 </style>

@@ -1028,17 +1028,6 @@ const getFlagCode = (team) => {
   return flagCodes[team] || "un";
 };
 
-// const handleExportPDF = async () => {
-//   exportando.value = true;
-//   await exportarPDF(
-//     partidosAgrupados.value,
-//     formatDate,
-//     getFlagCode,
-//     nombreLigaActiva.value,
-//   );
-//   exportando.value = false;
-// };
-
 const handleExportPDF = () => {
   exportando.value = true;
 
@@ -1084,34 +1073,6 @@ const handleExportPDF = () => {
         ]);
       });
     });
-
-    // 2. Configuramos la tabla para que gaste el mínimo espacio posible
-    // doc.autoTable({
-    //   startY: 45,
-    //   head: [['Fecha', 'Hora', 'Grupo', 'Local', 'Pronóstico', 'Visitante']],
-    //   body: tableData,
-    //   theme: 'grid',
-    //   styles: {
-    //     fontSize: 8,         // Letra pequeña para meter más filas
-    //     cellPadding: 3,      // Relleno mínimo de la celda
-    //     halign: 'center',
-    //     valign: 'middle'
-    //   },
-    //   headStyles: {
-    //     fillColor: [25, 135, 84], // Verde oscuro de tu plataforma
-    //     textColor: 255,
-    //     fontSize: 9,
-    //     fontStyle: 'bold'
-    //   },
-    //   columnStyles: {
-    //     0: { halign: 'left', cellWidth: 80 },
-    //     1: { cellWidth: 40 },
-    //     2: { cellWidth: 40 },
-    //     3: { halign: 'right' },
-    //     4: { halign: 'center', fontStyle: 'bold', fillColor: [240, 240, 240] },
-    //     5: { halign: 'left' }
-    //   }
-    // });
 
     autoTable(doc, {
       startY: 45,
