@@ -275,6 +275,112 @@
               </div>
             </div>
 
+            <!-- Ficha del Campeón -->
+  <div
+    v-if="faseActual === 'finalistas'"
+    class="campeon-card"
+  >
+
+
+
+<div class="campeon-left">
+    <div class="campeon-header">
+        ⭐ TU CAMPEÓN
+    </div>
+    <div class="campeon-seleccion">
+        <div
+        class="circulo-bandera"
+        :class="'estado-' + estadoCampeon"
+        >
+            <img
+                :src="`https://flagcdn.com/w320/${miCodigoCampeon}.png`"
+                class="campeon-bandera"
+            >
+        </div>
+
+        <div class="campeon-info">
+            <div class="campeon-nombre">
+                {{ miCampeon }}
+            </div>
+            <div
+                class="estado activo"
+                v-if="estadoCampeon=='activo'"
+            >
+                🟢 Sigue en competencia
+            </div>
+            <div
+                class="estado eliminado"
+                v-if="estadoCampeon=='eliminado'"
+            >
+                🔴 Eliminado
+            </div>
+            <div
+                class="estado campeon"
+                v-if="estadoCampeon=='campeon'"
+            >
+                🏆 ¡CAMPEÓN!
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  <!-- <div class="campeon-left">
+      <div class="campeon-header">
+          ⭐ TU CAMPEÓN
+      </div>
+
+      <div class="circulo-bandera">
+          <img
+              :src="`https://flagcdn.com/w320/${miCodigoCampeon}.png`"
+              class="campeon-bandera"
+          >
+      </div>
+
+      <div class="campeon-info">
+          <div class="campeon-nombre">
+              {{ miCampeon }}
+          </div>
+
+          <div
+              class="estado activo"
+              v-if="estadoCampeon=='activo'"
+          >
+              🟢 Sigue en competencia
+          </div>
+
+          <div
+              class="estado eliminado"
+              v-if="estadoCampeon=='eliminado'"
+          >
+              🔴 Eliminado
+          </div>
+          <div
+              class="estado campeon"
+              v-if="estadoCampeon=='campeon'"
+          >
+              🏆 ¡CAMPEÓN!
+          </div>
+      </div>
+  </div>
+ -->
+  <div class="campeon-right">
+      <div class="bonus-icon">
+          🏆
+      </div>
+      <div class="bonus-title">
+          BONUS
+      </div>
+      <div class="bonus-puntos">
+          +10
+      </div>
+      <div class="bonus-texto">
+          puntos si tu selección
+          gana el Mundial
+      </div>
+  </div>
+</div>
+
             <!-- TOP 3 PODIO -->
             <section
               v-if="topTres.length && !search.trim() && sortBy === 'puntos'"
@@ -764,6 +870,21 @@ const route = useRoute();
 const search = ref("");
 const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
 
+
+
+const equipos = {
+  mx: "México",
+  ar: "Argentina",
+  br: "Brasil",
+  fr: "Francia",
+  es: "España",
+  pt: "Portugal",
+  ec: "Ecuador",
+};
+const miCampeon = ref("");
+const miCodigoCampeon = ref("");
+const estadoCampeon = ref("activo");
+
 const currentPage = ref(1);
 const itemsPerPage = 7;
 
@@ -871,6 +992,8 @@ const cargarPosiciones = async () => {
     .eq("id", idLigaActiva.value)
     .single();
 
+  await cargarMiCampeon();
+
   if (!errorLiga) {
     codigoInvitacion.value = liga?.invite_code || "";
   }
@@ -971,6 +1094,22 @@ const cargarPosiciones = async () => {
   } catch (error) {
     console.error("Error al cargar posiciones VIP:", error);
   }
+};
+
+const cargarMiCampeon = async () => {
+
+    const { data } = await supabase
+        .from("league_members")
+        .select("champion_team")
+        .eq("league_id", idLigaActiva.value)
+        .eq("user_id", userId.value)
+        .single();
+
+    if (!data) return;
+
+    miCodigoCampeon.value = data.champion_team;
+    miCampeon.value = equipos[data.champion_team] || data.champion_team;
+
 };
 
 // Función cadenero
@@ -1292,5 +1431,270 @@ const compartirPosicion = async () => {
 .fase-texto{
     font-size:15px;
 }
+}
+
+
+
+/*=========================================================
+                TARJETA TU CAMPEÓN
+=========================================================*/
+
+.campeon-card{
+    margin:18px 0;
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    min-height:135px;
+    border-radius:16px;
+    overflow:hidden;
+    background:#232629;
+    border:1px solid rgba(255,193,7,.18);
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+}
+
+.campeon-header{
+    font-size:15px;
+    color:#FFD54F;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.campeon-bandera-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.campeon-bandera{
+    width:180px;
+    border-radius:16px;
+    border:5px solid rgba(255,215,0,.75);
+    box-shadow:
+        0 0 35px rgba(255,193,7,.35);
+    transition:.35s;
+}
+
+.campeon-bandera:hover{
+    transform:scale(1.05);
+    box-shadow:
+        0 0 50px rgba(255,215,0,.55);
+}
+
+.campeon-nombre{
+    font-size:22px;
+    font-weight:700;
+    color:white;
+    margin-bottom:6px;
+}
+
+.campeon-seleccion{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+}
+
+.estado{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:5px 14px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.estado.activo{
+    background:#12361f;
+    color:#58d67c;
+    border:1px solid #2d9c57;
+}
+
+.estado.eliminado{
+    background:#421616;
+    color:#ff7b7b;
+    border:1px solid #ff5252;
+}
+
+.estado.campeon{
+    background:#4d3d00;
+    color:#FFD54F;
+    border:1px solid #FFD54F;
+}
+
+.bonus{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    border-top:1px solid rgba(255,193,7,.35);
+    padding-top:25px;
+}
+
+.bonus-title{
+    font-size:15px;
+}
+
+.bonus-puntos{
+    font-size:26px;
+}
+
+.bonus-texto{
+    font-size:12px;
+}
+
+.bonus-icon{
+    font-size:30px;
+}
+
+.bonus-titulo{
+    color:#FFD54F;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.campeon-left{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:18px;
+    text-align:center;
+}
+.campeon-right{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:0px;
+    background:rgba(255,193,7,.05);
+    border-left:1px solid rgba(255,193,7,.18);
+}
+
+.circulo-bandera{
+    width:68px;
+    height:68px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.35s;
+    border:3px solid transparent;
+}
+
+.campeon-bandera{
+    width:42px;
+    border-radius:6px;
+}
+
+.campeon-info{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:center;
+}
+
+.estado-activo{
+
+    border-color:#35d16f;
+
+    box-shadow:
+        0 0 12px rgba(53,209,111,.45);
+
+}
+.estado-eliminado{
+
+    border-color:#ff4b4b;
+
+    box-shadow:
+        0 0 12px rgba(255,75,75,.40);
+
+}
+.estado-subcampeon{
+    border-color:#bdbdbd;
+    box-shadow:
+        0 0 12px rgba(200,200,200,.35);
+}
+
+.estado-campeon{
+    border-color:#FFD54F;
+    box-shadow:
+        0 0 18px rgba(255,213,79,.75);
+    animation:campeonGlow 2s infinite;
+}
+
+
+
+@media (max-width: 900px) {
+    .campeon-card{
+        grid-template-columns:1fr;
+    }
+
+    .campeon-left{
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+    }
+
+    .campeon-info{
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+    }
+
+    .campeon-right{
+        border-left:none;
+        border-top:1px solid rgba(255,193,7,.20);
+        padding:18px;
+    }
+
+    .estado{
+        margin-top:8px;
+    }
+
+    .campeon-seleccion{
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .campeon-info{
+        align-items:center;
+        text-align:center;
+    }    
+}
+
+@media(max-width:480px){
+    .circulo-bandera{
+        width:58px;
+        height:58px;
+    }
+
+    .campeon-bandera{
+        width:38px;
+    }
+
+    .campeon-nombre{
+        font-size:18px;
+    }
+
+    .bonus-puntos{
+        font-size:22px;
+    }
+}
+
+
+@keyframes campeonGlow{
+    0%{
+        box-shadow:
+            0 0 10px rgba(255,213,79,.45);
+    }
+    50%{
+        box-shadow:
+            0 0 22px rgba(255,213,79,.90);
+    }
+    100%{
+        box-shadow:
+            0 0 10px rgba(255,213,79,.45);
+    }
 }
 </style>
