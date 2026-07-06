@@ -1,22 +1,23 @@
-<template>  
-  <div class="bg-black min-vh-100 text-white pb-5 pb-lg-0">
+<template>
+  <!-- <div class="bg-black min-vh-100 text-white pb-5 pb-lg-0"> -->
+  <div class="bg-black text-white pb-5 pb-lg-0 vip-page">
     <div class="container-fluid px-3 pt-0 pb-3">
       <div class="row g-0">
         <aside class="d-none d-lg-block col-lg-3 col-xl-2">
           <div class="position-fixed top-0 start-0 p-3 sidebar-fixed">
             <Sidebar />
           </div>
-        </aside>        
+        </aside>
         <!-- CONTENIDO -->
         <main
           class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 px-0 pt-0 pb-5 pb-lg-1"
         >
-          <section class="container-fluid px-3 px-md-4">            
+          <section class="container-fluid px-3 px-md-4">
             <div
               class="d-flex justify-content-between align-items-start mb-4 mt-4"
             >
               <div>
-                <h2                
+                <h2
                   class="fw-bold mb-1 d-flex align-items-center gap-2 text-warning"
                 >
                   <PhStar weight="fill" />Posiciones VIP
@@ -36,39 +37,57 @@
 
                 <div class="vip-tabs">
                   <button
-                      class="vip-tab"
-                      :class="{ active: faseActual === 'grupos' }"
-                      @click="cambiarFase('grupos')">
-                      👥 Fase de Grupos
+                    class="vip-tab"
+                    :class="{ active: faseActual === 'grupos' }"
+                    @click="cambiarFase('grupos')"
+                  >
+                    👥 Fase de Grupos
                   </button>
                   <button
-                      class="vip-tab"
-                      :class="{ active: faseActual === 'finalistas' }"
-                      @click="cambiarFase('finalistas')">
-                      🏆 Fase de Finalistas
+                    class="vip-tab"
+                    :class="{ active: faseActual === 'finalistas' }"
+                    @click="cambiarFase('finalistas')"
+                  >
+                    🏆 Fase de Finalistas
+                  </button>
+                  <button
+                    class="vip-tab"
+                    :class="{ active: faseActual === 'llaves' }"
+                    @click="cambiarFase('llaves')"
+                  >
+                    🔀 Llaves
                   </button>
                 </div>
 
                 <!-- NUEVO BANNER -->
                 <div class="fase-banner">
-                      <div class="fase-info">
-                        <div class="fase-titulo">
-                            {{ faseActual=="grupos"
-                                ? "FASE DE GRUPOS"
-                                : "FASE DE FINALISTAS"
-                            }}
-                        </div>
-                         <div class="fase-texto">
-                            {{ faseActual=="grupos"
-                            ? "Se contabilizan únicamente los partidos correspondientes a la fase de grupos. Ya tenemos a los ganadores de la quiniela VIP de la fase de grupos, pero la competencia continúa en la fase de eliminación directa."
-                            : "Comienza un nuevo capítulo. Los puntos ahora corresponden únicamente a las rondas de eliminación directa, dentro de los 90 minutos de cada partido. No se contabilizan los penales ni prórrogas."
-                            }}
-                          </div>
-                        </div>
-                      </div>
+                  <div class="fase-info">
+                    <div class="fase-titulo">
+                      {{
+                        faseActual == "grupos"
+                          ? "FASE DE GRUPOS"
+                          : faseActual == "finalistas"
+                            ? "FASE DE FINALISTAS"
+                            : "LLAVES"
+                      }}
                     </div>
-                  <PageHeader />              
+                    <div class="fase-texto">
+                      {{
+                        faseActual == "grupos"
+                          ? "Se contabilizan únicamente los partidos correspondientes a la fase de grupos. Ya tenemos a los ganadores de la quiniela VIP de la fase de grupos, pero la competencia continúa en la fase de eliminación directa."
+                          : "Comienza un nuevo capítulo. Los puntos ahora corresponden únicamente a las rondas de eliminación directa, dentro de los 90 minutos de cada partido. No se contabilizan los penales ni prórrogas."
+                      }}
+                    </div>
+                  </div>
                 </div>
+              </div>
+              <PageHeader />
+            </div>
+
+
+            <!-- Inicio de la condición v-if para faseActual !== 'llaves' -->            
+            <div v-if="faseActual !== 'llaves'">
+
 
             <!-- CARDS SUPERIORES -->
             <div class="row g-3 mb-4">
@@ -80,11 +99,11 @@
                   <div
                     class="card-body p-3 text-center d-flex flex-column justify-content-center"
                     :class="[
-                        'leader-card',
-                        faseActual === 'grupos'
-                            ? 'leader-grupos'
-                            : 'leader-finalistas'
-                    ]"                    
+                      'leader-card',
+                      faseActual === 'grupos'
+                        ? 'leader-grupos'
+                        : 'leader-finalistas',
+                    ]"
                   >
                     <!-- Título centrado -->
                     <div
@@ -98,7 +117,11 @@
                       <small
                         class="text-white-50 fw-bold text-uppercase"
                         style="font-size: 0.75rem"
-                        >{{ faseActual === 'grupos' ? 'LÍDER ACTUAL' : 'LÍDER FINALISTAS' }}</small                        
+                        >{{
+                          faseActual === "grupos"
+                            ? "LÍDER ACTUAL"
+                            : "LÍDER FINALISTAS"
+                        }}</small
                       >
                     </div>
 
@@ -276,110 +299,52 @@
             </div>
 
             <!-- Ficha del Campeón -->
-  <div
-    v-if="faseActual === 'finalistas'"
-    class="campeon-card"
-  >
+            <div v-if="faseActual === 'finalistas'" class="campeon-card">
+              <div class="campeon-left">
+                <div class="campeon-header">⭐ TU CAMPEÓN</div>
+                <div class="campeon-seleccion">
+                  <div
+                    class="circulo-bandera"
+                    :class="'estado-' + estadoCampeon"
+                  >
+                    <img
+                      :src="`https://flagcdn.com/w320/${miCodigoCampeon}.png`"
+                      class="campeon-bandera"
+                    />
+                  </div>
 
+                  <div class="campeon-info">
+                    <div class="campeon-nombre">
+                      {{ miCampeon }}
+                    </div>
+                    <div class="estado activo" v-if="estadoCampeon == 'activo'">
+                      🟢 Sigue en competencia
+                    </div>
+                    <div
+                      class="estado eliminado"
+                      v-if="estadoCampeon == 'eliminado'"
+                    >
+                      🔴 Eliminado
+                    </div>
+                    <div
+                      class="estado campeon"
+                      v-if="estadoCampeon == 'campeon'"
+                    >
+                      🏆 ¡CAMPEÓN!
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-
-<div class="campeon-left">
-    <div class="campeon-header">
-        ⭐ TU CAMPEÓN
-    </div>
-    <div class="campeon-seleccion">
-        <div
-        class="circulo-bandera"
-        :class="'estado-' + estadoCampeon"
-        >
-            <img
-                :src="`https://flagcdn.com/w320/${miCodigoCampeon}.png`"
-                class="campeon-bandera"
-            >
-        </div>
-
-        <div class="campeon-info">
-            <div class="campeon-nombre">
-                {{ miCampeon }}
+              <div class="campeon-right">
+                <div class="bonus-icon">🏆</div>
+                <div class="bonus-title">BONUS</div>
+                <div class="bonus-puntos">+10</div>
+                <div class="bonus-texto">
+                  puntos si tu selección gana el Mundial
+                </div>
+              </div>
             </div>
-            <div
-                class="estado activo"
-                v-if="estadoCampeon=='activo'"
-            >
-                🟢 Sigue en competencia
-            </div>
-            <div
-                class="estado eliminado"
-                v-if="estadoCampeon=='eliminado'"
-            >
-                🔴 Eliminado
-            </div>
-            <div
-                class="estado campeon"
-                v-if="estadoCampeon=='campeon'"
-            >
-                🏆 ¡CAMPEÓN!
-            </div>
-        </div>
-    </div>
-</div>
-
-
-  <!-- <div class="campeon-left">
-      <div class="campeon-header">
-          ⭐ TU CAMPEÓN
-      </div>
-
-      <div class="circulo-bandera">
-          <img
-              :src="`https://flagcdn.com/w320/${miCodigoCampeon}.png`"
-              class="campeon-bandera"
-          >
-      </div>
-
-      <div class="campeon-info">
-          <div class="campeon-nombre">
-              {{ miCampeon }}
-          </div>
-
-          <div
-              class="estado activo"
-              v-if="estadoCampeon=='activo'"
-          >
-              🟢 Sigue en competencia
-          </div>
-
-          <div
-              class="estado eliminado"
-              v-if="estadoCampeon=='eliminado'"
-          >
-              🔴 Eliminado
-          </div>
-          <div
-              class="estado campeon"
-              v-if="estadoCampeon=='campeon'"
-          >
-              🏆 ¡CAMPEÓN!
-          </div>
-      </div>
-  </div>
- -->
-  <div class="campeon-right">
-      <div class="bonus-icon">
-          🏆
-      </div>
-      <div class="bonus-title">
-          BONUS
-      </div>
-      <div class="bonus-puntos">
-          +10
-      </div>
-      <div class="bonus-texto">
-          puntos si tu selección
-          gana el Mundial
-      </div>
-  </div>
-</div>
 
             <!-- TOP 3 PODIO -->
             <section
@@ -395,9 +360,10 @@
                       class="mb-0 fw-bold text-warning text-uppercase"
                       style="letter-spacing: 0.5px"
                     >
-                      {{ faseActual === 'grupos'
-                          ? 'TABLA VIP EXCLUSIVA'
-                          : 'TOP 3 FASE FINALISTAS'
+                      {{
+                        faseActual === "grupos"
+                          ? "TABLA VIP EXCLUSIVA"
+                          : "TOP 3 FASE FINALISTAS"
                       }}
                     </h5>
                   </div>
@@ -469,13 +435,6 @@
                               jugador.posicion === 3,
                           }"
                         />
-
-                        <!-- <div
-                          v-else
-                          class="top-player-avatar rounded-circle border border-secondary mx-auto mb-2 d-flex align-items-center justify-content-center bg-dark"
-                        >
-                          <PhUser size="26" class="text-white-50" />
-                        </div> -->
                         <img
                           v-else
                           src="@/assets/avatar-null.png"
@@ -484,27 +443,26 @@
                           :class="{
                             'border-warning': jugador.posicion === 1,
                             'border-light': jugador.posicion === 2,
-                            'border-warning border-opacity-50': jugador.posicion === 3,
+                            'border-warning border-opacity-50':
+                              jugador.posicion === 3,
                           }"
                           style="object-fit: contain"
                         />
 
-
-
-                        <h6 
+                        <h6
                           class="fw-bold mb-1 text-truncate"
                           :class="jugador.has_paid ? 'text-gold' : 'text-white'"
                         >
                           {{ jugador.nombre }}
                         </h6>
-                                                
+
                         <div class="fw-bold">
                           <span
                             :class="{
                               'fs-4': jugador.posicion === 1,
                               'fs-5': jugador.posicion !== 1,
                               'text-gold': jugador.has_paid,
-                              'text-white': !jugador.has_paid
+                              'text-white': !jugador.has_paid,
                             }"
                           >
                             {{ jugador.puntos }}
@@ -704,7 +662,11 @@
                               <div class="d-flex flex-column">
                                 <span
                                   class="fw-bold text-truncate"
-                                  :class="jugador.has_paid ? 'text-gold' : 'text-white'"
+                                  :class="
+                                    jugador.has_paid
+                                      ? 'text-gold'
+                                      : 'text-white'
+                                  "
                                   style="max-width: 160px"
                                   >{{ jugador.nombre }}</span
                                 >
@@ -714,9 +676,9 @@
                                   style="font-size: 0.6rem; width: fit-content"
                                   >Tú</span
                                 >
-                              </div>                              
+                              </div>
                             </div>
-                          </td>                          
+                          </td>
 
                           <td class="text-center d-none d-md-table-cell">
                             <span
@@ -738,9 +700,11 @@
                             {{ jugador.efectividad }}
                           </td>
                           <td class="text-center px-3 px-md-4">
-                            <span 
+                            <span
                               class="fs-4 fw-bold"
-                              :class="jugador.has_paid ? 'text-gold' : 'text-white'"
+                              :class="
+                                jugador.has_paid ? 'text-gold' : 'text-white'
+                              "
                             >
                               {{ jugador.puntos }}
                             </span>
@@ -809,10 +773,20 @@
                 </div>
               </div>
             </div>
+
+
+
+            <!-- Fin de la condición v-if para faseActual !== 'llaves' -->
+            </div>
+            <div v-if="faseActual === 'llaves'">
+                <VipBracket :matches="knockoutMatches"/>
+            </div>
           </section>
         </main>
       </div>
     </div>
+
+
     <div class="share-export-hidden">
       <SharePositionImage
         ref="shareImageRef"
@@ -836,6 +810,7 @@ import BottomNav from "@/components/dashboard/BottomNav.vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 import SharePositionImage from "@/components/common/SharePositionImage.vue";
+import VipBracket from "@/components/VipBracket.vue";
 
 import {
   PhCrown,
@@ -857,10 +832,18 @@ const shareImageRef = ref(null);
 
 // Fase seleccionada
 const faseActual = ref("grupos");
+
 const cambiarFase = async (fase) => {
   if (faseActual.value === fase) return;
   faseActual.value = fase;
-  await cargarPosiciones();
+  if (fase === "llaves") {
+    // Sólo consultar la primera vez
+    if (knockoutMatches.value.length === 0) {
+      await cargarLlaves();
+    }
+  } else {
+    await cargarPosiciones();
+  }
 };
 
 const router = useRouter();
@@ -869,8 +852,6 @@ const route = useRoute();
 // Variables para filtrado y ordenamiento
 const search = ref("");
 const sortBy = ref("puntos"); // Por defecto ordenamos por puntos
-
-
 
 const equipos = {
   mx: "México",
@@ -984,6 +965,8 @@ const codigoInvitacion = ref("");
 
 const tablaPosiciones = ref([]);
 
+const knockoutMatches = ref([]);
+
 const cargarPosiciones = async () => {
   if (!idLigaActiva.value || idLigaActiva.value === "null") return;
   const { data: liga, error: errorLiga } = await supabase
@@ -1017,7 +1000,7 @@ const cargarPosiciones = async () => {
     const vipUserIds = vipUsers.map((v) => v.user_id);
 
     // 2. Obtenemos las posiciones generales (como siempre)
-      const nombreVista =
+    const nombreVista =
       faseActual.value === "grupos"
         ? "vw_posiciones_grupos"
         : "vw_posiciones_finales";
@@ -1096,20 +1079,32 @@ const cargarPosiciones = async () => {
   }
 };
 
+const cargarLlaves = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("vw_knockout_matches")
+      .select("*")
+      .order("id");
+    if (error) throw error;
+    knockoutMatches.value = data || [];
+    console.log("Llaves:", knockoutMatches.value);
+  } catch (error) {
+    console.error("Error al cargar las llaves:", error);
+  }
+};
+
 const cargarMiCampeon = async () => {
+  const { data } = await supabase
+    .from("league_members")
+    .select("champion_team")
+    .eq("league_id", idLigaActiva.value)
+    .eq("user_id", userId.value)
+    .single();
 
-    const { data } = await supabase
-        .from("league_members")
-        .select("champion_team")
-        .eq("league_id", idLigaActiva.value)
-        .eq("user_id", userId.value)
-        .single();
+  if (!data) return;
 
-    if (!data) return;
-
-    miCodigoCampeon.value = data.champion_team;
-    miCampeon.value = equipos[data.champion_team] || data.champion_team;
-
+  miCodigoCampeon.value = data.champion_team;
+  miCampeon.value = equipos[data.champion_team] || data.champion_team;
 };
 
 // Función cadenero
@@ -1196,26 +1191,30 @@ const compartirPosicion = async () => {
     windowHeight: 1350,
   });
 
-  canvas.toBlob(async (blob) => {
-    if (!blob) return;
+  canvas.toBlob(
+    async (blob) => {
+      if (!blob) return;
 
-    const file = new File([blob], "mi-posicion-fansleague.jpg", {
-      type: "image/jpeg",
-    });
-
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        files: [file],
-        title: "Mi posición en FansLeague",
-        text: `🏆 Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}. ⚽ ¿Crees poder alcanzarme? Únete a mi *QUINIELA* en 👉 https://fansleague.com.mx usando el código ${codigoInvitacion.value}`,
+      const file = new File([blob], "mi-posicion-fansleague.jpg", {
+        type: "image/jpeg",
       });
-    } else {
-      const link = document.createElement("a");
-      link.download = "mi-posicion-fansleague.jpg";
-      link.href = URL.createObjectURL(blob);
-      link.click();
-    }
-  }, "image/jpeg", 0.70);
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Mi posición en FansLeague",
+          text: `🏆 Voy ${miPosicion.value}° de ${totalParticipantes.value} en ${nombreQuinielaActiva.value}. ⚽ ¿Crees poder alcanzarme? Únete a mi *QUINIELA* en 👉 https://fansleague.com.mx usando el código ${codigoInvitacion.value}`,
+        });
+      } else {
+        const link = document.createElement("a");
+        link.download = "mi-posicion-fansleague.jpg";
+        link.href = URL.createObjectURL(blob);
+        link.click();
+      }
+    },
+    "image/jpeg",
+    0.7,
+  );
 };
 </script>
 
@@ -1325,376 +1324,377 @@ const compartirPosicion = async () => {
 }
 
 .text-gold {
-  color: #FFD700 !important; /* Tono dorado. Puedes usar #ffc107 si prefieres el de Bootstrap */
+  color: #ffd700 !important; /* Tono dorado. Puedes usar #ffc107 si prefieres el de Bootstrap */
 }
 
 /*=============================
   TABS FASES
 ==============================*/
 
-.vip-tabs{
-    display:flex;
-    width:100%;
-    background:#1d1d1d;
-    border-radius:18px;
-    padding:6px;
-    margin-top:15px;
+.vip-tabs {
+  display: flex;
+  width: 100%;
+  background: #1d1d1d;
+  border-radius: 18px;
+  padding: 6px;
+  margin-top: 15px;
 }
 
-.vip-tab{
-    flex:1;
-    border:none;
-    background:transparent;
-    color:#b8b8b8;
-    padding:14px;
-    border-radius:14px;
-    font-weight:700;
-    transition:.30s;
-    font-size:15px;
+.vip-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #b8b8b8;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 700;
+  transition: 0.3s;
+  font-size: 15px;
 }
 
-.vip-tab:hover{
-    color:white;
+.vip-tab:hover {
+  color: white;
 }
 
-.vip-tab.active{
-    background:linear-gradient(
-        90deg,
-        #0d6efd,
-        #2196f3
-    );
+.vip-tab.active {
+  background: linear-gradient(90deg, #0d6efd, #2196f3);
 }
 
 /* Grupo de estilos para los líderes según la fase actual */
-.leader-grupos{
-    border:1px solid #c99a00;
-    background:linear-gradient(
-        180deg,
-        rgba(80,60,0,.40),
-        rgba(25,20,0,.40)
-    );
+.leader-grupos {
+  border: 1px solid #c99a00;
+  background: linear-gradient(
+    180deg,
+    rgba(80, 60, 0, 0.4),
+    rgba(25, 20, 0, 0.4)
+  );
 }
 
-.leader-finalistas{
-    border:1px solid #0088ff;
-    background:linear-gradient(
-        180deg,
-        rgba(0,55,120,.35),
-        rgba(0,20,55,.35)
-    );
+.leader-finalistas {
+  border: 1px solid #0088ff;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 55, 120, 0.35),
+    rgba(0, 20, 55, 0.35)
+  );
 }
 
 /*==================================
     BANNER DE LA FASE
 ===================================*/
-.fase-banner{
-    margin-top:20px;
-    padding:18px;
-    border-radius:18px;
-    background:linear-gradient(
-        180deg,
-        rgba(255,255,255,.05),
-        rgba(255,255,255,.02)
-    );
-    border:1px solid rgba(255,255,255,.08);
+.fase-banner {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.fase-titulo{
-    font-size:20px;
-    font-weight:700;
-    color:#ffffff;
+.fase-titulo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-.fase-texto{
-    margin-top:8px;
-    color:#cfcfcf;
-    line-height:1.5;
+.fase-texto {
+  margin-top: 8px;
+  color: #cfcfcf;
+  line-height: 1.5;
 }
 
+@media (max-width: 768px) {
+  .fase-banner {
+    flex-direction: row;
+    padding: 18px;
+  }
 
-@media (max-width:768px){
-.fase-banner{
-    flex-direction:row;
-    padding:18px;
+  .fase-icono {
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+  }
+
+  .fase-titulo {
+    font-size: 22px;
+  }
+
+  .fase-texto {
+    font-size: 15px;
+  }
 }
-
-.fase-icono{
-    width:55px;
-    height:55px;
-    font-size:24px;
-}
-
-.fase-titulo{
-    font-size:22px;
-}
-
-.fase-texto{
-    font-size:15px;
-}
-}
-
-
 
 /*=========================================================
                 TARJETA TU CAMPEÓN
 =========================================================*/
 
-.campeon-card{
-    margin:18px 0;
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    min-height:135px;
-    border-radius:16px;
-    overflow:hidden;
-    background:#232629;
-    border:1px solid rgba(255,193,7,.18);
-    box-shadow:0 6px 16px rgba(0,0,0,.25);
+.campeon-card {
+  margin: 18px 0;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  min-height: 135px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #232629;
+  border: 1px solid rgba(255, 193, 7, 0.18);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
-.campeon-header{
-    font-size:15px;
-    color:#FFD54F;
-    font-weight:700;
-    margin-bottom:12px;
+.campeon-header {
+  font-size: 15px;
+  color: #ffd54f;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
-.campeon-bandera-container{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin-bottom:22px;
+.campeon-bandera-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 22px;
 }
 
-.campeon-bandera{
-    width:180px;
-    border-radius:16px;
-    border:5px solid rgba(255,215,0,.75);
-    box-shadow:
-        0 0 35px rgba(255,193,7,.35);
-    transition:.35s;
+.campeon-bandera {
+  width: 180px;
+  border-radius: 16px;
+  border: 5px solid rgba(255, 215, 0, 0.75);
+  box-shadow: 0 0 35px rgba(255, 193, 7, 0.35);
+  transition: 0.35s;
 }
 
-.campeon-bandera:hover{
-    transform:scale(1.05);
-    box-shadow:
-        0 0 50px rgba(255,215,0,.55);
+.campeon-bandera:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.55);
 }
 
-.campeon-nombre{
-    font-size:22px;
-    font-weight:700;
-    color:white;
-    margin-bottom:6px;
+.campeon-nombre {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 6px;
 }
 
-.campeon-seleccion{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:18px;
+.campeon-seleccion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
 }
 
-.estado{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:5px 14px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:600;
+.estado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.estado.activo{
-    background:#12361f;
-    color:#58d67c;
-    border:1px solid #2d9c57;
+.estado.activo {
+  background: #12361f;
+  color: #58d67c;
+  border: 1px solid #2d9c57;
 }
 
-.estado.eliminado{
-    background:#421616;
-    color:#ff7b7b;
-    border:1px solid #ff5252;
+.estado.eliminado {
+  background: #421616;
+  color: #ff7b7b;
+  border: 1px solid #ff5252;
 }
 
-.estado.campeon{
-    background:#4d3d00;
-    color:#FFD54F;
-    border:1px solid #FFD54F;
+.estado.campeon {
+  background: #4d3d00;
+  color: #ffd54f;
+  border: 1px solid #ffd54f;
 }
 
-.bonus{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:20px;
-    border-top:1px solid rgba(255,193,7,.35);
-    padding-top:25px;
+.bonus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border-top: 1px solid rgba(255, 193, 7, 0.35);
+  padding-top: 25px;
 }
 
-.bonus-title{
-    font-size:15px;
+.bonus-title {
+  font-size: 15px;
 }
 
-.bonus-puntos{
-    font-size:26px;
+.bonus-puntos {
+  font-size: 26px;
 }
 
-.bonus-texto{
-    font-size:12px;
+.bonus-texto {
+  font-size: 12px;
 }
 
-.bonus-icon{
-    font-size:30px;
+.bonus-icon {
+  font-size: 30px;
 }
 
-.bonus-titulo{
-    color:#FFD54F;
-    font-size:18px;
-    font-weight:bold;
+.bonus-titulo {
+  color: #ffd54f;
+  font-size: 18px;
+  font-weight: bold;
 }
 
-.campeon-left{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:18px;
-    text-align:center;
+.campeon-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+  text-align: center;
 }
-.campeon-right{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:0px;
-    background:rgba(255,193,7,.05);
-    border-left:1px solid rgba(255,193,7,.18);
-}
-
-.circulo-bandera{
-    width:68px;
-    height:68px;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    transition:.35s;
-    border:3px solid transparent;
+.campeon-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  background: rgba(255, 193, 7, 0.05);
+  border-left: 1px solid rgba(255, 193, 7, 0.18);
 }
 
-.campeon-bandera{
-    width:42px;
-    border-radius:6px;
+.circulo-bandera {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.35s;
+  border: 3px solid transparent;
 }
 
-.campeon-info{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    justify-content:center;
+.campeon-bandera {
+  width: 42px;
+  border-radius: 6px;
 }
 
-.estado-activo{
-
-    border-color:#35d16f;
-
-    box-shadow:
-        0 0 12px rgba(53,209,111,.45);
-
-}
-.estado-eliminado{
-
-    border-color:#ff4b4b;
-
-    box-shadow:
-        0 0 12px rgba(255,75,75,.40);
-
-}
-.estado-subcampeon{
-    border-color:#bdbdbd;
-    box-shadow:
-        0 0 12px rgba(200,200,200,.35);
+.campeon-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
-.estado-campeon{
-    border-color:#FFD54F;
-    box-shadow:
-        0 0 18px rgba(255,213,79,.75);
-    animation:campeonGlow 2s infinite;
+.estado-activo {
+  border-color: #35d16f;
+
+  box-shadow: 0 0 12px rgba(53, 209, 111, 0.45);
+}
+.estado-eliminado {
+  border-color: #ff4b4b;
+
+  box-shadow: 0 0 12px rgba(255, 75, 75, 0.4);
+}
+.estado-subcampeon {
+  border-color: #bdbdbd;
+  box-shadow: 0 0 12px rgba(200, 200, 200, 0.35);
 }
 
-
+.estado-campeon {
+  border-color: #ffd54f;
+  box-shadow: 0 0 18px rgba(255, 213, 79, 0.75);
+  animation: campeonGlow 2s infinite;
+}
 
 @media (max-width: 900px) {
-    .campeon-card{
-        grid-template-columns:1fr;
-    }
+  .campeon-card {
+    grid-template-columns: 1fr;
+  }
 
-    .campeon-left{
-        align-items:center;
-        justify-content:center;
-        text-align:center;
-    }
+  .campeon-left {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
 
-    .campeon-info{
-        align-items:center;
-        justify-content:center;
-        text-align:center;
-    }
+  .campeon-info {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
 
-    .campeon-right{
-        border-left:none;
-        border-top:1px solid rgba(255,193,7,.20);
-        padding:18px;
-    }
+  .campeon-right {
+    border-left: none;
+    border-top: 1px solid rgba(255, 193, 7, 0.2);
+    padding: 18px;
+  }
 
-    .estado{
-        margin-top:8px;
-    }
+  .estado {
+    margin-top: 8px;
+  }
 
-    .campeon-seleccion{
-        flex-direction:column;
-        gap:10px;
-    }
+  .campeon-seleccion {
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .campeon-info{
-        align-items:center;
-        text-align:center;
-    }    
+  .campeon-info {
+    align-items: center;
+    text-align: center;
+  }
 }
 
-@media(max-width:480px){
-    .circulo-bandera{
-        width:58px;
-        height:58px;
-    }
+@media (max-width: 480px) {
+  .circulo-bandera {
+    width: 58px;
+    height: 58px;
+  }
 
-    .campeon-bandera{
-        width:38px;
-    }
+  .campeon-bandera {
+    width: 38px;
+  }
 
-    .campeon-nombre{
-        font-size:18px;
-    }
+  .campeon-nombre {
+    font-size: 18px;
+  }
 
-    .bonus-puntos{
-        font-size:22px;
-    }
+  .bonus-puntos {
+    font-size: 22px;
+  }
+}
+
+@keyframes campeonGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 213, 79, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(255, 213, 79, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 213, 79, 0.45);
+  }
+}
+
+.vip-page{
+    background:#000;
+    min-height:100dvh;   /* Navegadores modernos */
+    min-height:100vh;    /* Respaldo */
+}
+
+ .vip-page{
+    background:#000;
+    min-height:100dvh;
+    min-height:100vh;
+}
+
+/* .vip-page{
+    overflow-x:hidden;
+} */
+
+.bracket-wrapper{
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
 }
 
 
-@keyframes campeonGlow{
-    0%{
-        box-shadow:
-            0 0 10px rgba(255,213,79,.45);
-    }
-    50%{
-        box-shadow:
-            0 0 22px rgba(255,213,79,.90);
-    }
-    100%{
-        box-shadow:
-            0 0 10px rgba(255,213,79,.45);
-    }
-}
 </style>
