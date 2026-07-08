@@ -1,159 +1,6 @@
 <template>
 <div class="bracket-wrapper">
-
     <div class="bracket">
-        <svg class="bracket-lines">
-
-        <path
-            d="M200 124 H320"
-            class="bracket-line"
-        />
-        <path
-            d="M200 326 H320"
-            class="bracket-line"
-        />
-        <path
-            d="M321 125 V325"
-            class="bracket-line"
-        />
-        <path
-            d="M250 225 H340"
-            class="bracket-line"
-        />
-
-        <path
-            d="M200 524 H320"
-            class="bracket-line"
-        />
-        <path
-            d="M200 726 H320"
-            class="bracket-line"
-        />
-        <path
-            d="M321 525 V725"
-            class="bracket-line"
-        />
-        <path
-            d="M250 625 H335"
-            class="bracket-line"
-        />
-
-        <path
-            d="M425 219 H549"
-            class="bracket-line"
-        />
-        <path
-            d="M425 621 H549"
-            class="bracket-line"
-        />
-        <path
-            d="M550 220 V620"
-            class="bracket-line"
-        />
-        <path
-            d="M495 390 H620"
-            class="bracket-line"
-        />
-
-
-        <path
-            d="M655 410 H673"
-            class="bracket-line"
-        />
-        <path
-            d="M820 410 H870"
-            class="bracket-line"
-        />
-        <!-- <path
-            d="M675 420 V390"
-            class="bracket-line"
-        /> -->
-        <!-- <path
-            d="M676 620 H820"
-            class="bracket-line"
-        /> -->
-
-        <!-- Finales -->
-        <!-- <path
-            d="M955 490 H906"
-            class="bracket-line"
-        /> -->
-        <!-- <path
-            d="M820 620 H903"
-            class="bracket-line"
-        /> -->
-        <!-- <path
-            d="M904 420 V390"
-            class="bracket-line"
-        /> -->
-        <!-- <path
-            d="M676 520 H820"
-            class="bracket-line"
-        /> -->
-
-
-        <path
-            d="M1235 220 H961"
-            class="bracket-line"
-        />
-        <path
-            d="M1235 620 H961"
-            class="bracket-line"
-        />
-        <path
-            d="M960 220 V620"
-            class="bracket-line"
-        />
-        <!-- <path
-            d="M1087 390 H1065"
-            class="bracket-line"
-        />         -->
-
-
-
-        <path
-            d="M1211 135 H1380"
-            class="bracket-line"
-        />
-        <path
-            d="M1211 325 H1380"
-            class="bracket-line"
-        />
-        <path
-            d="M1210 135 V324"
-            class="bracket-line"
-        />
-        <!-- <path
-            d="M1245 217 H1279"
-            class="bracket-line"
-        /> -->
-
-
-
-        <path
-            d="M1211 525 H1390"
-            class="bracket-line"
-        />
-        <path
-            d="M1211 725 H1380"
-            class="bracket-line"
-        />
-        <path
-            d="M1210 525 V725"
-            class="bracket-line"
-        />
-        <!-- <path
-            d="M1268 625 H1200"
-            class="bracket-line"
-        /> -->
-
-        <path
-            v-for="(line,index) in svgPaths"
-            :key="index"
-            :d="line.d"
-            class="bracket-line"
-        />
-    </svg>
     <div class="bracket-column octavos">       
         <h6>Octavos</h6>
         <BracketMatch
@@ -187,14 +34,46 @@
         />
     </div>
 
-    <div class="bracket-column final">
+<div class="bracket-column final">
+    <h6>🏆 Final</h6>
+
+    <BracketMatch
+        v-if="finalMatch"
+        :match="finalMatch"
+        @mounted="registerCard"
+    />
+
+    <h6 class="third-place-title">
+        🥉 Tercer Lugar
+    </h6>
+
+    <BracketMatch
+        v-if="thirdPlaceMatch"
+        :match="thirdPlaceMatch"
+        class="third-place-card"
+        @mounted="registerCard"
+    />
+</div>    
+    <!-- <div class="bracket-column final">
         <h6>Final</h6>
+
         <BracketMatch
             v-if="finalMatch"
             :match="finalMatch"
             @mounted="registerCard"
         />
-    </div>
+
+        <h6 class="third-title">
+            3er Lugar
+        </h6>
+
+        <BracketMatch
+            v-if="thirdPlaceMatch"
+            :match="thirdPlaceMatch"
+            class="third-place-card"
+            @mounted="registerCard"
+        />
+    </div> -->
 
     <div class="bracket-column">
         <h6>Semifinal</h6>
@@ -271,6 +150,12 @@ const leftSemis = computed(() =>
 const finalMatch = computed(() =>
     props.matches.find(m =>
         m.stage === "Final"
+    )
+)
+
+const thirdPlaceMatch = computed(() =>
+    props.matches.find(m =>
+        m.stage === "Tercer lugar"
     )
 )
 
@@ -425,20 +310,45 @@ onMounted(async () => {
 }
 
 .bracket-column h6{
+    color:#FFC107;
+    font-weight:700;
+    font-size:1rem;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    margin-bottom:22px;
+}
+
+/* .bracket-column h6{
     height:40px;
     display:flex;
     align-items:center;
     justify-content:center;
     color:#FFC107;
     font-weight:700;
-}
+} */
 
 .bracket-column{
     display:flex;
     flex-direction:column;
     align-items:center;
     position:relative;
-    z-index:2;
+    z-index:2;    
+}
+
+.bracket-column::after{
+    content:"";
+    position:absolute;
+    top:60px;
+    bottom:30px;
+    right:-10px;
+    width:1px;
+    background:linear-gradient(
+        to bottom,
+        transparent,
+        rgba(255,255,255,.12),
+        rgba(255,255,255,.12),
+        transparent
+    );
 }
 
 .match-card-spacing.octavos{
@@ -458,22 +368,29 @@ onMounted(async () => {
     padding-top:310px;
 }
 
-.bracket-lines{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    z-index:0;
+.bracket-column h6::after{
+    content:"";
+    display:block;
+
+    width:42px;
+    height:2px;
+
+    margin:8px auto 0;
+
+    background:#FFC107;
+    opacity:.45;
+    border-radius:10px;
 }
 
-.bracket-line{
-    fill:none;
-    stroke:#FFC107;
-    stroke-width:3;
-    stroke-linecap:round;
-    stroke-linejoin:round;
+.third-place-title{
+    margin-top:70px;
+    margin-bottom:18px;
 }
+
+.third-place-card{
+    margin-top:0;
+}
+
 
 /* Solo móviles y tablets */
 @media (max-width:1100px){
@@ -496,5 +413,4 @@ onMounted(async () => {
         width:100%;
     }
 }
-
 </style>

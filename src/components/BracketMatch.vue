@@ -204,4 +204,9 @@ cursor:pointer;
     white-space:nowrap;
     text-overflow:ellipsis;
 }
+
+.match-card:hover{
+    border-color:#FFC107;
+    box-shadow:0 0 20px rgba(255,193,7,.18);
+}
 </style>

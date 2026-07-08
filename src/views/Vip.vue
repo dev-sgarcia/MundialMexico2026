@@ -72,6 +72,30 @@
                       }}
                     </div>
                     <div class="fase-texto">
+                    {{
+                      faseActual == "grupos"
+                        ? "Se contabilizan únicamente los partidos correspondientes a la fase de grupos. Ya tenemos a los ganadores de la quiniela VIP de la fase de grupos, pero la competencia continúa en la fase de eliminación directa."
+                        : faseActual == "finalistas"
+                          ? "Comienza un nuevo capítulo. Los puntos ahora corresponden únicamente a las rondas de eliminación directa, dentro de los 90 minutos de cada partido. No se contabilizan los penales ni prórrogas."
+                          : "Si participaste en el Sorteo de Llaves, aquí podrás seguir tu camino hasta conocer al ganador. Esta competencia es independiente de la quiniela tradicional y cuenta con su propia clasificación y premios."
+                    }}
+                    </div>
+                  </div>
+                </div>
+
+
+                <!-- <div class="fase-banner">
+                  <div class="fase-info">
+                    <div class="fase-titulo">
+                      {{
+                        faseActual == "grupos"
+                          ? "FASE DE GRUPOS"
+                          : faseActual == "finalistas"
+                            ? "FASE DE FINALISTAS"
+                            : "LLAVES"
+                      }}
+                    </div>
+                    <div class="fase-texto">
                       {{
                         faseActual == "grupos"
                           ? "Se contabilizan únicamente los partidos correspondientes a la fase de grupos. Ya tenemos a los ganadores de la quiniela VIP de la fase de grupos, pero la competencia continúa en la fase de eliminación directa."
@@ -79,7 +103,8 @@
                       }}
                     </div>
                   </div>
-                </div>
+                </div> -->
+
               </div>
               <PageHeader />
             </div>
@@ -324,7 +349,7 @@
                       class="estado eliminado"
                       v-if="estadoCampeon == 'eliminado'"
                     >
-                      🔴 Eliminado
+                      🔴 Eliminado del Mundial
                     </div>
                     <div
                       class="estado campeon"
@@ -831,7 +856,8 @@ import html2canvas from "html2canvas";
 const shareImageRef = ref(null);
 
 // Fase seleccionada
-const faseActual = ref("grupos");
+//const faseActual = ref("grupos");
+const faseActual = ref("finalistas");
 
 const cambiarFase = async (fase) => {
   if (faseActual.value === fase) return;
@@ -864,6 +890,7 @@ const equipos = {
 };
 const miCampeon = ref("");
 const miCodigoCampeon = ref("");
+
 const estadoCampeon = ref("activo");
 
 const currentPage = ref(1);
@@ -890,31 +917,24 @@ const resetPage = () => {
 
 const posicionesFiltradas = computed(() => {
   let filtrados = [...tablaPosiciones.value];
-
   if (search.value.trim()) {
     const query = search.value.trim().toLowerCase();
-
     filtrados = filtrados.filter((jugador) =>
       jugador.nombre?.toLowerCase().includes(query),
     );
   }
-
   filtrados.sort((a, b) => {
     if (sortBy.value === "puntos") {
       return b.puntos - a.puntos || b.exactos - a.exactos;
     }
-
     if (sortBy.value === "exactos") {
       return b.exactos - a.exactos || b.puntos - a.puntos;
     }
-
     if (sortBy.value === "aciertos") {
       return b.aciertos - a.aciertos || b.puntos - a.puntos;
     }
-
     return 0;
   });
-
   return filtrados;
 });
 
@@ -976,6 +996,7 @@ const cargarPosiciones = async () => {
     .single();
 
   await cargarMiCampeon();
+  await cargarEstadoCampeon();  
 
   if (!errorLiga) {
     codigoInvitacion.value = liga?.invite_code || "";
@@ -1107,6 +1128,22 @@ const cargarMiCampeon = async () => {
   miCampeon.value = equipos[data.champion_team] || data.champion_team;
 };
 
+const cargarEstadoCampeon = async () => {
+  if (!miCampeon.value) return;
+  const { data, error } = await supabase
+    .from("vw_equipos_vivos")
+    .select("team_name")
+    .eq("team_name", miCampeon.value)
+    .maybeSingle();
+  if (error) {
+    console.error(error);
+    return;
+  }
+  estadoCampeon.value = data
+    ? "activo"
+    : "eliminado";
+};
+
 // Función cadenero
 const validarAcceso = async (userId) => {
   try {
@@ -1147,8 +1184,7 @@ onMounted(async () => {
     "Participante";
 
   miAvatar.value = session.user.user_metadata?.avatar_url || "";
-  // await cargarPosiciones();
-
+  
   // 1. Validar si tiene al menos una liga
   const tieneLiga = await validarAcceso(userId.value);
 
@@ -1460,7 +1496,7 @@ const compartirPosicion = async () => {
 .campeon-bandera {
   width: 180px;
   border-radius: 16px;
-  border: 5px solid rgba(255, 215, 0, 0.75);
+  border: 1px solid rgba(255, 215, 0, 0.75);
   box-shadow: 0 0 35px rgba(255, 193, 7, 0.35);
   transition: 0.35s;
 }
@@ -1561,20 +1597,17 @@ const compartirPosicion = async () => {
   border-left: 1px solid rgba(255, 193, 7, 0.18);
 }
 
-.circulo-bandera {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.35s;
-  border: 3px solid transparent;
+.campeon-bandera{
+    width:38px;
+    height:auto;
+    border-radius:5px;
+    box-shadow:
+        0 3px 8px rgba(0,0,0,.35);
+    transition:.35s;
 }
 
-.campeon-bandera {
-  width: 42px;
-  border-radius: 6px;
+.estado-eliminado .campeon-bandera{
+    filter:grayscale(100%) brightness(.80);
 }
 
 .campeon-info {
@@ -1584,25 +1617,41 @@ const compartirPosicion = async () => {
   justify-content: center;
 }
 
-.estado-activo {
-  border-color: #35d16f;
-
-  box-shadow: 0 0 12px rgba(53, 209, 111, 0.45);
-}
-.estado-eliminado {
-  border-color: #ff4b4b;
-
-  box-shadow: 0 0 12px rgba(255, 75, 75, 0.4);
-}
 .estado-subcampeon {
   border-color: #bdbdbd;
   box-shadow: 0 0 12px rgba(200, 200, 200, 0.35);
 }
 
-.estado-campeon {
-  border-color: #ffd54f;
-  box-shadow: 0 0 18px rgba(255, 213, 79, 0.75);
-  animation: campeonGlow 2s infinite;
+.circulo-bandera{
+    width:72px;
+    height:72px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#1c2228;
+    border:3px solid transparent;
+    transition:.35s;
+}
+
+.estado-activo{
+    border-color:#37d56d;
+    box-shadow:
+        0 0 10px rgba(55,213,109,.45),
+        0 0 25px rgba(55,213,109,.20);
+}
+
+.estado-eliminado{
+    border-color:#6b7280;
+    box-shadow:none;
+    opacity:.85;
+}
+
+.estado-campeon{
+    border-color:#FFC107;
+    box-shadow:
+        0 0 12px rgba(255,193,7,.60),
+        0 0 30px rgba(255,193,7,.30);
 }
 
 @media (max-width: 900px) {
@@ -1694,6 +1743,51 @@ const compartirPosicion = async () => {
     overflow-x:auto;
     overflow-y:hidden;
     -webkit-overflow-scrolling:touch;
+}
+
+.estado{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 16px;
+    border-radius:20px;
+    font-size:.90rem;
+    font-weight:600;
+    margin-top:10px;
+}
+
+.estado.activo{
+    background:rgba(35,185,85,.15);
+    color:#5EE28A;
+    border:1px solid rgba(35,185,85,.45);
+}
+
+.estado.eliminado{
+    background:rgba(255,255,255,.06);
+    color:#B9BEC8;
+    border:1px solid rgba(255,255,255,.12);
+}
+
+.estado.campeon{
+    background:rgba(255,193,7,.18);
+    color:#FFD54A;
+    border:1px solid rgba(255,193,7,.45);
+}
+
+.estado-activo{
+    box-shadow:0 0 18px rgba(0,255,120,.45);
+    border-color:#46D46F;
+}
+
+.estado-eliminado{
+    box-shadow:none;
+    border-color:#666;
+    filter:grayscale(35%);
+}
+
+.estado-campeon{
+    box-shadow:0 0 25px rgba(255,193,7,.75);
+    border-color:#FFC107;
 }
 
 
