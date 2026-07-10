@@ -1,13 +1,51 @@
 <template>
   <aside
     class="sidebar d-none d-lg-flex flex-column bg-dark rounded-bottom-4 p-2 position-sticky top-0 rounded-4"
+    :class="{ collapsed: sidebarCollapsed }"
+  >  
+
+
+  <button
+    class="sidebar-toggle"
+    @click="toggleSidebar"
   >
+    <PhCaretDoubleRight
+      v-if="sidebarCollapsed"
+      :size="18"
+      weight="bold"
+    />
+
+    <PhCaretDoubleLeft
+      v-else
+      :size="18"
+      weight="bold"
+    />
+  </button>
+
+
+
+  <!-- <aside
+    class="sidebar d-none d-lg-flex flex-column bg-dark rounded-bottom-4 p-2 position-sticky top-0 rounded-4"
+  > -->
     <!-- LOGO -->
-    <div
+    <!-- <div
       class="w-100 border-bottom border-secondary border-opacity-25 mb-3 overflow-hidden"
-    >
-      <RouterLink to="/" class="d-block">
-        <img src="@/assets/zonafan.png" alt="Zona Fan" class="logo-zona-fan" />
+    > -->
+    <div
+        class="w-100 mb-3 overflow-hidden"
+        :class="{
+            'border-bottom border-secondary border-opacity-25': !sidebarCollapsed
+        }"
+    >    
+      <RouterLink to="/" class="d-block"
+      >
+        <!-- <img src="@/assets/zonafan.png" alt="Zona Fan" class="logo-zona-fan" /> -->
+        <img
+            src="@/assets/zonafan.png"
+            alt="Zona Fan"
+            class="logo-zona-fan"
+            :class="{ 'logo-small': sidebarCollapsed }"
+        />        
       </RouterLink>
     </div>
 
@@ -17,23 +55,26 @@
         v-for="item in menuItems"
         :key="item.label"
         :to="obtenerRutaConLiga(item.path)"
-        class="menu-link nav-link d-flex align-items-center gap-2 rounded-4 px-3 py-2"
-        :class="{ 'vip-link': item.label === 'VIP' }"
+
+        class="menu-link nav-link d-flex align-items-center rounded-4 px-3 py-2"
+        :class="{
+            'justify-content-center': sidebarCollapsed,
+            'gap-2': !sidebarCollapsed,
+            'vip-link': item.label === 'VIP'
+        }"        
       >      
-      <!-- <RouterLink
-        v-for="item in menuItems"
-        :key="item.label"
-        :to="obtenerRutaConLiga(item.path)"
-        class="menu-link nav-link d-flex align-items-center gap-2 rounded-4 px-3 py-2 fw-semibold text-white-50"
-        active-class="text-white bg-success bg-opacity-25"
-      > -->
+        <!-- <component :is="item.icon" size="18" weight="fill" />
+        <span>{{ item.label }}</span> -->
         <component :is="item.icon" size="18" weight="fill" />
-        <span>{{ item.label }}</span>
+        <span v-show="!sidebarCollapsed">
+          {{ item.label }}
+        </span>        
       </RouterLink>
     </nav>
 
     <!-- CARD -->
     <div
+      v-show="!sidebarCollapsed"
       class="card bg-success bg-opacity-10 border border-success border-opacity-25 rounded-4 p-2 text-white mt-auto"
     >
       <div class="d-flex align-items-center gap-2 mb-2">
@@ -92,9 +133,14 @@ import {
   PhStar,
   PhChartPieSlice,
   PhSquaresFour,
+  PhCaretDoubleLeft,
+  PhCaretDoubleRight,  
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
+
+// Variable para controlar el estado del sidebar (colapsado o expandido)
+const sidebarCollapsed = ref(false);
 
 // --- WHATSAPP LINK ---
 const linkWhatsapp = ref(null);
@@ -136,6 +182,10 @@ const adminEmails = [
 ];
 
 onMounted(async () => {
+
+  sidebarCollapsed.value =
+    localStorage.getItem("sidebarCollapsed") === "true";
+
   // 👇 Cargamos el link al iniciar el componente
   cargarWhatsapp();
 
@@ -193,6 +243,17 @@ const obtenerRutaConLiga = (basePath) => {
     },
   };
 };
+
+const toggleSidebar = () => {
+  sidebarCollapsed.value = !sidebarCollapsed.value;
+
+  localStorage.setItem(
+    "sidebarCollapsed",
+    sidebarCollapsed.value
+  );
+};
+
+
 </script>
 
 <style scoped>
@@ -214,10 +275,18 @@ const obtenerRutaConLiga = (basePath) => {
   font-size: 0.9rem;
 }
 
-.logo-zona-fan {
-  height: 60px; /* Ajusta el alto según prefieras */
-  width: auto;
-  mix-blend-mode: screen; /* Esta es la magia que oculta el fondo negro */
+.logo-zona-fan{
+    width:170px;
+    transition:.25s;
+
+    /*height: 60px;
+    width: auto;*/
+    mix-blend-mode: screen; 
+}
+
+.logo-small{
+    width:38px;
+    margin:auto;
 }
 
 .whatsapp-fab {
@@ -252,10 +321,6 @@ const obtenerRutaConLiga = (basePath) => {
   }
 }
 
-
-
-
-
 .menu-link {
     color: #9CA3AF;
 }
@@ -282,4 +347,58 @@ const obtenerRutaConLiga = (basePath) => {
 .vip-link svg,
 .vip-link i {
     color: #C9A227 !important;
-}</style>
+}
+
+
+
+.sidebar{
+    position:sticky;
+    transition:width .25s ease;
+    /*overflow:hidden;*/
+    transition:width .25s ease;
+    
+}
+
+.sidebar.collapsed{
+    width:72px !important;
+}
+
+
+.sidebar-toggle{
+    position:absolute;
+
+    top:10px;
+    right:8px;
+
+    width:28px;
+    height:28px;
+
+    border:none;
+    border-radius:50%;
+
+    background:#2a2d31;
+    border:1px solid #4b5563;    
+
+    /*background:#4da1ff;
+    color:rgba(3, 3, 3, 0.589);*/
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    cursor:pointer;
+
+    z-index:9999;
+
+    transition:
+        background .25s,
+        transform .25s;
+}
+
+.sidebar-toggle:hover{
+    transform:scale(1.08);
+    background:#2563eb;
+    border-color:#2563eb;    
+}
+
+</style>
