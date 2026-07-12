@@ -72,7 +72,15 @@
                             v-for="country in visibleChampionCountries"
                             :key="country.rawCode"
                             class="champion-country-row rounded-3 px-2 py-1"
-                          >
+                            :class="{
+                              eliminado: !equipoSigueVivo(country.name)
+                            }"
+                          >                          
+                          <!-- <div
+                            v-for="country in visibleChampionCountries"
+                            :key="country.rawCode"
+                            class="champion-country-row rounded-3 px-2 py-1"
+                          > -->
                             <div
                               class="d-flex align-items-center justify-content-between gap-3"
                             >
@@ -436,6 +444,22 @@ const selectedGroup = ref("A");
 const showAllChampionCountries = ref(false);
 const matchAccuracy = ref([]);
 const surpriseMatches = ref([]);
+const equiposVivos = ref([]);
+const cargarEquiposVivos = async () => {
+  const { data, error } = await supabase
+    .from("vw_equipos_vivos")
+    .select("team_name");
+  if (error) {
+    console.error(error);
+    return;
+  }
+  equiposVivos.value = data || [];
+};
+const equipoSigueVivo = (nombrePais) => {
+  return equiposVivos.value.some(
+    equipo => equipo.team_name === nombrePais
+  );
+};
 
 const countryCatalog = {
   mx: { name: "México", color: "#006341" },
@@ -510,11 +534,9 @@ const validGroups = [
 
 const getLeagueId = () => {
   const leagueId = route.query.ligaId || localStorage.getItem("ligaIdActiva");
-
   if (route.query.ligaId) {
     localStorage.setItem("ligaIdActiva", route.query.ligaId);
   }
-
   return leagueId;
 };
 
@@ -1167,6 +1189,7 @@ onMounted(async () => {
   await loadMatchAccuracy();
   await loadSurpriseTeam();
   await initMap();
+  await cargarEquiposVivos();  
 });
 
 onBeforeUnmount(() => {
@@ -1292,4 +1315,11 @@ onBeforeUnmount(() => {
     font-size: 1.2rem;
   }
 }
+
+.eliminado{
+  opacity:.35;
+  filter:grayscale(100%);
+  transition:.3s;
+}
+
 </style>
