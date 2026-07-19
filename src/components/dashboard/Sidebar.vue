@@ -23,14 +23,6 @@
   </button>
 
 
-
-  <!-- <aside
-    class="sidebar d-none d-lg-flex flex-column bg-dark rounded-bottom-4 p-2 position-sticky top-0 rounded-4"
-  > -->
-    <!-- LOGO -->
-    <!-- <div
-      class="w-100 border-bottom border-secondary border-opacity-25 mb-3 overflow-hidden"
-    > -->
     <div
         class="w-100 mb-3 overflow-hidden"
         :class="{
@@ -39,7 +31,6 @@
     >    
       <RouterLink to="/" class="d-block"
       >
-        <!-- <img src="@/assets/zonafan.png" alt="Zona Fan" class="logo-zona-fan" /> -->
         <img
             src="@/assets/zonafan.png"
             alt="Zona Fan"
@@ -60,7 +51,8 @@
         :class="{
             'justify-content-center': sidebarCollapsed,
             'gap-2': !sidebarCollapsed,
-            'vip-link': item.label === 'VIP'
+            'vip-link': item.label === 'VIP',
+            'hall-link': item.label === 'Salón de la Fama'
         }"        
       >      
         <!-- <component :is="item.icon" size="18" weight="fill" />
@@ -134,7 +126,8 @@ import {
   PhChartPieSlice,
   PhSquaresFour,
   PhCaretDoubleLeft,
-  PhCaretDoubleRight,  
+  PhCaretDoubleRight, 
+  PhMedal, 
 } from "@phosphor-icons/vue";
 
 const route = useRoute();
@@ -212,6 +205,7 @@ const allMenuItems = [
   { label: "Resultados", path: "/resultados", icon: PhChartBar },
   { label: "Posiciones", path: "/posiciones", icon: PhRanking },
   { label: "VIP", path: "/vip", icon: PhStar, vipOnly: true },
+  { label: "Salón de la Fama", path: "/hall-of-fame", icon: PhMedal},
 ];
 
 // Leemos la memoria caché. Si dice 'true', la variable será verdadera
@@ -349,14 +343,42 @@ const toggleSidebar = () => {
     color: #C9A227 !important;
 }
 
+/* Salón de la Fama */
+.hall-link,
+.hall-link svg,
+.hall-link i {
+    color: #C9A227 !important;
+}
 
+.hall-link{
+    animation: hallBeat 3s infinite;
+}
+
+.hall-link svg{
+    animation: iconPulse 3s infinite;
+}
+
+@keyframes hallBeat{
+
+    0%,100%{transform:scale(1);}
+    5%{transform:scale(1.03);}
+    10%{transform:scale(1);}
+    15%{transform:scale(1.03);}
+    20%{transform:scale(1);}
+}
+
+@keyframes iconPulse{
+
+    0%,100%{transform:scale(1);}
+    10%{transform:scale(1.20);}
+    20%{transform:scale(1);}
+}
 
 .sidebar{
     position:sticky;
     transition:width .25s ease;
     /*overflow:hidden;*/
-    transition:width .25s ease;
-    
+    transition:width .25s ease;  
 }
 
 .sidebar.collapsed{

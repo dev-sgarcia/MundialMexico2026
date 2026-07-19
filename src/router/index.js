@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { supabase } from "@/supabaseClient";
+import HallOfFame from "@/views/HallOfFame.vue";
 
 const routes = [
   {
@@ -79,6 +80,11 @@ const routes = [
     name: "VIP",
     component: () => import("@/views/Vip.vue"),
     meta: { requiresAuth: true, requiresLiga: true },
+  },
+  {
+    path: "/hall-of-fame",
+    name: "HallOfFame",
+    component: HallOfFame,
   },
 ];
 
