@@ -132,31 +132,19 @@
                             </div>
                           </div>
 
+
                           <img
-                            v-if="jugador.avatar_url"
-                            :src="jugador.avatar_url"
+                            :src="jugador.avatar_url || avatarNull"
                             :alt="jugador.nombre"
                             class="top-player-avatar rounded-circle border mb-2"
                             :class="{
                               'border-warning': jugador.posicion === 1,
                               'border-light': jugador.posicion === 2,
-                              'border-warning border-opacity-25':
-                                jugador.posicion === 3,
+                              'border-warning border-opacity-25': jugador.posicion === 3,
                             }"
-                          />
-                          <img
-                            v-else
-                            src="@/assets/avatar-null.png"
-                            :alt="jugador.nombre"
-                            class="top-player-avatar rounded-circle border mx-auto mb-2 bg-dark p-1"
-                            :class="{
-                              'border-warning': jugador.posicion === 1,
-                              'border-light': jugador.posicion === 2,
-                              'border-warning border-opacity-25':
-                                jugador.posicion === 3,
-                            }"
-                            style="object-fit: contain"
-                          />
+                            @error="avatarError"
+                          />                          
+                          
                           <h6 class="fw-bold mb-1 text-truncate text-white">
                             {{ jugador.nombre }}
                           </h6>
@@ -283,31 +271,19 @@
                             </div>
                           </div>
 
+
                           <img
-                            v-if="jugador.avatar_url"
-                            :src="jugador.avatar_url"
+                            :src="jugador.avatar_url || avatarNull"
                             :alt="jugador.nombre"
                             class="top-player-avatar rounded-circle border mb-2"
                             :class="{
                               'border-warning': jugador.posicion === 1,
                               'border-light': jugador.posicion === 2,
-                              'border-warning border-opacity-25':
-                                jugador.posicion === 3,
+                              'border-warning border-opacity-25': jugador.posicion === 3,
                             }"
-                          />
-                          <img
-                            v-else
-                            src="@/assets/avatar-null.png"
-                            :alt="jugador.nombre"
-                            class="top-player-avatar rounded-circle border mx-auto mb-2 bg-dark p-1"
-                            :class="{
-                              'border-warning': jugador.posicion === 1,
-                              'border-light': jugador.posicion === 2,
-                              'border-warning border-opacity-25':
-                                jugador.posicion === 3,
-                            }"
-                            style="object-fit: contain"
-                          />
+                            @error="avatarError"
+                          />                          
+
 
                           <h6
                             class="fw-bold mb-1 text-truncate"
@@ -766,9 +742,11 @@
 
                         <img
                           v-if="item.orden != 0"
-                          :src="item.avatar_url"
+                          :src="item.avatar_url || avatarNull"
+                          :alt="item.nombre"
                           class="hall-avatar mt-3 mb-2"
-                        />
+                          @error="avatarError"
+                        />                        
                         <!-- <div class="small"> -->
                         <div class="hall-player-name">
                           {{ item.orden == 0 ? "" : item.nombre }}
@@ -836,6 +814,11 @@ import BottomNav from "@/components/dashboard/BottomNav.vue";
 import Sidebar from "@/components/dashboard/Sidebar.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 import SharePositionImage from "@/components/common/SharePositionImage.vue";
+
+import avatarNull from "@/assets/avatar-null.png";
+const avatarError = (event) => {
+  event.target.src = avatarNull;
+};
 
 import {
   PhCrown,
